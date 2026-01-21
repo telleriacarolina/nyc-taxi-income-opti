@@ -1,29 +1,36 @@
 # Planning Guide
 
-A comprehensive driver management application for NYC TLC (Taxi and Limousine Commission) drivers to track their license renewals, required documents, and compliance deadlines.
+A comprehensive driver management hub for NYC TLC (Taxi and Limousine Commission) drivers to track their license renewals, required documents, compliance deadlines, and optimize their earnings through data-driven insights.
 
 **Experience Qualities**: 
-1. **Professional** - Clean, organized interface that inspires confidence and trust for managing critical licensing information
-2. **Urgent** - Clear visual indicators for approaching deadlines and expired items that demand attention
-3. **Empowering** - Intuitive tools that help drivers stay compliant and in control of their licensing requirements
+1. **Professional** - Clean, organized interface that inspires confidence and trust for managing critical licensing and earnings information
+2. **Empowering** - Data-driven insights that help drivers maximize earnings and stay compliant with their licensing requirements
+3. **Actionable** - Clear visual indicators and recommendations that guide drivers to make better decisions about when and where to drive
 
-**Complexity Level**: Light Application (multiple features with basic state)
-This is a multi-feature application with document tracking, deadline management, and status monitoring, but doesn't require complex backend integrations or multi-view navigation systems.
+**Complexity Level**: Complex Application (advanced functionality with multiple views)
+This is a multi-view application with document tracking, deadline management, shift logging, earnings analytics, pattern recognition, and personalized insights requiring sophisticated state management and data analysis.
 
 ## Essential Features
+
+### Tabbed Navigation
+- **Functionality**: Switch between License Manager and Earnings Optimizer views with persistent tab state
+- **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
+- **Trigger**: Click tab buttons in header
+- **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking and earnings optimization
 
 ### License Status Dashboard
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
 - **Purpose**: Provide at-a-glance awareness of license validity to prevent driving with expired credentials
-- **Trigger**: Automatically loads on app launch
-- **Progression**: App opens → License card displays with color-coded status (active/expiring soon/expired) → Shows days remaining until expiration
+- **Trigger**: Automatically loads on License Manager tab
+- **Progression**: Tab opens → License card displays with color-coded status (active/expiring soon/expired) → Shows days remaining until expiration
 - **Success criteria**: Driver can immediately see if their license is current and when action is needed
 
 ### Document Tracker
 - **Functionality**: Track multiple required documents (DMV license, defensive driving certificate, drug test, vehicle inspection, insurance)
 - **Purpose**: Ensure all required documentation stays current to maintain TLC compliance
-- **Trigger**: View on dashboard, add/edit via modal dialog
-- **Progression**: Dashboard shows document list → Click document to edit → Update expiration date and upload reference → Save changes → Status updates with visual indicator
+- **Trigger**: View on License Manager tab, add/edit via modal dialog
+- **Progression**: Dashboard shows document list → Click document to edit → Update expiration date and notes → Save changes → Status updates with visual indicator
 - **Success criteria**: All required documents are tracked with expiration dates and status indicators
 
 ### Renewal Reminders
@@ -33,21 +40,47 @@ This is a multi-feature application with document tracking, deadline management,
 - **Progression**: System checks dates → Items within 30 days show warning badge → Expired items show alert badge → Driver reviews and takes action
 - **Success criteria**: Driver receives clear visual warnings before documents expire
 
+### Shift Logger
+- **Functionality**: Log individual driving shifts with date, time, platform, earnings, trips, tips, and expenses
+- **Purpose**: Build a comprehensive earnings history to enable pattern analysis and optimization recommendations
+- **Trigger**: Click "Add Shift" button on Earnings Optimizer tab
+- **Progression**: Click add → Modal opens → Enter shift details (platform, time, earnings, trips, expenses) → Save → Shift added to history with calculated hourly rate
+- **Success criteria**: Driver can log a complete shift in under 60 seconds
+
+### Earnings Analytics Dashboard
+- **Functionality**: Display key metrics including net earnings, average hourly rate, total trips, and tips
+- **Purpose**: Provide clear overview of financial performance across all logged shifts
+- **Trigger**: Automatically calculates from logged shifts on Earnings Optimizer tab
+- **Progression**: View opens → Cards display metrics → Updates in real-time as shifts are added
+- **Success criteria**: Driver can see total earnings, hourly rate, trip count, and tips at a glance
+
+### Peak Performance Insights
+- **Functionality**: Analyze shift data to identify best earning hours, days, and platforms with personalized recommendations
+- **Purpose**: Guide drivers to work during their most profitable times and on their best-performing platforms
+- **Trigger**: Automatically generated after 3+ shifts are logged
+- **Progression**: System analyzes patterns → Identifies peak hours, best days, top platforms → Displays insights with actionable recommendations → Updates as more data is added
+- **Success criteria**: Driver receives specific, data-backed recommendations on when and where to drive for maximum earnings
+
 ### Quick Actions
-- **Functionality**: Fast access buttons to update license info, add documents, and mark items as renewed
-- **Trigger**: Click action buttons on cards or floating action button
-- **Progression**: Click action button → Modal opens with pre-filled form → Update information → Confirm → Data persists and UI updates
-- **Success criteria**: Driver can update any document in under 30 seconds
+- **Functionality**: Fast access buttons to update license info, add documents, and log shifts
+- **Trigger**: Click action buttons on cards or in tab views
+- **Progression**: Click action button → Modal opens with form → Enter/update information → Confirm → Data persists and UI updates
+- **Success criteria**: Driver can update any information or log a shift in under 30 seconds
 
 ## Edge Case Handling
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
 - **Multiple Expired Items**: Prioritize display by expiration date (most urgent first)
 - **Invalid Dates**: Validate that expiration dates are in the future when adding new documents
-- **First-Time User**: Show helpful onboarding hints about what documents are required
+- **First-Time User (License Tab)**: Show helpful onboarding hints about what documents are required
+- **No Shifts Logged**: Display empty state on Earnings tab with clear explanation of benefits and CTA to log first shift
+- **Insufficient Data for Insights**: Show message that 3+ shifts are needed for pattern analysis
+- **Overlapping Shifts**: Allow entry but highlight in UI for driver to review
+- **Zero or Negative Earnings**: Allow entry for tracking purposes (bad days happen)
+- **Missing Expense Data**: Optional field, calculations work with or without it
 
 ## Design Direction
-The design should evoke confidence, urgency, and professionalism - like a reliable assistant that keeps you compliant. It should feel official but approachable, with clear status indicators that make complex compliance requirements immediately understandable.
+The design should evoke confidence, empowerment, and professionalism - like having both a compliance assistant and a business advisor. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -95,52 +128,64 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Card**: Primary container for license info and document groups with custom borders for status indication
+  - **Tabs**: Primary navigation between License Manager and Earnings Optimizer views
+  - **Card**: Primary container for license info, document groups, shift entries, and stat displays
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants
-  - **Dialog**: Modal for adding/editing license and document information
+  - **Dialog**: Modal for adding/editing license, documents, and shift information
   - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
-  - **Input**: Text fields for license numbers and document names
-  - **Calendar** (via date picker): Date selection for expiration dates
-  - **Progress**: Visual indicator for time remaining until expiration
-  - **Alert**: Prominent warnings for expired or soon-to-expire items
-  - **Separator**: Dividers between document groups
-  - **Scroll Area**: For long lists of documents on mobile
+  - **Input**: Text fields for license numbers, document names, earnings amounts, and shift details
+  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Other) and document types
+  - **Textarea**: Notes fields for documents and shifts
+  - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
+  - **Separator**: Dividers between document and shift groups
+  - **Scroll Area**: For long lists of documents and shifts on mobile
 
 - **Customizations**:
-  - Custom colored borders on Cards based on status (green/orange/red)
+  - Custom colored borders on Cards based on status (green/orange/red for compliance, gradient for earnings)
   - Badge variants with status-specific colors and icons
-  - Floating Action Button component for quick "Add Document" access
-  - Custom date display component showing "X days remaining" with countdown
-  - Status indicator dots with animation for expired items
+  - Custom stat cards with large numbers and icon accents
+  - Platform badges with brand colors (black for Uber, pink for Lyft, teal for Via)
+  - Insight cards with gradient backgrounds to draw attention to optimization recommendations
+  - Custom date display showing "X days remaining" countdown
+  - Hourly rate calculation display showing $/hr alongside shift totals
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
   - Cards: Neutral default, colored left border on hover, full colored border for expired items
+  - Tabs: Clear active state with icon and text, subtle inactive state
   - Inputs: Subtle focus ring in primary blue, error state in alert red
   - Badges: Static for current, animated pulse for expired
+  - Shift cards: Hover shadow lift, edit/delete buttons appear on hover
 
 - **Icon Selection**:
-  - IdentificationCard: License/ID card representation
+  - IdentificationCard: License/ID card representation, License Manager tab
+  - ChartBar: Earnings analytics, Earnings Optimizer tab
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays
-  - Warning: Expiring soon indicators
-  - WarningCircle: Expired/urgent alerts
+  - Clock: Time and duration displays
+  - CurrencyDollar: Earnings and financial metrics
+  - Car: Trip counts and ride metrics
+  - TrendUp: Performance improvements and best rates
+  - Lightbulb: Insights and recommendations
+  - Warning/WarningCircle: Expiring/expired alerts
   - CheckCircle: Current/valid status
-  - Plus: Add new document
+  - Plus: Add new document or shift
   - PencilSimple: Edit existing entries
-  - ClockCounterClockwise: Renewal history
+  - Trash: Delete shifts
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
-  - Card padding: p-6
-  - Section gaps: gap-6 for card grids
+  - Card padding: p-5 for shifts, p-6 for license/documents
+  - Stat cards: p-5 with generous spacing for large numbers
+  - Section gaps: gap-6 for card grids, gap-4 for metric grids
   - Element gaps: gap-4 within cards, gap-2 for inline elements
   - Button padding: px-6 py-3 for primary, px-4 py-2 for secondary
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Sticky header with page title and quick add button
-  - Bottom sheet dialog variant for forms on mobile
+  - Tabs span full width with clear touch targets
+  - Stat grid collapses to 2 columns on mobile
   - Larger touch targets (min 44px) for all interactive elements
-  - Collapsible document sections to reduce scroll length
-  - Floating action button fixed at bottom-right for quick access
+  - Bottom sheet dialog variant for forms on mobile
+  - Sticky tab navigation at top
+  - Collapsible sections to reduce scroll length
