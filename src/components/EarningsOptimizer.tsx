@@ -12,6 +12,7 @@ import { PlatformComparison } from './PlatformComparison'
 import { AIInsights } from './AIInsights'
 import { VeteranInsights } from './VeteranInsights'
 import { TrafficOverlay } from './TrafficOverlay'
+import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { LocationHeatmap } from './LocationHeatmap'
 import { Progress } from '@/components/ui/progress'
 
@@ -242,6 +243,8 @@ export function EarningsOptimizer() {
       <AIInsights />
 
       <VeteranInsights />
+
+      <TrafficPatternComparison />
 
       <TrafficOverlay />
 
