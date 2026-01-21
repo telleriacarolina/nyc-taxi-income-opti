@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { MapPin, TrendUp, CurrencyDollar } from '@phosphor-icons/react'
+import { Button } from '@/components/ui/button'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
+import { toast } from 'sonner'
 import * as d3 from 'd3'
 
 interface LocationData {
@@ -280,6 +282,54 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
 
   }, [locationData])
 
+  const handleExportCSV = () => {
+    if (locationData.length === 0) {
+      toast.error('No location data to export')
+      return
+    }
+
+    const csvHeaders = [
+      'Location',
+      'Total Earnings',
+      'Total Trips',
+      'Hours Worked',
+      'Hourly Rate',
+      'Number of Shifts',
+      'Avg Earnings per Shift',
+      'Avg Trips per Shift'
+    ]
+
+    const csvRows = locationData.map(location => [
+      location.location,
+      location.earnings.toFixed(2),
+      location.trips,
+      location.hours.toFixed(2),
+      location.avgHourly.toFixed(2),
+      location.count,
+      (location.earnings / location.count).toFixed(2),
+      (location.trips / location.count).toFixed(2)
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `location-earnings-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success('Location earnings exported to CSV')
+  }
+
   if (locationData.length === 0) {
     return null
   }
@@ -303,6 +353,15 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
             Identify high-earning pickup zones across NYC
           </p>
         </div>
+        <Button
+          onClick={handleExportCSV}
+          size="sm"
+          variant="outline"
+          className="flex-shrink-0 h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30"
+        >
+          <DownloadSimple size={16} weight="bold" />
+          <span className="hidden sm:inline">Export</span>
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-4 gap-3 mb-4">
