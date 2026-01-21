@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { MapPin, TrendUp, CurrencyDollar, DownloadSimple } from '@phosphor-icons/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
 import { toast } from 'sonner'
 import * as d3 from 'd3'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface LocationData {
   location: string
@@ -23,9 +27,31 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [locationData, setLocationData] = useState<LocationData[]>([])
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null)
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  })
+
+  const handleClearDateRange = () => {
+    setDateRange({ from: undefined, to: undefined })
+  }
+
+  const filteredShifts = dateRange.from || dateRange.to
+    ? shifts.filter(shift => {
+        const shiftDate = new Date(shift.date)
+        if (dateRange.from && dateRange.to) {
+          return shiftDate >= dateRange.from && shiftDate <= dateRange.to
+        } else if (dateRange.from) {
+          return shiftDate >= dateRange.from
+        } else if (dateRange.to) {
+          return shiftDate <= dateRange.to
+        }
+        return true
+      })
+    : shifts
 
   useEffect(() => {
-    const shiftsWithLocation = shifts.filter(s => s.startLocation && s.startLocation.trim() !== '')
+    const shiftsWithLocation = filteredShifts.filter(s => s.startLocation && s.startLocation.trim() !== '')
     
     const locationMap = new Map<string, {
       earnings: number
@@ -60,7 +86,7 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     })).sort((a, b) => b.earnings - a.earnings)
 
     setLocationData(data)
-  }, [shifts])
+  }, [filteredShifts])
 
   useEffect(() => {
     if (!svgRef.current || locationData.length === 0) return
@@ -319,8 +345,20 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
     
+    let filename = 'location-earnings'
+    if (dateRange.from && dateRange.to) {
+      filename += `-${format(dateRange.from, 'yyyy-MM-dd')}-to-${format(dateRange.to, 'yyyy-MM-dd')}`
+    } else if (dateRange.from) {
+      filename += `-from-${format(dateRange.from, 'yyyy-MM-dd')}`
+    } else if (dateRange.to) {
+      filename += `-until-${format(dateRange.to, 'yyyy-MM-dd')}`
+    } else {
+      filename += `-${new Date().toISOString().split('T')[0]}`
+    }
+    filename += '.csv'
+    
     link.setAttribute('href', url)
-    link.setAttribute('download', `location-earnings-${new Date().toISOString().split('T')[0]}.csv`)
+    link.setAttribute('download', filename)
     link.style.visibility = 'hidden'
     
     document.body.appendChild(link)
@@ -353,16 +391,84 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
             Identify high-earning pickup zones across NYC
           </p>
         </div>
-        <Button
-          onClick={handleExportCSV}
-          size="sm"
-          variant="outline"
-          className="flex-shrink-0 h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30"
-        >
-          <DownloadSimple size={16} weight="bold" />
-          <span className="hidden sm:inline">Export</span>
-        </Button>
+        <div className="flex gap-2 flex-shrink-0">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className={cn(
+                  "h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30",
+                  (dateRange.from || dateRange.to) && "border-primary bg-primary/5"
+                )}
+              >
+                <CalendarBlank size={16} weight="bold" />
+                <span className="hidden sm:inline">
+                  {dateRange.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "MMM d")} - {format(dateRange.to, "MMM d")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "MMM d, yyyy")
+                    )
+                  ) : (
+                    "Date Range"
+                  )}
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="range"
+                selected={{ from: dateRange.from, to: dateRange.to }}
+                onSelect={(range) => {
+                  setDateRange({ from: range?.from, to: range?.to })
+                }}
+                numberOfMonths={2}
+                disabled={(date) => date > new Date()}
+              />
+              {(dateRange.from || dateRange.to) && (
+                <div className="p-3 border-t">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleClearDateRange}
+                    className="w-full gap-1.5 h-8 text-[clamp(0.7rem,2vw,0.8rem)]"
+                  >
+                    <X size={16} weight="bold" />
+                    Clear Dates
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+          <Button
+            onClick={handleExportCSV}
+            size="sm"
+            variant="outline"
+            className="h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30"
+          >
+            <DownloadSimple size={16} weight="bold" />
+            <span className="hidden sm:inline">Export</span>
+          </Button>
+        </div>
       </div>
+
+      {(dateRange.from || dateRange.to) && (
+        <div className="mb-3 px-3 py-2 bg-primary/10 border border-primary/30 rounded-lg">
+          <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-primary font-medium">
+            {dateRange.from && dateRange.to ? (
+              <>Showing data from {format(dateRange.from, "MMM d, yyyy")} to {format(dateRange.to, "MMM d, yyyy")}</>
+            ) : dateRange.from ? (
+              <>Showing data from {format(dateRange.from, "MMM d, yyyy")} onwards</>
+            ) : (
+              <>Showing data until {format(dateRange.to!, "MMM d, yyyy")}</>
+            )}
+            {' '}• {filteredShifts.length} {filteredShifts.length === 1 ? 'shift' : 'shifts'}
+          </p>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-4 gap-3 mb-4">
         <div className="bg-gradient-to-br from-success/20 to-success/10 rounded-lg p-3 border border-success/30">
