@@ -1,0 +1,29 @@
+# OpenFreeMap Git Aliases
+# Add these to your ~/.gitconfig or run: git config --global include.path ~/.gitconfig-openfreemap
+
+[alias]
+    # OpenFreeMap shortcuts
+    ofm-fetch = fetch openfreemap
+    ofm-log = log openfreemap/main --oneline --graph -20
+    ofm-new = !git log HEAD..openfreemap/main --oneline
+    ofm-count = !git rev-list HEAD..openfreemap/main --count
+    ofm-diff = diff main openfreemap/main --
+    ofm-show = show openfreemap/main
+    ofm-stat = diff main openfreemap/main --stat
+    
+    # OpenFreeMap filtered searches
+    ofm-tiles = log openfreemap/main --grep="tile" --oneline -20
+    ofm-maps = log openfreemap/main --grep="map" --oneline -20
+    ofm-perf = log openfreemap/main --grep="performance|optimize|speed" --oneline -20
+    ofm-recent = log openfreemap/main --since="1 month ago" --oneline
+    
+    # OpenFreeMap component comparison
+    ofm-component = diff main openfreemap/main -- src/components/OpenFreeMap.tsx
+    ofm-package = diff main openfreemap/main -- package.json
+    
+    # OpenFreeMap cherry-pick workflow
+    ofm-test = !git checkout -b test/openfreemap-$(date +%Y%m%d)
+    ofm-pick = cherry-pick
+    
+    # Pretty log for OpenFreeMap
+    ofm-pretty = log openfreemap/main --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -20

@@ -1,0 +1,92 @@
+# Monthly OpenFreeMap Update Check
+# Automatically checks for new OpenFreeMap commits and creates an issue if updates are available
+
+name: Check OpenFreeMap Updates
+
+on:
+  schedule:
+    # Run on the 1st of each month at 9 AM UTC
+    - cron: '0 9 1 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Fetch OpenFreeMap remote
+        run: |
+          git remote add openfreemap https://github.com/telleriacarolina/openfreemap.git || true
+          git fetch openfreemap
+      
+      - name: Check for new commits
+        id: check
+        run: |
+          # Count new commits
+          NEW_COMMITS=$(git rev-list HEAD..openfreemap/main --count 2>/dev/null || echo "0")
+          echo "new_commits=$NEW_COMMITS" >> $GITHUB_OUTPUT
+          
+          # Get recent commit messages
+          if [ "$NEW_COMMITS" -gt 0 ]; then
+            echo "commits<<EOF" >> $GITHUB_OUTPUT
+            git log openfreemap/main --oneline -10 >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create issue if updates available
+        if: steps.check.outputs.new_commits > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const newCommits = '${{ steps.check.outputs.new_commits }}';
+            const commits = `${{ steps.check.outputs.commits }}`;
+            
+            const body = `## 🗺️ OpenFreeMap Updates Available
+            
+            There are **${newCommits} new commit(s)** in the OpenFreeMap repository.
+            
+            ### Recent Commits
+            \`\`\`
+            ${commits}
+            \`\`\`
+            
+            ### What to do
+            
+            1. **Review the commits**:
+               \`\`\`bash
+               git log openfreemap/main --oneline -20
+               \`\`\`
+            
+            2. **Check for relevant changes**:
+               \`\`\`bash
+               git log openfreemap/main --grep="tile|map|performance" --oneline
+               \`\`\`
+            
+            3. **Compare implementations**:
+               \`\`\`bash
+               git diff main openfreemap/main -- src/components/
+               \`\`\`
+            
+            4. **If you find useful improvements**:
+               - Create a test branch
+               - Cherry-pick the commit
+               - Test thoroughly
+               - Merge if successful
+            
+            ### Documentation
+            - [Quick Reference](.github/QUICK_REFERENCE.md)
+            - [Integration Guide](.github/OPENFREEMAP.md)
+            
+            Close this issue once you've reviewed the updates.`;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🗺️ OpenFreeMap Updates Available',
+              body: body,
+              labels: ['openfreemap', 'enhancement', 'dependencies']
+            });

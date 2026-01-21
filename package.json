@@ -11,7 +11,10 @@
         "optimize": "vite optimize",
         "preview": "vite preview",
         "verify:openfreemap": "chmod +x verify-openfreemap.sh && ./verify-openfreemap.sh",
-        "fetch:openfreemap": "git fetch openfreemap && echo '✅ OpenFreeMap updates fetched'"
+        "fetch:openfreemap": "git fetch openfreemap && echo '✅ OpenFreeMap updates fetched'",
+        "check:openfreemap": "git fetch openfreemap && git log HEAD..openfreemap/main --oneline && git rev-list HEAD..openfreemap/main --count | xargs -I {} echo 'New commits: {}'",
+        "compare:openfreemap": "git fetch openfreemap && git diff --stat main openfreemap/main",
+        "review:openfreemap": "git fetch openfreemap && git log openfreemap/main --oneline --graph -20 --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr)%Creset'"
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",
