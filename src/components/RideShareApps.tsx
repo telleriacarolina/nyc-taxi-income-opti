@@ -167,41 +167,40 @@ export function RideShareApps() {
       </TabsList>
 
       <TabsContent value="platforms" className="space-y-6">
-        <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-6 border">
-          <div className="flex items-start gap-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
-              <CarProfile size={28} className="text-primary" weight="fill" />
+        <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 border mb-4">
+          <div className="flex items-start gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
+              <CarProfile size={22} className="text-primary" weight="fill" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-semibold mb-2">Ride Share Platforms</h2>
-              <p className="text-muted-foreground">
-                Compare NYC ride-sharing platforms to maximize your earnings. Each app has different 
-                commission rates, features, and rider demand patterns.
+              <h2 className="text-lg font-semibold mb-1">Rideshare Platforms</h2>
+              <p className="text-xs text-muted-foreground">
+                Compare NYC platforms to maximize earnings
               </p>
             </div>
           </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
           {RIDESHARE_APPS.map(app => (
             <Card 
               key={app.id} 
-              className="p-6 transition-all hover:shadow-lg"
-              style={{ borderLeft: `4px solid ${app.color}` }}
+              className="p-4 transition-all hover:shadow-lg"
+              style={{ borderLeft: `3px solid ${app.color}` }}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
                   <div 
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
                     style={{ backgroundColor: app.bgColor }}
                   >
                     {app.icon}
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{app.name}</h3>
+                    <h3 className="text-base font-semibold">{app.name}</h3>
                     {app.marketShare && (
-                      <p className="text-xs text-muted-foreground">
-                        {app.marketShare} market share
+                      <p className="text-[10px] text-muted-foreground">
+                        {app.marketShare}
                       </p>
                     )}
                   </div>
@@ -210,50 +209,50 @@ export function RideShareApps() {
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleFavorite(app.id)}
-                  className="h-9 w-9 p-0"
+                  className="h-7 w-7 p-0"
                 >
                   <Star 
-                    size={20} 
+                    size={16} 
                     weight={isFavorite(app.id) ? 'fill' : 'regular'}
                     className={isFavorite(app.id) ? 'text-accent' : 'text-muted-foreground'}
                   />
                 </Button>
               </div>
 
-              <p className="text-sm text-foreground/80 mb-4">
+              <p className="text-xs text-foreground/80 mb-3">
                 {app.description}
               </p>
 
-              <div className="space-y-3 mb-4">
+              <div className="space-y-2 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded bg-accent/20">
-                    <CurrencyDollar size={16} className="text-accent" weight="bold" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-accent/20">
+                    <CurrencyDollar size={14} className="text-accent" weight="bold" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs text-muted-foreground">Commission Rate</div>
-                    <div className="text-sm font-semibold font-mono">{app.commissionRate}</div>
+                    <div className="text-[10px] text-muted-foreground">Fee</div>
+                    <div className="text-xs font-semibold font-mono">{app.commissionRate}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded bg-success/20">
-                    <Lightning size={16} className="text-success" weight="fill" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-success/20">
+                    <Lightning size={14} className="text-success" weight="fill" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs text-muted-foreground">Best For</div>
-                    <div className="text-sm font-medium">{app.bestFor}</div>
+                    <div className="text-[10px] text-muted-foreground">Best For</div>
+                    <div className="text-xs font-medium">{app.bestFor}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t pt-4">
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                  Key Features
+              <div className="border-t pt-3">
+                <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+                  Features
                 </div>
-                <ul className="space-y-1.5">
+                <ul className="space-y-1">
                   {app.features.map((feature, idx) => (
-                    <li key={idx} className="text-sm flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
+                    <li key={idx} className="text-xs flex items-start gap-1.5">
+                      <span className="text-primary mt-0.5">•</span>
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -263,29 +262,29 @@ export function RideShareApps() {
           ))}
         </div>
 
-        <Card className="p-6 bg-gradient-to-br from-accent/5 to-warning/5 border-accent/30">
-          <div className="flex items-start gap-4">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-accent/20">
-              <Users size={24} className="text-accent" weight="fill" />
+        <Card className="p-4 bg-gradient-to-br from-accent/5 to-warning/5 border-accent/30">
+          <div className="flex items-start gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/20">
+              <Users size={20} className="text-accent" weight="fill" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-2">Pro Tips for Multi-Apping</h3>
-              <ul className="space-y-2 text-sm text-foreground/80">
-                <li className="flex items-start gap-2">
-                  <span className="text-accent font-bold">1.</span>
-                  <span><strong>Run multiple apps simultaneously</strong> to maximize ride opportunities and minimize downtime</span>
+              <h3 className="text-sm font-semibold mb-2">Multi-Apping Tips</h3>
+              <ul className="space-y-1.5 text-xs text-foreground/80">
+                <li className="flex items-start gap-1.5">
+                  <span className="text-accent font-bold">•</span>
+                  <span>Run multiple apps to maximize opportunities</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent font-bold">2.</span>
-                  <span><strong>Compare commission rates</strong> when accepting rides - prioritize apps with lower fees during slow periods</span>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-accent font-bold">•</span>
+                  <span>Compare fees - prioritize lower commission apps</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent font-bold">3.</span>
-                  <span><strong>Track your earnings per app</strong> to identify which platforms are most profitable for your driving pattern</span>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-accent font-bold">•</span>
+                  <span>Track earnings per app for best performance</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent font-bold">4.</span>
-                  <span><strong>Stay updated on bonus programs</strong> and ride challenges to boost your income</span>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-accent font-bold">•</span>
+                  <span>Stay updated on bonuses and challenges</span>
                 </li>
               </ul>
             </div>

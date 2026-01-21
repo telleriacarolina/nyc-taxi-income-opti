@@ -71,13 +71,13 @@ export function LicenseManager() {
   return (
     <>
       {(licenseStatus === 'expired' || expiredCount > 0 || expiringCount > 0) && (
-        <Alert className="mb-6 border-warning bg-warning/5">
-          <WarningCircle size={20} className="text-warning" weight="fill" />
-          <AlertTitle className="font-semibold">Action Required</AlertTitle>
-          <AlertDescription>
-            {licenseStatus === 'expired' && 'Your TLC license has expired. '}
-            {expiredCount > 0 && `${expiredCount} document${expiredCount > 1 ? 's' : ''} expired. `}
-            {expiringCount > 0 && `${expiringCount} document${expiringCount > 1 ? 's' : ''} expiring soon.`}
+        <Alert className="mb-4 border-warning bg-warning/5 py-3">
+          <WarningCircle size={18} className="text-warning" weight="fill" />
+          <AlertTitle className="font-semibold text-sm">Action Required</AlertTitle>
+          <AlertDescription className="text-xs">
+            {licenseStatus === 'expired' && 'TLC license expired. '}
+            {expiredCount > 0 && `${expiredCount} doc${expiredCount > 1 ? 's' : ''} expired. `}
+            {expiringCount > 0 && `${expiringCount} doc${expiringCount > 1 ? 's' : ''} expiring.`}
           </AlertDescription>
         </Alert>
       )}
@@ -86,80 +86,68 @@ export function LicenseManager() {
        licenseStatus === 'current' && 
        expiredCount === 0 && 
        expiringCount === 0 && (
-        <Alert className="mb-6 border-success bg-success/5">
-          <CheckCircle size={20} className="text-success" weight="fill" />
-          <AlertTitle className="font-semibold">All Current</AlertTitle>
-          <AlertDescription>
-            Your license and all documents are up to date. Great job staying compliant!
+        <Alert className="mb-4 border-success bg-success/5 py-3">
+          <CheckCircle size={18} className="text-success" weight="fill" />
+          <AlertTitle className="font-semibold text-sm">All Current</AlertTitle>
+          <AlertDescription className="text-xs">
+            All documents up to date
           </AlertDescription>
         </Alert>
       )}
 
-      <Card className="mb-6 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/10">
-        <CardHeader>
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-primary text-primary-foreground">
-              <LinkIcon size={24} weight="bold" />
+      <Card className="mb-4 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-start gap-2">
+            <div className="p-1.5 rounded-lg bg-primary text-primary-foreground">
+              <LinkIcon size={18} weight="bold" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-xl mb-1">TLC Resources</CardTitle>
-              <CardDescription className="text-base">
-                Quick access to essential NYC TLC services and information
-              </CardDescription>
+              <CardTitle className="text-base mb-0">TLC Resources</CardTitle>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 md:grid-cols-1">
+          <div className="grid gap-2 md:grid-cols-1">
             <a
               href="https://apps.nyc.gov/lars/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+              className="flex items-center justify-between p-3 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
             >
               <div className="flex-1">
-                <div className="font-semibold text-foreground mb-1">
-                  License Appointment Reservation System (LARS)
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Schedule appointments for TLC license renewals and applications
+                <div className="font-semibold text-sm text-foreground">
+                  LARS - Appointments
                 </div>
               </div>
-              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+              <ArrowSquareOut size={16} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
             </a>
 
             <a
               href="https://a156-nauf.nyc.gov/tlcup/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+              className="flex items-center justify-between p-3 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
             >
               <div className="flex-1">
-                <div className="font-semibold text-foreground mb-1">
-                  TLC License Status & Online Portal
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Check license status, pay violations, and access your TLC account
+                <div className="font-semibold text-sm text-foreground">
+                  License Status Portal
                 </div>
               </div>
-              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+              <ArrowSquareOut size={16} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
             </a>
 
             <a
               href="https://www.nyc.gov/site/tlc/tlc-online/licensing-standards-appointment-scheduling.page"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+              className="flex items-center justify-between p-3 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
             >
               <div className="flex-1">
-                <div className="font-semibold text-foreground mb-1">
-                  Licensing Standards & Requirements
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Official TLC licensing standards, requirements, and appointment info
+                <div className="font-semibold text-sm text-foreground">
+                  Standards & Requirements
                 </div>
               </div>
-              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+              <ArrowSquareOut size={16} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
             </a>
           </div>
         </CardContent>
@@ -174,36 +162,38 @@ export function LicenseManager() {
         </section>
 
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Required Documents</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold">Documents</h2>
             <Button 
               onClick={handleAddDocument}
+              size="sm"
               className="bg-accent text-accent-foreground hover:bg-accent/90"
             >
-              <Plus size={20} weight="bold" className="mr-2" />
-              Add Document
+              <Plus size={18} weight="bold" className="mr-1" />
+              Add
             </Button>
           </div>
 
           {(documents || []).length === 0 ? (
-            <div className="text-center py-12 bg-card rounded-lg border-2 border-dashed">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary mb-4">
-                <Plus size={32} className="text-muted-foreground" />
+            <div className="text-center py-8 bg-card rounded-lg border-2 border-dashed">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-secondary mb-3">
+                <Plus size={24} className="text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">No Documents Added</h3>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Start tracking your required documents like DMV license, insurance, and vehicle inspection
+              <h3 className="text-base font-semibold mb-1">No Documents</h3>
+              <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                Track DMV license, insurance, vehicle inspection
               </p>
               <Button 
                 onClick={handleAddDocument}
+                size="sm"
                 className="bg-accent text-accent-foreground hover:bg-accent/90"
               >
-                <Plus size={20} weight="bold" className="mr-2" />
-                Add Your First Document
+                <Plus size={18} weight="bold" className="mr-1" />
+                Add Document
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-2">
               {documentsWithStatus.map(doc => (
                 <DocumentCard 
                   key={doc.id} 

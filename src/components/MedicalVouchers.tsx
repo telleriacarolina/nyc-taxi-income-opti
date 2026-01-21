@@ -185,17 +185,15 @@ export function MedicalVouchers() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-success/10 to-primary/10 rounded-lg p-6 border">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-success/20">
-            <FirstAidKit size={28} className="text-success" weight="fill" />
+      <div className="bg-gradient-to-br from-success/10 to-primary/10 rounded-lg p-4 border">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-success/20">
+            <FirstAidKit size={22} className="text-success" weight="fill" />
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-2">Medical Transportation & Voucher Services</h2>
-            <p className="text-muted-foreground">
-              Supplement your rideshare income with medical transportation services. These TLC-approved 
-              programs offer reliable, scheduled trips with guaranteed payment for transporting patients 
-              to medical appointments, hospitals, and treatment centers.
+            <h2 className="text-lg font-semibold mb-1">Medical Transport</h2>
+            <p className="text-xs text-muted-foreground">
+              TLC-approved programs with reliable, scheduled trips
             </p>
           </div>
         </div>
@@ -221,26 +219,26 @@ export function MedicalVouchers() {
         </TabsList>
 
         <TabsContent value={activeType || 'all'} className="space-y-4">
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             {filteredProviders.map(provider => (
               <Card 
                 key={provider.id} 
-                className="p-6 transition-all hover:shadow-lg"
-                style={{ borderLeft: `4px solid ${provider.color}` }}
+                className="p-4 transition-all hover:shadow-lg"
+                style={{ borderLeft: `3px solid ${provider.color}` }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
                     <div 
-                      className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+                      className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
                       style={{ backgroundColor: provider.bgColor }}
                     >
                       {provider.icon}
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold">{provider.name}</h3>
+                      <h3 className="text-base font-semibold">{provider.name}</h3>
                       <Badge 
                         variant="secondary" 
-                        className="mt-1"
+                        className="mt-0.5 text-[10px] h-4"
                         style={{ 
                           backgroundColor: provider.bgColor,
                           color: provider.color 
@@ -254,90 +252,90 @@ export function MedicalVouchers() {
                     variant={isEnrolled(provider.id) ? "default" : "outline"}
                     size="sm"
                     onClick={() => toggleEnrollment(provider.id)}
-                    className="gap-2"
+                    className="gap-1 h-7 text-xs"
                   >
                     <CheckCircle 
-                      size={16} 
+                      size={12} 
                       weight={isEnrolled(provider.id) ? 'fill' : 'regular'}
                     />
                     {isEnrolled(provider.id) ? 'Enrolled' : 'Enroll'}
                   </Button>
                 </div>
 
-                <p className="text-sm text-foreground/80 mb-4">
+                <p className="text-xs text-foreground/80 mb-3">
                   {provider.description}
                 </p>
 
-                <div className="space-y-3 mb-4">
+                <div className="space-y-2 mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center w-8 h-8 rounded bg-success/20">
-                      <CurrencyDollar size={16} className="text-success" weight="bold" />
+                    <div className="flex items-center justify-center w-7 h-7 rounded bg-success/20">
+                      <CurrencyDollar size={14} className="text-success" weight="bold" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-xs text-muted-foreground">Payment</div>
-                      <div className="text-sm font-semibold font-mono">{provider.paymentStructure}</div>
+                      <div className="text-[10px] text-muted-foreground">Payment</div>
+                      <div className="text-xs font-semibold font-mono">{provider.paymentStructure}</div>
                     </div>
                   </div>
 
                   {provider.coverage && (
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center w-8 h-8 rounded bg-primary/20">
-                        <MapPin size={16} className="text-primary" weight="fill" />
+                      <div className="flex items-center justify-center w-7 h-7 rounded bg-primary/20">
+                        <MapPin size={14} className="text-primary" weight="fill" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-muted-foreground">Coverage Area</div>
-                        <div className="text-sm font-medium">{provider.coverage}</div>
+                        <div className="text-[10px] text-muted-foreground">Coverage</div>
+                        <div className="text-xs font-medium">{provider.coverage}</div>
                       </div>
                     </div>
                   )}
 
                   {provider.contactInfo && (
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center w-8 h-8 rounded bg-accent/20">
-                        <Phone size={16} className="text-accent" weight="fill" />
+                      <div className="flex items-center justify-center w-7 h-7 rounded bg-accent/20">
+                        <Phone size={14} className="text-accent" weight="fill" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-muted-foreground">Contact</div>
-                        <div className="text-sm font-medium font-mono">{provider.contactInfo}</div>
+                        <div className="text-[10px] text-muted-foreground">Contact</div>
+                        <div className="text-xs font-medium font-mono">{provider.contactInfo}</div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="border-t pt-4 mb-4">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                    Key Features
+                <div className="border-t pt-3 mb-3">
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+                    Features
                   </div>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-1">
                     {provider.features.map((feature, idx) => (
-                      <li key={idx} className="text-sm flex items-start gap-2">
-                        <span className="text-success mt-1">✓</span>
+                      <li key={idx} className="text-xs flex items-start gap-1.5">
+                        <span className="text-success mt-0.5">✓</span>
                         <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="border-t pt-4 mb-4">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                <div className="border-t pt-3 mb-3">
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
                     Requirements
                   </div>
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-1">
                     {provider.requirements.map((req, idx) => (
-                      <li key={idx} className="text-sm flex items-start gap-2">
-                        <span className="text-primary mt-1">•</span>
+                      <li key={idx} className="text-xs flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
                         <span>{req}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="bg-accent/10 rounded-lg p-3 border border-accent/30">
-                  <div className="flex items-center gap-2">
-                    <Star size={16} className="text-accent" weight="fill" />
-                    <div className="text-xs font-semibold text-accent">Best For:</div>
+                <div className="bg-accent/10 rounded-lg p-2.5 border border-accent/30">
+                  <div className="flex items-center gap-1.5">
+                    <Star size={14} className="text-accent" weight="fill" />
+                    <div className="text-[10px] font-semibold text-accent">Best For:</div>
                   </div>
-                  <div className="text-sm mt-1">{provider.bestFor}</div>
+                  <div className="text-xs mt-0.5">{provider.bestFor}</div>
                 </div>
               </Card>
             ))}
@@ -345,66 +343,58 @@ export function MedicalVouchers() {
         </TabsContent>
       </Tabs>
 
-      <Card className="p-6 bg-gradient-to-br from-primary/5 to-success/5 border-primary/30">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
-            <Info size={24} className="text-primary" weight="fill" />
+      <Card className="p-4 bg-gradient-to-br from-primary/5 to-success/5 border-primary/30">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20">
+            <Info size={20} className="text-primary" weight="fill" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">Why Medical Transportation?</h3>
-            <ul className="space-y-2 text-sm text-foreground/80">
-              <li className="flex items-start gap-2">
+            <h3 className="text-sm font-semibold mb-2">Why Medical?</h3>
+            <ul className="space-y-1.5 text-xs text-foreground/80">
+              <li className="flex items-start gap-1.5">
                 <span className="text-success font-bold">✓</span>
-                <span><strong>Guaranteed payment:</strong> Unlike rideshare apps, medical vouchers are paid by insurance companies and government programs with reliable payment schedules</span>
+                <span>Guaranteed payment from insurance/government</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5">
                 <span className="text-success font-bold">✓</span>
-                <span><strong>Scheduled trips:</strong> Know your routes and earnings in advance with pre-booked appointments</span>
+                <span>Scheduled trips - know routes in advance</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5">
                 <span className="text-success font-bold">✓</span>
-                <span><strong>Lower competition:</strong> Fewer drivers compete for medical transport compared to standard rideshare</span>
+                <span>Lower competition vs standard rideshare</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5">
                 <span className="text-success font-bold">✓</span>
-                <span><strong>Premium rates:</strong> Medical trips typically pay $10-20 more per trip than equivalent rideshare fares</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-success font-bold">✓</span>
-                <span><strong>Meaningful work:</strong> Help patients access critical healthcare services while earning a living</span>
+                <span>Premium rates - $10-20 more per trip</span>
               </li>
             </ul>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6 bg-gradient-to-br from-warning/5 to-accent/5 border-warning/30">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-warning/20">
-            <Clock size={24} className="text-warning" weight="fill" />
+      <Card className="p-4 bg-gradient-to-br from-warning/5 to-accent/5 border-warning/30">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-warning/20">
+            <Clock size={20} className="text-warning" weight="fill" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">Getting Started Tips</h3>
-            <ul className="space-y-2 text-sm text-foreground/80">
-              <li className="flex items-start gap-2">
-                <span className="text-warning font-bold">1.</span>
-                <span><strong>Start with MTM or LogistiCare</strong> - These providers have the highest trip volume and easiest onboarding process</span>
+            <h3 className="text-sm font-semibold mb-2">Getting Started</h3>
+            <ul className="space-y-1.5 text-xs text-foreground/80">
+              <li className="flex items-start gap-1.5">
+                <span className="text-warning font-bold">•</span>
+                <span>Start with MTM or LogistiCare for high volume</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-warning font-bold">2.</span>
-                <span><strong>Get CPR certified</strong> - While not always required, it opens up more opportunities and premium trips</span>
+              <li className="flex items-start gap-1.5">
+                <span className="text-warning font-bold">•</span>
+                <span>Get CPR certified for premium opportunities</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-warning font-bold">3.</span>
-                <span><strong>Enroll with multiple providers</strong> - Maximize your trip opportunities by working with 2-3 different services</span>
+              <li className="flex items-start gap-1.5">
+                <span className="text-warning font-bold">•</span>
+                <span>Enroll with 2-3 providers to maximize trips</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-warning font-bold">4.</span>
-                <span><strong>Consider WAV certification</strong> - Wheelchair accessible vehicle trips pay 40-60% more than standard trips</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-warning font-bold">5.</span>
-                <span><strong>Build relationships</strong> - Regular patients and dispatchers can lead to consistent trip assignments</span>
+              <li className="flex items-start gap-1.5">
+                <span className="text-warning font-bold">•</span>
+                <span>WAV certification pays 40-60% more</span>
               </li>
             </ul>
           </div>

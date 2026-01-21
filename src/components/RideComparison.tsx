@@ -125,16 +125,15 @@ export function RideComparison() {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-6 border mb-6">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
-            <MapTrifold size={28} className="text-primary" weight="fill" />
+      <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 border mb-4">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
+            <MapTrifold size={22} className="text-primary" weight="fill" />
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-2">Ride Comparison</h2>
-            <p className="text-muted-foreground">
-              Compare individual rides based on distance, time, and pay after fees to identify which 
-              platforms and routes give you the best value per mile and minute.
+            <h2 className="text-lg font-semibold mb-1">Ride Comparison</h2>
+            <p className="text-xs text-muted-foreground">
+              Compare rides by distance, time & pay to find best platforms
             </p>
           </div>
         </div>
@@ -151,47 +150,47 @@ export function RideComparison() {
 
       {filteredRides.length > 0 && (
         <>
-          <div className="grid gap-4 md:grid-cols-4 mb-6">
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Rides</span>
-                <MapTrifold size={24} className="text-primary" weight="fill" />
+          <div className="grid gap-3 md:grid-cols-4 mb-4">
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Rides</span>
+                <MapTrifold size={18} className="text-primary" weight="fill" />
               </div>
-              <div className="text-3xl font-bold">{stats.totalRides}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {formatDistance(stats.totalDistance)} total
-              </div>
-            </Card>
-
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Avg Net Pay</span>
-                <CurrencyDollar size={24} className="text-success" weight="fill" />
-              </div>
-              <div className="text-3xl font-bold">{formatCurrency(stats.averageNetPay)}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {formatCurrency(stats.totalNetPay)} total net
+              <div className="text-2xl font-bold">{stats.totalRides}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">
+                {formatDistance(stats.totalDistance)}
               </div>
             </Card>
 
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Fuel Costs</span>
-                <Path size={24} className="text-warning" weight="bold" />
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Avg Pay</span>
+                <CurrencyDollar size={18} className="text-success" weight="fill" />
               </div>
-              <div className="text-3xl font-bold">{formatCurrency(stats.totalFuelCost)}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {formatCurrency(stats.averageFuelCostPerMile)}/mi avg
+              <div className="text-2xl font-bold">{formatCurrency(stats.averageNetPay)}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">
+                {formatCurrency(stats.totalNetPay)} total
               </div>
             </Card>
 
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Profit</span>
-                <TrendUp size={24} className="text-accent" weight="bold" />
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fuel</span>
+                <Path size={18} className="text-warning" weight="bold" />
               </div>
-              <div className="text-3xl font-bold">{formatCurrency(stats.totalProfit)}</div>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-2xl font-bold">{formatCurrency(stats.totalFuelCost)}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">
+                {formatCurrency(stats.averageFuelCostPerMile)}/mi
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Profit</span>
+                <TrendUp size={18} className="text-accent" weight="bold" />
+              </div>
+              <div className="text-2xl font-bold">{formatCurrency(stats.totalProfit)}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">
                 {formatCurrency(stats.averageProfitPerMile)}/mi
               </div>
             </Card>
@@ -340,57 +339,61 @@ export function RideComparison() {
         </>
       )}
 
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Your Rides</h2>
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold">Rides</h2>
+        <div className="flex items-center gap-2">
           {(rides || []).length > 0 && (
             <Button 
               onClick={handleExportCSV}
               variant="outline"
+              size="sm"
               className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
             >
-              <DownloadSimple size={20} weight="bold" className="mr-2" />
-              Export CSV
+              <DownloadSimple size={16} weight="bold" className="mr-1" />
+              Export
             </Button>
           )}
           <Button 
             onClick={handleAddRide}
+            size="sm"
             className="bg-accent text-accent-foreground hover:bg-accent/90"
           >
-            <Plus size={20} weight="bold" className="mr-2" />
-            Add Ride
+            <Plus size={18} weight="bold" className="mr-1" />
+            Add
           </Button>
         </div>
       </div>
 
       {(rides || []).length === 0 ? (
-        <Card className="p-12 text-center border-2 border-dashed">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 mb-4">
-            <MapTrifold size={32} className="text-accent" />
+        <Card className="p-8 text-center border-2 border-dashed">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/20 mb-3">
+            <MapTrifold size={24} className="text-accent" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Start Comparing Your Rides</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Track individual rides to compare which platforms and routes give you the best pay per mile and minute
+          <h3 className="text-base font-semibold mb-1">Compare Rides</h3>
+          <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+            Track rides to compare platforms & routes
           </p>
           <Button 
             onClick={handleAddRide}
+            size="sm"
             className="bg-accent text-accent-foreground hover:bg-accent/90"
           >
-            <Plus size={20} weight="bold" className="mr-2" />
-            Log Your First Ride
+            <Plus size={18} weight="bold" className="mr-1" />
+            Log Ride
           </Button>
         </Card>
       ) : filteredRides.length === 0 ? (
-        <Card className="p-12 text-center border-2 border-dashed">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/50 mb-4">
-            <MapTrifold size={32} className="text-muted-foreground" />
+        <Card className="p-8 text-center border-2 border-dashed">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 mb-3">
+            <MapTrifold size={24} className="text-muted-foreground" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">No Rides Match Your Filters</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Try adjusting your date range or platform filters to see more results
+          <h3 className="text-base font-semibold mb-1">No Matches</h3>
+          <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+            Adjust filters to see results
           </p>
           <Button 
             variant="outline"
+            size="sm"
             onClick={() => setFilters({
               platforms: [],
               dateFrom: '',
@@ -402,7 +405,7 @@ export function RideComparison() {
           </Button>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
           {sortedRides.map(ride => (
             <RideCard 
               key={ride.id}

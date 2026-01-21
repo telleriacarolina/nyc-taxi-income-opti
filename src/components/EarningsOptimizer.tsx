@@ -50,48 +50,48 @@ export function EarningsOptimizer() {
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-4 mb-6">
-        <Card className="p-5 bg-gradient-to-br from-accent/20 to-accent/5 border-accent/30">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Net Earnings</span>
-            <CurrencyDollar size={24} className="text-accent" weight="fill" />
+      <div className="grid gap-3 md:grid-cols-4 mb-4">
+        <Card className="p-4 bg-gradient-to-br from-accent/20 to-accent/5 border-accent/30">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Net</span>
+            <CurrencyDollar size={18} className="text-accent" weight="fill" />
           </div>
-          <div className="text-3xl font-bold">{formatCurrency(stats.netEarnings)}</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            After {formatCurrency(stats.totalExpenses)} expenses
-          </div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Hourly Rate</span>
-            <TrendUp size={24} className="text-success" weight="fill" />
-          </div>
-          <div className="text-3xl font-bold">{formatCurrency(stats.averageHourlyRate)}/hr</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {formatHours(stats.totalHours)} total
+          <div className="text-2xl font-bold">{formatCurrency(stats.netEarnings)}</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">
+            -{formatCurrency(stats.totalExpenses)}
           </div>
         </Card>
 
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Trips</span>
-            <Car size={24} className="text-primary" weight="fill" />
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Hourly</span>
+            <TrendUp size={18} className="text-success" weight="fill" />
           </div>
-          <div className="text-3xl font-bold">{stats.totalTrips}</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {formatCurrency(stats.averageTripEarnings)} per trip
+          <div className="text-2xl font-bold">{formatCurrency(stats.averageHourlyRate)}/hr</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">
+            {formatHours(stats.totalHours)}
           </div>
         </Card>
 
-        <Card className="p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Tips</span>
-            <CurrencyDollar size={24} className="text-warning" weight="fill" />
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Trips</span>
+            <Car size={18} className="text-primary" weight="fill" />
           </div>
-          <div className="text-3xl font-bold">{formatCurrency(stats.totalTips)}</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {stats.totalEarnings > 0 ? Math.round((stats.totalTips / stats.totalEarnings) * 100) : 0}% of gross
+          <div className="text-2xl font-bold">{stats.totalTrips}</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">
+            {formatCurrency(stats.averageTripEarnings)}/trip
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tips</span>
+            <CurrencyDollar size={18} className="text-warning" weight="fill" />
+          </div>
+          <div className="text-2xl font-bold">{formatCurrency(stats.totalTips)}</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">
+            {stats.totalEarnings > 0 ? Math.round((stats.totalTips / stats.totalEarnings) * 100) : 0}%
           </div>
         </Card>
       </div>
@@ -104,36 +104,38 @@ export function EarningsOptimizer() {
         <PlatformComparison platformStats={platformStats} />
       )}
 
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Your Shifts</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold">Shifts</h2>
         <Button 
           onClick={handleAddShift}
+          size="sm"
           className="bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          <Plus size={20} weight="bold" className="mr-2" />
-          Add Shift
+          <Plus size={18} weight="bold" className="mr-1" />
+          Add
         </Button>
       </div>
 
       {(shifts || []).length === 0 ? (
-        <Card className="p-12 text-center border-2 border-dashed">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 mb-4">
-            <ChartBar size={32} className="text-accent" />
+        <Card className="p-8 text-center border-2 border-dashed">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/20 mb-3">
+            <ChartBar size={24} className="text-accent" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Start Tracking Your Earnings</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Add your shift data to get personalized insights on the best times and platforms to maximize your earnings
+          <h3 className="text-base font-semibold mb-1">Track Earnings</h3>
+          <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+            Log shifts for insights on best times & platforms
           </p>
           <Button 
             onClick={handleAddShift}
+            size="sm"
             className="bg-accent text-accent-foreground hover:bg-accent/90"
           >
-            <Plus size={20} weight="bold" className="mr-2" />
-            Log Your First Shift
+            <Plus size={18} weight="bold" className="mr-1" />
+            Log Shift
           </Button>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {sortedShifts.map(shift => (
             <ShiftCard 
               key={shift.id}

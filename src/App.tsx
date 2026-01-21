@@ -15,57 +15,57 @@ function App() {
   return (
     <>
       <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-6 py-8 md:px-8 md:py-12">
-          <header className="mb-8">
-            <h1 className="text-[32px] font-bold tracking-tight leading-tight mb-2">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
+          <header className="mb-6">
+            <h1 className="text-2xl font-bold tracking-tight leading-tight mb-1">
               TLC Driver Hub
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Stay compliant and optimize your NYC TLC earnings
+            <p className="text-muted-foreground text-sm">
+              Compliance & earnings tracking
             </p>
           </header>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 max-w-4xl">
-              <TabsTrigger value="license" className="gap-2">
-                <IdentificationCard size={20} weight="fill" />
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <TabsList className="grid w-full grid-cols-5 max-w-4xl h-9">
+              <TabsTrigger value="license" className="gap-1.5 text-xs">
+                <IdentificationCard size={16} weight="fill" />
                 License
               </TabsTrigger>
-              <TabsTrigger value="earnings" className="gap-2">
-                <ChartBar size={20} weight="fill" />
+              <TabsTrigger value="earnings" className="gap-1.5 text-xs">
+                <ChartBar size={16} weight="fill" />
                 Earnings
               </TabsTrigger>
-              <TabsTrigger value="rides" className="gap-2">
-                <MapTrifold size={20} weight="fill" />
+              <TabsTrigger value="rides" className="gap-1.5 text-xs">
+                <MapTrifold size={16} weight="fill" />
                 Rides
               </TabsTrigger>
-              <TabsTrigger value="apps" className="gap-2">
-                <CarProfile size={20} weight="fill" />
+              <TabsTrigger value="apps" className="gap-1.5 text-xs">
+                <CarProfile size={16} weight="fill" />
                 Apps
               </TabsTrigger>
-              <TabsTrigger value="calculator" className="gap-2">
-                <Calculator size={20} weight="fill" />
+              <TabsTrigger value="calculator" className="gap-1.5 text-xs">
+                <Calculator size={16} weight="fill" />
                 Calculator
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="license" className="space-y-6">
+            <TabsContent value="license" className="space-y-4">
               <LicenseManager />
             </TabsContent>
 
-            <TabsContent value="earnings" className="space-y-6">
+            <TabsContent value="earnings" className="space-y-4">
               <EarningsOptimizer />
             </TabsContent>
 
-            <TabsContent value="rides" className="space-y-6">
+            <TabsContent value="rides" className="space-y-4">
               <RideComparison />
             </TabsContent>
 
-            <TabsContent value="apps" className="space-y-6">
+            <TabsContent value="apps" className="space-y-4">
               <RideShareApps />
             </TabsContent>
 
-            <TabsContent value="calculator" className="space-y-6">
+            <TabsContent value="calculator" className="space-y-4">
               <TripCalculator />
             </TabsContent>
           </Tabs>

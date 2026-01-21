@@ -144,15 +144,15 @@ export function TripCalculator() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-primary/10 to-success/10 rounded-lg p-6 border">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
-            <Calculator size={28} className="text-primary" weight="fill" />
+      <div className="bg-gradient-to-br from-primary/10 to-success/10 rounded-lg p-4 border mb-4">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
+            <Calculator size={22} className="text-primary" weight="fill" />
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-2">Trip Income Calculator</h2>
-            <p className="text-muted-foreground">
-              Compare potential earnings from rideshare apps vs medical transport services. Calculate fuel costs for gas, hybrid, or electric vehicles.
+            <h2 className="text-lg font-semibold mb-1">Trip Calculator</h2>
+            <p className="text-xs text-muted-foreground">
+              Compare rideshare vs medical transport income & fuel costs
             </p>
           </div>
         </div>
@@ -166,16 +166,16 @@ export function TripCalculator() {
 
         <TabsContent value="trip" className="space-y-6">
 
-      <Card className="p-6 border-2 border-primary/20">
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <Path size={20} className="text-primary" weight="fill" />
+      <Card className="p-4 border-2 border-primary/20">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+          <Path size={16} className="text-primary" weight="fill" />
           Trip Details
         </h3>
         
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="distance" className="text-sm font-semibold">
-              Distance (miles)
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="distance" className="text-xs font-semibold">
+              Distance (mi)
             </Label>
             <Input
               id="distance"
@@ -185,13 +185,13 @@ export function TripCalculator() {
               value={distance}
               onChange={(e) => setDistance(e.target.value)}
               placeholder="10"
-              className="text-lg"
+              className="text-base h-9"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="duration" className="text-sm font-semibold">
-              Duration (minutes)
+          <div className="space-y-1.5">
+            <Label htmlFor="duration" className="text-xs font-semibold">
+              Duration (min)
             </Label>
             <Input
               id="duration"
@@ -201,7 +201,7 @@ export function TripCalculator() {
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="25"
-              className="text-lg"
+              className="text-base h-9"
             />
           </div>
         </div>
