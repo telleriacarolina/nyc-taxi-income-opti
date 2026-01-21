@@ -156,25 +156,25 @@ export function RideShareApps() {
   return (
     <Tabs value={activeView || 'platforms'} onValueChange={setActiveView} className="space-y-6">
       <TabsList className="grid w-full grid-cols-2 max-w-md">
-        <TabsTrigger value="platforms" className="gap-2">
-          <CarProfile size={20} weight="fill" />
-          Rideshare Platforms
+        <TabsTrigger value="platforms" className="gap-2 text-[clamp(0.7rem,2vw,0.85rem)] px-2">
+          <CarProfile size={20} weight="fill" className="flex-shrink-0" />
+          <span className="truncate">Rideshare</span>
         </TabsTrigger>
-        <TabsTrigger value="medical" className="gap-2">
-          <FirstAidKit size={20} weight="fill" />
-          Medical Vouchers
+        <TabsTrigger value="medical" className="gap-2 text-[clamp(0.7rem,2vw,0.85rem)] px-2">
+          <FirstAidKit size={20} weight="fill" className="flex-shrink-0" />
+          <span className="truncate">Medical</span>
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="platforms" className="space-y-6">
         <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 border mb-4">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 flex-shrink-0">
               <CarProfile size={22} className="text-primary" weight="fill" />
             </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold mb-1">Rideshare Platforms</h2>
-              <p className="text-xs text-muted-foreground">
+            <div className="flex-1 min-w-0">
+              <h2 className="font-semibold mb-1 text-[clamp(1rem,2.8vw,1.125rem)] line-clamp-1">Rideshare Platforms</h2>
+              <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-2 leading-snug">
                 Compare NYC platforms to maximize earnings
               </p>
             </div>
@@ -189,17 +189,17 @@ export function RideShareApps() {
               style={{ borderLeft: `3px solid ${app.color}` }}
             >
               <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <div 
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
                     style={{ backgroundColor: app.bgColor }}
                   >
                     {app.icon}
                   </div>
-                  <div>
-                    <h3 className="text-base font-semibold">{app.name}</h3>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">{app.name}</h3>
                     {app.marketShare && (
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">
                         {app.marketShare}
                       </p>
                     )}
@@ -209,7 +209,7 @@ export function RideShareApps() {
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleFavorite(app.id)}
-                  className="h-7 w-7 p-0"
+                  className="h-7 w-7 p-0 flex-shrink-0"
                 >
                   <Star 
                     size={16} 
@@ -219,41 +219,41 @@ export function RideShareApps() {
                 </Button>
               </div>
 
-              <p className="text-xs text-foreground/80 mb-3">
+              <p className="text-foreground/80 mb-3 text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-2 leading-snug">
                 {app.description}
               </p>
 
               <div className="space-y-2 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-7 h-7 rounded bg-accent/20">
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-accent/20 flex-shrink-0">
                     <CurrencyDollar size={14} className="text-accent" weight="bold" />
                   </div>
-                  <div className="flex-1">
-                    <div className="text-[10px] text-muted-foreground">Fee</div>
-                    <div className="text-xs font-semibold font-mono">{app.commissionRate}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">Fee</div>
+                    <div className="font-semibold font-mono text-[clamp(0.65rem,2vw,0.75rem)] truncate">{app.commissionRate}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-7 h-7 rounded bg-success/20">
+                  <div className="flex items-center justify-center w-7 h-7 rounded bg-success/20 flex-shrink-0">
                     <Lightning size={14} className="text-success" weight="fill" />
                   </div>
-                  <div className="flex-1">
-                    <div className="text-[10px] text-muted-foreground">Best For</div>
-                    <div className="text-xs font-medium">{app.bestFor}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">Best For</div>
+                    <div className="font-medium text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1">{app.bestFor}</div>
                   </div>
                 </div>
               </div>
 
               <div className="border-t pt-3">
-                <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+                <div className="font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">
                   Features
                 </div>
                 <ul className="space-y-1">
                   {app.features.map((feature, idx) => (
-                    <li key={idx} className="text-xs flex items-start gap-1.5">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>{feature}</span>
+                    <li key={idx} className="flex items-start gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)] leading-snug">
+                      <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                      <span className="line-clamp-1">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -264,27 +264,27 @@ export function RideShareApps() {
 
         <Card className="p-4 bg-gradient-to-br from-accent/5 to-warning/5 border-accent/30">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/20">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/20 flex-shrink-0">
               <Users size={20} className="text-accent" weight="fill" />
             </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold mb-2">Multi-Apping Tips</h3>
-              <ul className="space-y-1.5 text-xs text-foreground/80">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold mb-2 text-[clamp(0.75rem,2.4vw,0.875rem)] line-clamp-1">Multi-Apping Tips</h3>
+              <ul className="space-y-1.5 text-foreground/80 text-[clamp(0.65rem,2vw,0.75rem)] leading-snug">
                 <li className="flex items-start gap-1.5">
-                  <span className="text-accent font-bold">•</span>
-                  <span>Run multiple apps to maximize opportunities</span>
+                  <span className="text-accent font-bold flex-shrink-0">•</span>
+                  <span className="line-clamp-1">Run multiple apps to maximize opportunities</span>
                 </li>
                 <li className="flex items-start gap-1.5">
-                  <span className="text-accent font-bold">•</span>
-                  <span>Compare fees - prioritize lower commission apps</span>
+                  <span className="text-accent font-bold flex-shrink-0">•</span>
+                  <span className="line-clamp-1">Compare fees - prioritize lower commission apps</span>
                 </li>
                 <li className="flex items-start gap-1.5">
-                  <span className="text-accent font-bold">•</span>
-                  <span>Track earnings per app for best performance</span>
+                  <span className="text-accent font-bold flex-shrink-0">•</span>
+                  <span className="line-clamp-1">Track earnings per app for best performance</span>
                 </li>
                 <li className="flex items-start gap-1.5">
-                  <span className="text-accent font-bold">•</span>
-                  <span>Stay updated on bonuses and challenges</span>
+                  <span className="text-accent font-bold flex-shrink-0">•</span>
+                  <span className="line-clamp-1">Stay updated on bonuses and challenges</span>
                 </li>
               </ul>
             </div>

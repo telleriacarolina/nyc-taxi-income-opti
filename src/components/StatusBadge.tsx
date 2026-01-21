@@ -42,14 +42,14 @@ export function StatusBadge({ status, daysRemaining, className }: StatusBadgePro
   return (
     <Badge 
       className={cn(
-        'flex items-center gap-1.5 px-3 py-1 font-medium',
+        'flex items-center gap-1.5 px-3 py-1 font-medium text-[clamp(0.65rem,2vw,0.75rem)]',
         config.className,
         config.animate && 'animate-pulse-soft',
         className
       )}
     >
-      <Icon size={16} weight="fill" />
-      <span>{config.label}</span>
+      <Icon size={16} weight="fill" className="flex-shrink-0" />
+      <span className="truncate">{config.label}</span>
     </Badge>
   )
 }

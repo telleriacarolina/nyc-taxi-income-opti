@@ -20,10 +20,10 @@ export function DocumentCard({ document, onEdit }: DocumentCardProps) {
 
   return (
     <Card className={cn('p-5 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-start justify-between mb-3 gap-2">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className={cn(
-            'rounded-lg p-2.5',
+            'rounded-lg p-2.5 flex-shrink-0',
             document.status === 'expired' && 'bg-destructive/10',
             document.status === 'expiring' && 'bg-warning/10',
             document.status === 'current' && 'bg-success/10'
@@ -35,23 +35,23 @@ export function DocumentCard({ document, onEdit }: DocumentCardProps) {
             )} weight="fill" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate">{document.name}</h3>
+            <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.125rem)] line-clamp-1">{document.name}</h3>
             {document.notes && (
-              <p className="text-sm text-muted-foreground truncate mt-0.5">{document.notes}</p>
+              <p className="text-muted-foreground mt-0.5 text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1">{document.notes}</p>
             )}
           </div>
         </div>
-        <Button onClick={() => onEdit(document)} variant="ghost" size="sm" className="shrink-0">
+        <Button onClick={() => onEdit(document)} variant="ghost" size="sm" className="shrink-0 h-8 w-8 p-0">
           <PencilSimple size={16} />
         </Button>
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <StatusBadge status={document.status} daysRemaining={document.daysRemaining} />
-          <div className="flex items-center gap-1.5 text-sm font-mono font-medium">
+          <div className="flex items-center gap-1.5 font-mono font-medium text-[clamp(0.65rem,2vw,0.75rem)] flex-shrink-0">
             <CalendarBlank size={16} className="text-muted-foreground" />
-            <span>{formatDate(document.expirationDate)}</span>
+            <span className="truncate">{formatDate(document.expirationDate)}</span>
           </div>
         </div>
       </div>

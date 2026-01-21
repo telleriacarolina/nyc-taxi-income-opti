@@ -17,35 +17,35 @@ function App() {
       <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
           <header className="mb-6">
-            <h1 className="text-2xl font-bold tracking-tight leading-tight mb-1">
+            <h1 className="font-bold tracking-tight leading-tight mb-1 text-[clamp(1.25rem,3vw,1.5rem)]">
               TLC Driver Hub
             </h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] line-clamp-1">
               Compliance & earnings tracking
             </p>
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-5 max-w-4xl h-9">
-              <TabsTrigger value="license" className="gap-1.5 text-xs">
-                <IdentificationCard size={16} weight="fill" />
-                License
+              <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">License</span>
               </TabsTrigger>
-              <TabsTrigger value="earnings" className="gap-1.5 text-xs">
-                <ChartBar size={16} weight="fill" />
-                Earnings
+              <TabsTrigger value="earnings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <ChartBar size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Earnings</span>
               </TabsTrigger>
-              <TabsTrigger value="rides" className="gap-1.5 text-xs">
-                <MapTrifold size={16} weight="fill" />
-                Rides
+              <TabsTrigger value="rides" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <MapTrifold size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Rides</span>
               </TabsTrigger>
-              <TabsTrigger value="apps" className="gap-1.5 text-xs">
-                <CarProfile size={16} weight="fill" />
-                Apps
+              <TabsTrigger value="apps" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <CarProfile size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Apps</span>
               </TabsTrigger>
-              <TabsTrigger value="calculator" className="gap-1.5 text-xs">
-                <Calculator size={16} weight="fill" />
-                Calculator
+              <TabsTrigger value="calculator" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <Calculator size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Calc</span>
               </TabsTrigger>
             </TabsList>
 

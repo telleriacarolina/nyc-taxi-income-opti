@@ -32,7 +32,7 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
         <div className="flex items-start gap-4 flex-1 min-w-0">
           <div className="shrink-0">
             <div className={cn(
-              'px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide',
+              'px-3 py-1.5 rounded-md font-semibold uppercase tracking-wide text-[clamp(0.625rem,1.8vw,0.7rem)]',
               platformColors[shift.platform]
             )}>
               {shift.platform}
@@ -41,40 +41,40 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
 
           <div className="flex-1 min-w-0 space-y-3">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h3 className="font-semibold text-lg">{formatDate(shift.date)}</h3>
-                <span className="text-sm text-muted-foreground font-mono">
+              <div className="flex items-center gap-3 mb-1 flex-wrap">
+                <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.125rem)] line-clamp-1">{formatDate(shift.date)}</h3>
+                <span className="text-muted-foreground font-mono text-[clamp(0.65rem,2vw,0.75rem)] truncate">
                   {shift.startTime} - {shift.endTime}
                 </span>
               </div>
               {shift.notes && (
-                <p className="text-sm text-muted-foreground truncate">{shift.notes}</p>
+                <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1">{shift.notes}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center gap-2">
+            <div className="grid grid-cols-3 gap-4 text-[clamp(0.75rem,2.4vw,0.875rem)]">
+              <div className="flex items-center gap-2 min-w-0">
                 <CurrencyDollar size={18} className="text-success shrink-0" weight="fill" />
-                <div>
-                  <div className="font-semibold">{formatCurrency(netEarnings)}</div>
-                  <div className="text-xs text-muted-foreground">{formatCurrency(hourlyRate)}/hr</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold truncate">{formatCurrency(netEarnings)}</div>
+                  <div className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">{formatCurrency(hourlyRate)}/hr</div>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <Clock size={18} className="text-primary shrink-0" weight="fill" />
-                <div>
-                  <div className="font-semibold">{formatHours(shift.hours)}</div>
-                  <div className="text-xs text-muted-foreground">Duration</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold truncate">{formatHours(shift.hours)}</div>
+                  <div className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">Duration</div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <Car size={18} className="text-accent shrink-0" weight="fill" />
-                <div>
-                  <div className="font-semibold">{shift.trips} trips</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold truncate">{shift.trips} trips</div>
                   {shift.tips && shift.tips > 0 && (
-                    <div className="text-xs text-muted-foreground">{formatCurrency(shift.tips)} tips</div>
+                    <div className="text-muted-foreground text-[clamp(0.625rem,1.8vw,0.7rem)] truncate">{formatCurrency(shift.tips)} tips</div>
                   )}
                 </div>
               </div>
@@ -87,6 +87,7 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
             variant="ghost" 
             size="sm"
             onClick={() => onEdit(shift)}
+            className="h-8 w-8 p-0"
           >
             <PencilSimple size={16} />
           </Button>
@@ -94,7 +95,7 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
             variant="ghost" 
             size="sm"
             onClick={() => onDelete(shift.id)}
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:text-destructive h-8 w-8 p-0"
           >
             <Trash size={16} />
           </Button>
