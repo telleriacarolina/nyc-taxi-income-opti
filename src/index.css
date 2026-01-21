@@ -38,11 +38,11 @@
 
   --radius: 0.5rem;
 
-  --font-sans: IBM Plex Sans;
+  --font-sans: Inter;
 
-  --font-serif: IBM Plex Serif;
+  --font-serif: Noto Serif;
 
-  --font-mono: IBM Plex Mono;
+  --font-mono: JetBrains Mono;
 
   --chart-1: oklch(0.45 0.15 260);
 
