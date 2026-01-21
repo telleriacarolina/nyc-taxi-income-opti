@@ -1,0 +1,69 @@
+commit b06f5f248f9fb3abaef5f57bd09474d3b154bd4c
+Author: Zsolt Ero <zsolt.ero@gmail.com>
+Date:   Wed Oct 22 10:10:41 2025 +0200
+
+    terrain example
+
+diff --git a/debug b/debug
+new file mode 120000
+index 0000000..202d88a
+--- /dev/null
++++ b/debug
+@@ -0,0 +1 @@
++/Users/user/Documents/dev/openfreemap/repo/website/public/debug
+\ No newline at end of file
+diff --git a/website/public/debug/terrain/terrain.html b/website/public/debug/terrain/terrain.html
+new file mode 100644
+index 0000000..49b3d22
+--- /dev/null
++++ b/website/public/debug/terrain/terrain.html
+@@ -0,0 +1,15 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <title>OpenFreeMap Debug</title>
++    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
++    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
++</head>
++<body>
++    <div id="map" class="w-full h-screen"></div>
++    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
++    <script src="terrain.js"></script>
++</body>
++</html>
+\ No newline at end of file
+diff --git a/website/public/debug/terrain/terrain.js b/website/public/debug/terrain/terrain.js
+new file mode 100644
+index 0000000..dbeda94
+--- /dev/null
++++ b/website/public/debug/terrain/terrain.js
+@@ -0,0 +1,26 @@
++const map = new maplibregl.Map({
++  container: 'map',
++  hash: 'map',
++  zoom: 10.5,
++  center: [9.0788, 47.1194],
++  style: {
++    version: 8,
++    sources: {
++      hillshadeSource: {
++        type: 'raster-dem',
++        url: 'https://tiles.mapterhorn.com/tilejson.json',
++      },
++    },
++    layers: [
++      {
++        id: 'hillshade',
++        type: 'hillshade',
++        source: 'hillshadeSource',
++      },
++    ],
++  },
++})
++
++map.on('load', () => {
++  console.log('Terrain map loaded')
++})
+\ No newline at end of file
