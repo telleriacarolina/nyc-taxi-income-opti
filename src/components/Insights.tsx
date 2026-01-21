@@ -3,8 +3,12 @@ import { useKV } from '@github/spark/hooks'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Sparkle, TrendUp, Clock, MapPin, CalendarBlank } from '@phosphor-icons/react'
+import { Sparkle, TrendUp, Clock, MapPin, CalendarBlank, Download, FileCsv, FileText, FileJs } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import { calculateStats } from '@/lib/earnings-utils'
+import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
+import { toast } from 'sonner'
 
 interface AIInsight {
   id: string
@@ -229,6 +233,31 @@ Base all recommendations on real TLC Trip Record Data patterns, NYC geography, a
     return `${hours} hours ago`
   }
 
+  const handleExport = (format: 'csv' | 'txt' | 'json') => {
+    if (!shifts || shifts.length === 0) {
+      toast.error('No data to export')
+      return
+    }
+
+    const stats = calculateStats(shifts)
+
+    try {
+      if (format === 'csv') {
+        exportToCSV(shifts, stats)
+        toast.success('CSV report downloaded')
+      } else if (format === 'txt') {
+        exportInsightsToPDF(shifts, stats, aiInsight || undefined, dayInsights, seasonalInsights)
+        toast.success('Insights report downloaded')
+      } else if (format === 'json') {
+        exportInsightsAsJSON(shifts, stats, aiInsight || undefined, dayInsights, seasonalInsights)
+        toast.success('JSON report downloaded')
+      }
+    } catch (error) {
+      toast.error('Failed to export report')
+      console.error('Export error:', error)
+    }
+  }
+
   return (
     <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/30">
       <Tabs defaultValue="ai" className="w-full">
@@ -239,6 +268,31 @@ Base all recommendations on real TLC Trip Record Data patterns, NYC geography, a
               Insights
             </h3>
           </div>
+          {shifts && shifts.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className="gap-1.5 h-8">
+                  <Download size={14} weight="bold" />
+                  <span className="text-[clamp(0.7rem,2vw,0.8rem)]">Export</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleExport('txt')} className="gap-2">
+                  <FileText size={16} weight="fill" />
+                  <span>Insights Report (.txt)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('csv')} className="gap-2">
+                  <FileCsv size={16} weight="fill" />
+                  <span>Shift Data (.csv)</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleExport('json')} className="gap-2">
+                  <FileJs size={16} weight="fill" />
+                  <span>Full Report (.json)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         <TabsList className="grid w-full grid-cols-2 mb-4">

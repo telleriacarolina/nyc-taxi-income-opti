@@ -4,7 +4,7 @@ import { Shift } from '@/lib/earnings-types'
 import { calculateStats, formatCurrency, formatHours, getPlatformStats, getDailyEarnings } from '@/lib/earnings-utils'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb, Target } from '@phosphor-icons/react'
+import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb, Target, Download } from '@phosphor-icons/react'
 import { ShiftDialog } from './ShiftDialog'
 import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
@@ -14,6 +14,9 @@ import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { LocationHeatmap } from './LocationHeatmap'
 import { Progress } from '@/components/ui/progress'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
+import { toast } from 'sonner'
 
 export function EarningsOptimizer() {
   const [shifts, setShifts] = useKV<Shift[]>('driver-shifts', [])
@@ -58,6 +61,29 @@ export function EarningsOptimizer() {
   const sortedShifts = [...(shifts || [])].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   )
+
+  const handleQuickExport = (format: 'csv' | 'txt' | 'json') => {
+    if (!shifts || shifts.length === 0) {
+      toast.error('No data to export')
+      return
+    }
+
+    try {
+      if (format === 'csv') {
+        exportToCSV(shifts, stats)
+        toast.success('CSV report downloaded')
+      } else if (format === 'txt') {
+        exportInsightsToPDF(shifts, stats)
+        toast.success('Insights report downloaded')
+      } else if (format === 'json') {
+        exportInsightsAsJSON(shifts, stats)
+        toast.success('JSON report downloaded')
+      }
+    } catch (error) {
+      toast.error('Failed to export report')
+      console.error('Export error:', error)
+    }
+  }
 
   return (
     <>
@@ -259,14 +285,45 @@ export function EarningsOptimizer() {
 
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold text-[clamp(1rem,2.8vw,1.125rem)] line-clamp-1">Shifts</h2>
-        <Button 
-          onClick={handleAddShift}
-          size="sm"
-          className="bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
-        >
-          <Plus size={18} weight="bold" className="mr-1 flex-shrink-0" />
-          <span className="truncate">Add</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          {(shifts || []).length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)] gap-1.5"
+                >
+                  <Download size={16} weight="bold" className="flex-shrink-0" />
+                  <span className="truncate">Export</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleQuickExport('csv')} className="gap-2">
+                  <Download size={16} weight="fill" />
+                  <span>Shift Data (.csv)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickExport('txt')} className="gap-2">
+                  <Download size={16} weight="fill" />
+                  <span>Full Report (.txt)</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleQuickExport('json')} className="gap-2">
+                  <Download size={16} weight="fill" />
+                  <span>JSON Export (.json)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          <Button 
+            onClick={handleAddShift}
+            size="sm"
+            className="bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+          >
+            <Plus size={18} weight="bold" className="mr-1 flex-shrink-0" />
+            <span className="truncate">Add</span>
+          </Button>
+        </div>
       </div>
 
       {(shifts || []).length === 0 ? (
