@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MedicalVouchers } from '@/components/MedicalVouchers'
+import { DailyPlatformPlanner } from '@/components/DailyPlatformPlanner'
 import { 
   CarProfile, 
   Globe, 
@@ -180,6 +181,8 @@ export function RideShareApps() {
             </div>
           </div>
         </div>
+
+        <DailyPlatformPlanner />
 
         <div className="grid gap-3 md:grid-cols-2">
           {RIDESHARE_APPS.map(app => (
