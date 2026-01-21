@@ -13,11 +13,11 @@ This is a multi-view application with document tracking, deadline management, sh
 ## Essential Features
 
 ### Tabbed Navigation
-- **Functionality**: Switch between License Manager and Earnings Optimizer views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, and Ride Share Apps views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking and earnings optimization
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, and platform information
 
 ### License Status Dashboard
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
@@ -67,6 +67,27 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Click action button → Modal opens with form → Enter/update information → Confirm → Data persists and UI updates
 - **Success criteria**: Driver can update any information or log a shift in under 30 seconds
 
+### Ride Share Platform Directory
+- **Functionality**: Comprehensive directory of NYC ride-sharing apps including Uber, Lyft, Curb, Revel, Via, and Juno with key details
+- **Purpose**: Help drivers understand commission rates, features, and best use cases for each platform to optimize multi-apping strategy
+- **Trigger**: Navigate to Ride Share Apps tab
+- **Progression**: View opens → Platform cards display with icon, description, commission rates, features, and market share → Star favorites for quick reference
+- **Success criteria**: Driver can compare all major platforms at a glance and mark preferred apps
+
+### Platform Comparison
+- **Functionality**: Side-by-side comparison of commission rates, features, and best use cases for each ride-share platform
+- **Purpose**: Enable informed decisions about which apps to prioritize based on commission structure and earning potential
+- **Trigger**: View Ride Share Apps tab
+- **Progression**: Cards display key metrics → Compare commission rates → Review features and best-use scenarios → Star favorites
+- **Success criteria**: Driver understands commission differences and can choose optimal platforms for their strategy
+
+### Multi-Apping Tips
+- **Functionality**: Curated advice on running multiple apps simultaneously to maximize earnings and minimize downtime
+- **Purpose**: Educate drivers on best practices for using multiple platforms effectively
+- **Trigger**: Displayed at bottom of Ride Share Apps tab
+- **Progression**: Tips card shows → Driver reads strategies for multi-apping → Applies knowledge to daily driving routine
+- **Success criteria**: Driver learns actionable strategies to improve earnings through platform diversification
+
 ## Edge Case Handling
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
@@ -78,9 +99,11 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Overlapping Shifts**: Allow entry but highlight in UI for driver to review
 - **Zero or Negative Earnings**: Allow entry for tracking purposes (bad days happen)
 - **Missing Expense Data**: Optional field, calculations work with or without it
+- **No Favorite Apps**: Apps tab displays all platforms equally without favorites filter
+- **Single Platform Driver**: Tips section still valuable for learning about alternatives
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having both a compliance assistant and a business advisor. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -128,8 +151,8 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager and Earnings Optimizer views
-  - **Card**: Primary container for license info, document groups, shift entries, and stat displays
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, and Ride Share Apps views
+  - **Card**: Primary container for license info, document groups, shift entries, stat displays, and platform details
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants
   - **Dialog**: Modal for adding/editing license, documents, and shift information
   - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
@@ -145,9 +168,12 @@ Animations should provide clear feedback for status changes and guide attention 
   - Badge variants with status-specific colors and icons
   - Custom stat cards with large numbers and icon accents
   - Platform badges with brand colors (black for Uber, pink for Lyft, teal for Via)
+  - Platform cards with color-coded left borders matching brand identity
   - Insight cards with gradient backgrounds to draw attention to optimization recommendations
   - Custom date display showing "X days remaining" countdown
   - Hourly rate calculation display showing $/hr alongside shift totals
+  - Favorite/star toggle button for marking preferred platforms
+  - Commission rate comparison display with visual emphasis
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -160,6 +186,7 @@ Animations should provide clear feedback for status changes and guide attention 
 - **Icon Selection**:
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab
+  - CarProfile: Ride share vehicles, Apps tab
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays
   - Clock: Time and duration displays
@@ -167,6 +194,11 @@ Animations should provide clear feedback for status changes and guide attention 
   - Car: Trip counts and ride metrics
   - TrendUp: Performance improvements and best rates
   - Lightbulb: Insights and recommendations
+  - Lightning: Quick features and fast pay
+  - Star: Favorite/preferred platforms
+  - Users: Multi-apping tips
+  - Globe: Platform availability
+  - MapPin: Location-based features
   - Warning/WarningCircle: Expiring/expired alerts
   - CheckCircle: Current/valid status
   - Plus: Add new document or shift
@@ -183,8 +215,9 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets
+  - Tabs span full width with clear touch targets, 3-column grid on tablets and up
   - Stat grid collapses to 2 columns on mobile
+  - Platform cards stack in single column on mobile
   - Larger touch targets (min 44px) for all interactive elements
   - Bottom sheet dialog variant for forms on mobile
   - Sticky tab navigation at top

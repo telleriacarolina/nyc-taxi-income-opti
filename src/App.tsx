@@ -3,7 +3,8 @@ import { useKV } from '@github/spark/hooks'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LicenseManager } from '@/components/LicenseManager'
 import { EarningsOptimizer } from '@/components/EarningsOptimizer'
-import { IdentificationCard, ChartBar } from '@phosphor-icons/react'
+import { RideShareApps } from '@/components/RideShareApps'
+import { IdentificationCard, ChartBar, CarProfile } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -23,14 +24,18 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsList className="grid w-full grid-cols-3 max-w-2xl">
               <TabsTrigger value="license" className="gap-2">
                 <IdentificationCard size={20} weight="fill" />
-                License Manager
+                License
               </TabsTrigger>
               <TabsTrigger value="earnings" className="gap-2">
                 <ChartBar size={20} weight="fill" />
-                Earnings Optimizer
+                Earnings
+              </TabsTrigger>
+              <TabsTrigger value="apps" className="gap-2">
+                <CarProfile size={20} weight="fill" />
+                Apps
               </TabsTrigger>
             </TabsList>
 
@@ -40,6 +45,10 @@ function App() {
 
             <TabsContent value="earnings" className="space-y-6">
               <EarningsOptimizer />
+            </TabsContent>
+
+            <TabsContent value="apps" className="space-y-6">
+              <RideShareApps />
             </TabsContent>
           </Tabs>
         </div>
