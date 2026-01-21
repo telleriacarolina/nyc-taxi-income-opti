@@ -8,6 +8,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Avatar } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { MessageBubble } from '@/components/MessageBubble'
 import { 
   PaperPlaneRight, 
   UserPlus, 
@@ -21,7 +23,11 @@ import {
   Image as ImageIcon,
   File,
   X,
-  DownloadSimple
+  DownloadSimple,
+  Microphone,
+  Stop,
+  Waveform,
+  ImagesSquare
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -29,9 +35,16 @@ import { format } from 'date-fns'
 interface Attachment {
   id: string
   name: string
-  type: 'image' | 'document'
+  type: 'image' | 'document' | 'voice'
   url: string
   size: number
+  duration?: number
+}
+
+interface Reaction {
+  emoji: string
+  userId: string
+  userName: string
 }
 
 interface Message {
@@ -41,6 +54,7 @@ interface Message {
   text: string
   timestamp: number
   attachments?: Attachment[]
+  reactions?: Reaction[]
 }
 
 interface DirectMessage {
@@ -53,6 +67,7 @@ interface DirectMessage {
   timestamp: number
   read: boolean
   attachments?: Attachment[]
+  reactions?: Reaction[]
 }
 
 interface Driver {
@@ -63,6 +78,8 @@ interface Driver {
   addedAt: number
 }
 
+const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏', '🎉', '🔥']
+
 export function Chatroom() {
   const [messages, setMessages, deleteMessages] = useKV<Message[]>('chatroom-messages', [])
   const [directMessages, setDirectMessages] = useKV<DirectMessage[]>('direct-messages', [])
@@ -72,8 +89,17 @@ export function Chatroom() {
   const [currentUser] = useKV<Driver | null>('current-user', null)
   const [activeDM, setActiveDM] = useState<string | null>(null)
   const [attachments, setAttachments] = useState<Attachment[]>([])
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordingTime, setRecordingTime] = useState(0)
+  const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null)
+  const [galleryOpen, setGalleryOpen] = useState(false)
+  const [selectedGalleryTab, setSelectedGalleryTab] = useState<'images' | 'files'>('images')
   const scrollRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const audioElementsRef = useRef<Map<string, HTMLAudioElement>>(new Map())
 
   const [, setCurrentUser] = useKV<Driver | null>('current-user', null)
 
@@ -99,6 +125,19 @@ export function Chatroom() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [messages, activeDM, directMessages])
+
+  useEffect(() => {
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current)
+      }
+      audioElementsRef.current.forEach(audio => {
+        audio.pause()
+        audio.src = ''
+      })
+      audioElementsRef.current.clear()
+    }
+  }, [])
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -142,6 +181,186 @@ export function Chatroom() {
     }
   }
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      audioChunksRef.current = []
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
+        }
+      }
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        const audioUrl = URL.createObjectURL(audioBlob)
+        
+        const newAttachment: Attachment = {
+          id: 'voice-' + Date.now(),
+          name: `Voice message ${format(Date.now(), 'h:mm a')}`,
+          type: 'voice',
+          url: audioUrl,
+          size: audioBlob.size,
+          duration: recordingTime
+        }
+        
+        setAttachments((current) => [...current, newAttachment])
+        toast.success('Voice message recorded')
+        
+        stream.getTracks().forEach(track => track.stop())
+        setRecordingTime(0)
+      }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+      
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1)
+      }, 1000)
+    } catch (error) {
+      toast.error('Could not access microphone')
+      console.error('Recording error:', error)
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current)
+        recordingIntervalRef.current = null
+      }
+    }
+  }
+
+  const playVoiceMessage = (voiceId: string, url: string) => {
+    if (playingVoiceId === voiceId) {
+      const audio = audioElementsRef.current.get(voiceId)
+      if (audio) {
+        audio.pause()
+        setPlayingVoiceId(null)
+      }
+      return
+    }
+
+    audioElementsRef.current.forEach((audio, id) => {
+      if (id !== voiceId) {
+        audio.pause()
+      }
+    })
+
+    let audio = audioElementsRef.current.get(voiceId)
+    if (!audio) {
+      audio = new Audio(url)
+      audio.onended = () => setPlayingVoiceId(null)
+      audioElementsRef.current.set(voiceId, audio)
+    }
+
+    audio.play()
+    setPlayingVoiceId(voiceId)
+  }
+
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const addReaction = (messageId: string, emoji: string, isDM: boolean = false) => {
+    if (!currentUser) return
+
+    if (isDM) {
+      setDirectMessages((current) => 
+        (current || []).map(msg => {
+          if (msg.id === messageId) {
+            const reactions = msg.reactions || []
+            const existingReaction = reactions.find(r => r.userId === currentUser.id && r.emoji === emoji)
+            
+            if (existingReaction) {
+              return {
+                ...msg,
+                reactions: reactions.filter(r => !(r.userId === currentUser.id && r.emoji === emoji))
+              }
+            } else {
+              return {
+                ...msg,
+                reactions: [...reactions, { emoji, userId: currentUser.id, userName: currentUser.name }]
+              }
+            }
+          }
+          return msg
+        })
+      )
+    } else {
+      setMessages((current) => 
+        (current || []).map(msg => {
+          if (msg.id === messageId) {
+            const reactions = msg.reactions || []
+            const existingReaction = reactions.find(r => r.userId === currentUser.id && r.emoji === emoji)
+            
+            if (existingReaction) {
+              return {
+                ...msg,
+                reactions: reactions.filter(r => !(r.userId === currentUser.id && r.emoji === emoji))
+              }
+            } else {
+              return {
+                ...msg,
+                reactions: [...reactions, { emoji, userId: currentUser.id, userName: currentUser.name }]
+              }
+            }
+          }
+          return msg
+        })
+      )
+    }
+  }
+
+  const getReactionCounts = (reactions?: Reaction[]) => {
+    if (!reactions || reactions.length === 0) return []
+    
+    const counts = new Map<string, { emoji: string; count: number; users: string[] }>()
+    
+    reactions.forEach(r => {
+      if (counts.has(r.emoji)) {
+        const existing = counts.get(r.emoji)!
+        existing.count++
+        existing.users.push(r.userName)
+      } else {
+        counts.set(r.emoji, { emoji: r.emoji, count: 1, users: [r.userName] })
+      }
+    })
+    
+    return Array.from(counts.values())
+  }
+
+  const getAllMedia = () => {
+    const allMessages = [...(messages || []), ...(directMessages || [])]
+    const allAttachments: (Attachment & { messageId: string; senderName: string; timestamp: number })[] = []
+    
+    allMessages.forEach(msg => {
+      if (msg.attachments) {
+        msg.attachments.forEach(att => {
+          allAttachments.push({
+            ...att,
+            messageId: msg.id,
+            senderName: msg.senderName,
+            timestamp: msg.timestamp
+          })
+        })
+      }
+    })
+    
+    return allAttachments.sort((a, b) => b.timestamp - a.timestamp)
+  }
+
+  const getImages = () => getAllMedia().filter(m => m.type === 'image')
+  const getFiles = () => getAllMedia().filter(m => m.type === 'document' || m.type === 'voice')
+
   const removeAttachment = (attachmentId: string) => {
     setAttachments((current) => current.filter(a => a.id !== attachmentId))
   }
@@ -162,7 +381,8 @@ export function Chatroom() {
       senderName: currentUser.name,
       text: messageInput.trim(),
       timestamp: Date.now(),
-      attachments: attachments.length > 0 ? [...attachments] : undefined
+      attachments: attachments.length > 0 ? [...attachments] : undefined,
+      reactions: []
     }
 
     setMessages((current) => [...(current || []), newMessage])
@@ -221,7 +441,8 @@ export function Chatroom() {
       text: messageInput.trim(),
       timestamp: Date.now(),
       read: false,
-      attachments: attachments.length > 0 ? [...attachments] : undefined
+      attachments: attachments.length > 0 ? [...attachments] : undefined,
+      reactions: []
     }
 
     setDirectMessages((current) => [...(current || []), newDM])
@@ -299,6 +520,136 @@ export function Chatroom() {
             <h2 className="text-xl font-semibold">The Chatroom</h2>
             <p className="text-sm text-muted-foreground">Connect with fellow TLC drivers</p>
           </div>
+          <Dialog open={galleryOpen} onOpenChange={setGalleryOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <ImagesSquare size={18} weight="fill" />
+                <span className="hidden sm:inline">Gallery</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[80vh]">
+              <DialogHeader>
+                <DialogTitle>Media Gallery</DialogTitle>
+              </DialogHeader>
+              <Tabs value={selectedGalleryTab} onValueChange={(v) => setSelectedGalleryTab(v as 'images' | 'files')} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="images" className="gap-2">
+                    <ImageIcon size={16} weight="fill" />
+                    Photos ({getImages().length})
+                  </TabsTrigger>
+                  <TabsTrigger value="files" className="gap-2">
+                    <File size={16} weight="fill" />
+                    Files ({getFiles().length})
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="images" className="mt-4">
+                  <ScrollArea className="h-[500px] pr-4">
+                    {getImages().length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <div className="p-4 bg-muted/50 rounded-full mb-3">
+                          <ImageIcon size={32} weight="duotone" className="text-muted-foreground" />
+                        </div>
+                        <h3 className="font-medium mb-1">No photos yet</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Shared photos will appear here
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {getImages().map((item) => (
+                          <div key={item.id} className="group relative">
+                            <div className="aspect-square rounded-lg overflow-hidden border border-border bg-muted">
+                              <img 
+                                src={item.url} 
+                                alt={item.name}
+                                className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => window.open(item.url, '_blank')}
+                              />
+                            </div>
+                            <div className="mt-2">
+                              <p className="text-xs font-medium truncate">{item.name}</p>
+                              <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
+                                <span>{item.senderName}</span>
+                                <span>{format(item.timestamp, 'MMM d')}</span>
+                              </div>
+                            </div>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => {
+                                const link = document.createElement('a')
+                                link.href = item.url
+                                link.download = item.name
+                                link.click()
+                              }}
+                            >
+                              <DownloadSimple size={16} weight="bold" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </TabsContent>
+                <TabsContent value="files" className="mt-4">
+                  <ScrollArea className="h-[500px] pr-4">
+                    {getFiles().length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <div className="p-4 bg-muted/50 rounded-full mb-3">
+                          <File size={32} weight="duotone" className="text-muted-foreground" />
+                        </div>
+                        <h3 className="font-medium mb-1">No files yet</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Shared documents and voice messages will appear here
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {getFiles().map((item) => (
+                          <Card key={item.id} className="p-4 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className="p-3 bg-primary/10 rounded-lg">
+                                {item.type === 'voice' ? (
+                                  <Waveform size={24} weight="fill" className="text-primary" />
+                                ) : (
+                                  <File size={24} weight="fill" className="text-primary" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{item.name}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                                  <span>{item.senderName}</span>
+                                  <span>•</span>
+                                  <span>{format(item.timestamp, 'MMM d, h:mm a')}</span>
+                                  <span>•</span>
+                                  <span>{formatFileSize(item.size)}</span>
+                                </div>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-2"
+                                onClick={() => {
+                                  const link = document.createElement('a')
+                                  link.href = item.url
+                                  link.download = item.name
+                                  link.click()
+                                }}
+                              >
+                                <DownloadSimple size={16} weight="bold" />
+                                Download
+                              </Button>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
+            </DialogContent>
+          </Dialog>
           <Badge variant="secondary" className="gap-1.5">
             <Users size={14} weight="fill" />
             {onlineCount} online
@@ -359,101 +710,24 @@ export function Chatroom() {
                     const isCurrentUser = currentUser && message.senderId === currentUser.id
                     
                     return (
-                      <div
+                      <MessageBubble
                         key={message.id}
-                        className={`flex gap-3 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}
-                      >
-                        <Avatar className="h-8 w-8 flex-shrink-0">
-                          <div className={`h-full w-full flex items-center justify-center text-xs font-medium ${
-                            isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
-                          }`}>
-                            {message.senderName.charAt(0).toUpperCase()}
-                          </div>
-                        </Avatar>
-                        <div className={`flex-1 max-w-[75%] ${isCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-xs font-medium ${isCurrentUser ? 'order-2' : 'order-1'}`}>
-                              {isCurrentUser ? 'You' : message.senderName}
-                            </span>
-                            <span className={`text-xs text-muted-foreground flex items-center gap-1 ${isCurrentUser ? 'order-1' : 'order-2'}`}>
-                              <Clock size={12} />
-                              {formatMessageTime(message.timestamp)}
-                            </span>
-                          </div>
-                          <div className={`px-4 py-2.5 rounded-2xl ${
-                            isCurrentUser 
-                              ? 'bg-primary text-primary-foreground rounded-tr-sm' 
-                              : 'bg-muted text-foreground rounded-tl-sm'
-                          }`}>
-                            {message.text && <p className="text-sm leading-relaxed">{message.text}</p>}
-                            {message.attachments && message.attachments.length > 0 && (
-                              <div className={`space-y-2 ${message.text ? 'mt-2' : ''}`}>
-                                {message.attachments.map((attachment) => (
-                                  <div key={attachment.id}>
-                                    {attachment.type === 'image' ? (
-                                      <div className="rounded-lg overflow-hidden border border-border/20">
-                                        <img 
-                                          src={attachment.url} 
-                                          alt={attachment.name}
-                                          className="max-w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                                          onClick={() => window.open(attachment.url, '_blank')}
-                                        />
-                                        <div className={`px-2 py-1.5 text-xs flex items-center justify-between ${
-                                          isCurrentUser ? 'bg-primary-foreground/10' : 'bg-background/50'
-                                        }`}>
-                                          <span className="truncate flex-1">{attachment.name}</span>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-6 w-6 p-0 ml-2"
-                                            onClick={() => {
-                                              const link = document.createElement('a')
-                                              link.href = attachment.url
-                                              link.download = attachment.name
-                                              link.click()
-                                            }}
-                                          >
-                                            <DownloadSimple size={14} weight="bold" />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className={`flex items-center gap-2 p-3 rounded-lg border ${
-                                        isCurrentUser 
-                                          ? 'border-primary-foreground/20 bg-primary-foreground/10' 
-                                          : 'border-border bg-background/50'
-                                      }`}>
-                                        <div className={`p-2 rounded ${
-                                          isCurrentUser ? 'bg-primary-foreground/20' : 'bg-muted'
-                                        }`}>
-                                          <File size={20} weight="fill" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <p className="text-xs font-medium truncate">{attachment.name}</p>
-                                          <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
-                                        </div>
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          className="h-8 w-8 p-0"
-                                          onClick={() => {
-                                            const link = document.createElement('a')
-                                            link.href = attachment.url
-                                            link.download = attachment.name
-                                            link.click()
-                                          }}
-                                        >
-                                          <DownloadSimple size={16} weight="bold" />
-                                        </Button>
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                        messageId={message.id}
+                        senderName={message.senderName}
+                        text={message.text}
+                        timestamp={message.timestamp}
+                        isCurrentUser={!!isCurrentUser}
+                        attachments={message.attachments}
+                        reactions={message.reactions}
+                        formatMessageTime={formatMessageTime}
+                        formatFileSize={formatFileSize}
+                        formatDuration={formatDuration}
+                        playingVoiceId={playingVoiceId}
+                        playVoiceMessage={playVoiceMessage}
+                        addReaction={addReaction}
+                        isDM={false}
+                        emojis={EMOJIS}
+                      />
                     )
                   })
                 )}
@@ -486,6 +760,22 @@ export function Chatroom() {
                             <X size={12} weight="bold" />
                           </Button>
                         </div>
+                      ) : attachment.type === 'voice' ? (
+                        <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted min-w-[140px]">
+                          <Waveform size={20} weight="fill" className="text-primary" />
+                          <div className="flex flex-col flex-1">
+                            <span className="text-xs font-medium">Voice message</span>
+                            <span className="text-xs text-muted-foreground">{attachment.duration ? formatDuration(attachment.duration) : '0:00'}</span>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeAttachment(attachment.id)}
+                          >
+                            <X size={12} weight="bold" />
+                          </Button>
+                        </div>
                       ) : (
                         <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted">
                           <File size={16} weight="fill" />
@@ -507,6 +797,24 @@ export function Chatroom() {
                   ))}
                 </div>
               )}
+              {isRecording && (
+                <div className="mb-3 p-3 rounded-lg border border-destructive bg-destructive/10 flex items-center gap-3">
+                  <div className="h-3 w-3 rounded-full bg-destructive animate-pulse" />
+                  <div className="flex-1">
+                    <span className="text-sm font-medium">Recording...</span>
+                    <span className="text-sm text-muted-foreground ml-2">{formatDuration(recordingTime)}</span>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={stopRecording}
+                    className="gap-2"
+                  >
+                    <Stop size={16} weight="fill" />
+                    Stop
+                  </Button>
+                </div>
+              )}
               <div className="flex gap-2">
                 <input
                   ref={fileInputRef}
@@ -520,9 +828,17 @@ export function Chatroom() {
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="gap-2"
+                  disabled={isRecording}
                 >
                   <Paperclip size={18} weight="bold" />
+                </Button>
+                <Button
+                  variant={isRecording ? "destructive" : "outline"}
+                  size="sm"
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={attachments.length > 0 || messageInput.trim().length > 0}
+                >
+                  {isRecording ? <Stop size={18} weight="fill" /> : <Microphone size={18} weight="fill" />}
                 </Button>
                 <Input
                   id="message-input"
@@ -531,10 +847,11 @@ export function Chatroom() {
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                   placeholder="Type your message..."
                   className="flex-1"
+                  disabled={isRecording}
                 />
                 <Button 
                   onClick={sendMessage} 
-                  disabled={!messageInput.trim() && attachments.length === 0}
+                  disabled={!messageInput.trim() && attachments.length === 0 || isRecording}
                   className="gap-2"
                 >
                   <PaperPlaneRight size={18} weight="fill" />
@@ -600,101 +917,24 @@ export function Chatroom() {
                       const isCurrentUser = currentUser && dm.senderId === currentUser.id
                       
                       return (
-                        <div
+                        <MessageBubble
                           key={dm.id}
-                          className={`flex gap-3 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}
-                        >
-                          <Avatar className="h-8 w-8 flex-shrink-0">
-                            <div className={`h-full w-full flex items-center justify-center text-xs font-medium ${
-                              isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
-                            }`}>
-                              {dm.senderName.charAt(0).toUpperCase()}
-                            </div>
-                          </Avatar>
-                          <div className={`flex-1 max-w-[75%] ${isCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-xs font-medium ${isCurrentUser ? 'order-2' : 'order-1'}`}>
-                                {isCurrentUser ? 'You' : dm.senderName}
-                              </span>
-                              <span className={`text-xs text-muted-foreground flex items-center gap-1 ${isCurrentUser ? 'order-1' : 'order-2'}`}>
-                                <Clock size={12} />
-                                {formatMessageTime(dm.timestamp)}
-                              </span>
-                            </div>
-                            <div className={`px-4 py-2.5 rounded-2xl ${
-                              isCurrentUser 
-                                ? 'bg-primary text-primary-foreground rounded-tr-sm' 
-                                : 'bg-muted text-foreground rounded-tl-sm'
-                            }`}>
-                              {dm.text && <p className="text-sm leading-relaxed">{dm.text}</p>}
-                              {dm.attachments && dm.attachments.length > 0 && (
-                                <div className={`space-y-2 ${dm.text ? 'mt-2' : ''}`}>
-                                  {dm.attachments.map((attachment) => (
-                                    <div key={attachment.id}>
-                                      {attachment.type === 'image' ? (
-                                        <div className="rounded-lg overflow-hidden border border-border/20">
-                                          <img 
-                                            src={attachment.url} 
-                                            alt={attachment.name}
-                                            className="max-w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                                            onClick={() => window.open(attachment.url, '_blank')}
-                                          />
-                                          <div className={`px-2 py-1.5 text-xs flex items-center justify-between ${
-                                            isCurrentUser ? 'bg-primary-foreground/10' : 'bg-background/50'
-                                          }`}>
-                                            <span className="truncate flex-1">{attachment.name}</span>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="h-6 w-6 p-0 ml-2"
-                                              onClick={() => {
-                                                const link = document.createElement('a')
-                                                link.href = attachment.url
-                                                link.download = attachment.name
-                                                link.click()
-                                              }}
-                                            >
-                                              <DownloadSimple size={14} weight="bold" />
-                                            </Button>
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className={`flex items-center gap-2 p-3 rounded-lg border ${
-                                          isCurrentUser 
-                                            ? 'border-primary-foreground/20 bg-primary-foreground/10' 
-                                            : 'border-border bg-background/50'
-                                        }`}>
-                                          <div className={`p-2 rounded ${
-                                            isCurrentUser ? 'bg-primary-foreground/20' : 'bg-muted'
-                                          }`}>
-                                            <File size={20} weight="fill" />
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium truncate">{attachment.name}</p>
-                                            <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
-                                          </div>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 w-8 p-0"
-                                            onClick={() => {
-                                              const link = document.createElement('a')
-                                              link.href = attachment.url
-                                              link.download = attachment.name
-                                              link.click()
-                                            }}
-                                          >
-                                            <DownloadSimple size={16} weight="bold" />
-                                          </Button>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                          messageId={dm.id}
+                          senderName={dm.senderName}
+                          text={dm.text}
+                          timestamp={dm.timestamp}
+                          isCurrentUser={!!isCurrentUser}
+                          attachments={dm.attachments}
+                          reactions={dm.reactions}
+                          formatMessageTime={formatMessageTime}
+                          formatFileSize={formatFileSize}
+                          formatDuration={formatDuration}
+                          playingVoiceId={playingVoiceId}
+                          playVoiceMessage={playVoiceMessage}
+                          addReaction={addReaction}
+                          isDM={true}
+                          emojis={EMOJIS}
+                        />
                       )
                     })
                   )}
@@ -727,6 +967,22 @@ export function Chatroom() {
                               <X size={12} weight="bold" />
                             </Button>
                           </div>
+                        ) : attachment.type === 'voice' ? (
+                          <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted min-w-[140px]">
+                            <Waveform size={20} weight="fill" className="text-primary" />
+                            <div className="flex flex-col flex-1">
+                              <span className="text-xs font-medium">Voice message</span>
+                              <span className="text-xs text-muted-foreground">{attachment.duration ? formatDuration(attachment.duration) : '0:00'}</span>
+                            </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeAttachment(attachment.id)}
+                            >
+                              <X size={12} weight="bold" />
+                            </Button>
+                          </div>
                         ) : (
                           <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted">
                             <File size={16} weight="fill" />
@@ -748,14 +1004,40 @@ export function Chatroom() {
                     ))}
                   </div>
                 )}
+                {isRecording && (
+                  <div className="mb-3 p-3 rounded-lg border border-destructive bg-destructive/10 flex items-center gap-3">
+                    <div className="h-3 w-3 rounded-full bg-destructive animate-pulse" />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium">Recording...</span>
+                      <span className="text-sm text-muted-foreground ml-2">{formatDuration(recordingTime)}</span>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={stopRecording}
+                      className="gap-2"
+                    >
+                      <Stop size={16} weight="fill" />
+                      Stop
+                    </Button>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="gap-2"
+                    disabled={isRecording}
                   >
                     <Paperclip size={18} weight="bold" />
+                  </Button>
+                  <Button
+                    variant={isRecording ? "destructive" : "outline"}
+                    size="sm"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={attachments.length > 0 || messageInput.trim().length > 0}
+                  >
+                    {isRecording ? <Stop size={18} weight="fill" /> : <Microphone size={18} weight="fill" />}
                   </Button>
                   <Input
                     id="dm-input"
@@ -764,10 +1046,11 @@ export function Chatroom() {
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendDirectMessage(activeDM)}
                     placeholder="Type your message..."
                     className="flex-1"
+                    disabled={isRecording}
                   />
                   <Button 
                     onClick={() => sendDirectMessage(activeDM)} 
-                    disabled={!messageInput.trim() && attachments.length === 0}
+                    disabled={!messageInput.trim() && attachments.length === 0 || isRecording}
                     className="gap-2"
                   >
                     <PaperPlaneRight size={18} weight="fill" />
@@ -835,6 +1118,8 @@ export function Chatroom() {
                                     <>
                                       {lastMessage.attachments[0].type === 'image' ? (
                                         <ImageIcon size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                                      ) : lastMessage.attachments[0].type === 'voice' ? (
+                                        <Waveform size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
                                       ) : (
                                         <File size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
                                       )}
@@ -843,7 +1128,7 @@ export function Chatroom() {
                                   <p className="text-sm text-muted-foreground truncate">
                                     {lastMessage.senderId === currentUser?.id ? 'You: ' : ''}
                                     {lastMessage.text || (lastMessage.attachments && lastMessage.attachments.length > 0 
-                                      ? `${lastMessage.attachments[0].type === 'image' ? 'Photo' : 'Document'}`
+                                      ? `${lastMessage.attachments[0].type === 'image' ? 'Photo' : lastMessage.attachments[0].type === 'voice' ? 'Voice message' : 'Document'}`
                                       : '')}
                                   </p>
                                 </div>
