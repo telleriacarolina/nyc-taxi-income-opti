@@ -1,4 +1,265 @@
-# ✨ Welcome to Your Spark Template!
+# NYC TAXI Income Optimizer
+
+**Rideshare Optimization & Mapping Platform**
+
+An end-to-end analytics and decision-support platform for maximizing NYC taxi and rideshare income using TLC trip data, traffic-aware optimization, and map-based visualization.
+
+Built for web, desktop, tablet (iPad), and mobile-first interfaces, the NYC TAXI Income Optimizer helps drivers and analysts:
+- **Increase hourly and daily earnings**
+- **Optimize airport, borough, and zone strategies**
+- **Analyze real NYC TLC trip data**
+- **Visualize demand, routes, and hotspots on open-source maps**
+- **Maintain a clean, compact UI across all screen sizes**
+
+Designed with performance, scalability, and data transparency in mind.
+
+---
+
+## 📚 Quick Links
+
+- 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
+- 📋 [Product Requirements Document (PRD)](PRD.md) - Full feature specifications and roadmap
+- 🐍 [Python Setup Guide](PYTHON_SETUP.md) - uv toolchain and data processing
+- 🗺️ [Map Integration](#-map-integration-with-openfreemap) - Jump to interactive mapping documentation
+
+---
+
+## ✨ Core Features
+
+- 🚕 **Multi-Platform Rideshare Optimization**
+  - Uber, Lyft, Via, Juno tuning
+  - Airport-specific strategies (JFK, LGA, EWR)
+  - Borough-specific optimization (Manhattan, Brooklyn, Queens, Bronx, Staten Island)
+
+- 📊 **NYC TLC Data Compatibility**
+  - Yellow Taxi, Green Taxi, FHV, HVFHS
+  - CSV & Parquet ingestion
+  - Zone-aware analytics (263 TLC zones)
+
+- 🗺️ **Interactive Mapping**
+  - OpenFreeMap + MapLibre
+  - Route visualization
+  - Pickup/dropoff markers
+  - Zone-based clustering
+
+- 📐 **Responsive Typography & UI**
+  - Mobile → Desktop → iPad optimized
+  - Automatic text fitting for compact UI
+  - Sleek, minimal, readable design
+
+- 🐍 **Python + uv Toolchain**
+  - Fast dependency management
+  - Data processing & ETL pipelines
+  - Notebook-friendly analytics
+
+---
+
+## 🐍 Python Development with uv
+
+This project uses **uv**, a modern Rust-based Python toolchain.
+
+### Why uv?
+- ⚡ **10–100× faster** than pip
+- 📦 Dependency & project management
+- 🐍 Python version pinning
+- 🛠️ Tool execution without installation
+- 🔄 Drop-in replacement for pip, pip-tools, venv
+
+### Install uv
+
+**macOS / Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows:**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### Quick Start
+
+```bash
+# Install recommended Python
+uv python install 3.13
+uv python pin 3.13
+
+# Initialize project
+uv init
+uv sync
+
+# Run the app
+uv run main.py
+```
+
+**📖 Full Documentation**: See [PYTHON_SETUP.md](PYTHON_SETUP.md) for complete Python setup, data processing, and NYC TLC integration.
+
+---
+
+## 📐 Typography & UI System
+
+A three-layer text system ensures clean layouts across small and large screens.
+
+### Layer 1 — Line Clamp (Recommended)
+
+```tsx
+<p className="text-sm leading-snug line-clamp-2">
+  Truncated text with ellipsis
+</p>
+```
+
+### Layer 2 — Fluid Typography
+
+```tsx
+<p className="text-[clamp(0.75rem,2.5vw,0.95rem)] leading-tight">
+  Responsive text
+</p>
+```
+
+### Layer 3 — Auto-Fit Text (Fixed Containers)
+
+```tsx
+<AutoFitText>Long Button Label</AutoFitText>
+```
+
+### UI Presets
+
+```tsx
+<h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] line-clamp-1">
+  Card Title
+</h3>
+```
+
+---
+
+## 📊 NYC TLC Trip Data Integration
+
+### Supported Fleets
+- Yellow Taxi
+- Green Taxi
+- FHV / HVFHS (Uber, Lyft, Via, Juno)
+
+### Data Sources
+- [NYC TLC Official Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+- [NYC Open Data Portal](https://opendata.cityofnewyork.us/)
+- CSV & Parquet formats
+
+### Supported Fields
+- Pickup / Dropoff time
+- Zone IDs (1–263)
+- Distance & duration
+- Fare, tips, tolls, congestion fees
+- Shared ride indicators
+
+### App Ride Interface
+
+```typescript
+interface Ride {
+  platform: string
+  date: string
+  time: string
+  pickupLocation: string
+  dropoffLocation: string
+  distance: number
+  duration: number
+  grossPay: number
+  fees: number
+  netPay: number
+  tips: number
+  vehicleType: string
+}
+```
+
+### Data Processing (CSV & Parquet)
+
+**Install Data Tools:**
+```bash
+uv pip install pandas pyarrow
+```
+
+**Read Parquet (Recommended):**
+```python
+import pandas as pd
+trips = pd.read_parquet("fhv_tripdata.parquet")
+```
+
+**Export for App Import:**
+```python
+rides.to_csv("app_format.csv", index=False)
+rides.to_parquet("app_format.parquet", index=False)
+```
+
+**📖 Full Data Pipeline**: See [PYTHON_SETUP.md](PYTHON_SETUP.md) for complete examples.
+
+---
+
+## 🗺️ Map Integration with OpenFreeMap
+
+### Why OpenFreeMap?
+- 🆓 Free & open-source
+- 🔒 Privacy-first
+- 🚀 Fast CDN
+- 🗺️ MapLibre-native
+- 🎨 Multiple styles
+
+### Styles
+
+| Style | URL |
+|-------|-----|
+| **Liberty** | `https://tiles.openfreemap.org/styles/liberty` |
+| **Bright** | `https://tiles.openfreemap.org/styles/bright` |
+| **Positron** | `https://tiles.openfreemap.org/styles/positron` |
+
+### MapLibre Example
+
+```typescript
+const map = new maplibregl.Map({
+  container: 'map',
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [-73.9712, 40.7831],
+  zoom: 12
+})
+```
+
+**📖 Complete Map Documentation**: See [.github/OPENFREEMAP.md](.github/OPENFREEMAP.md)
+
+---
+
+## 📦 Docker & Production
+
+- uv-based Docker images
+- Multi-stage builds
+- Cached dependency layers
+- Python 3.13 recommended
+
+**Example Dockerfile:**
+```dockerfile
+FROM python:3.13-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+WORKDIR /app
+COPY . .
+RUN uv sync --frozen
+CMD ["uv", "run", "main.py"]
+```
+
+---
+
+## 🤖 Recommended AI Components
+
+This app benefits strongly from:
+- 📈 Demand forecasting (time + location)
+- 🧠 Driver behavior modeling
+- 🗺️ Zone heatmap prediction
+- 🚦 Traffic-aware routing
+- 💰 Earnings optimization ML
+- 📊 Anomaly detection (bad fares, dead zones)
+
+---
+
+## 📄 License
+
+MIT License  
+© GitHub, Inc. & Contributors
 You've just launched your brand-new Spark Template Codespace — everything’s fired up and ready for you to explore, build, and create with Spark!
 
 This template is your blank canvas. It comes with a minimal setup to help you get started quickly with Spark development.

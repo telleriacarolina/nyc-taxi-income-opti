@@ -607,35 +607,149 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
         </TabsContent>
 
         <TabsContent value="map" className="space-y-4">
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <div className="text-[clamp(0.75rem,2.2vw,0.85rem)] text-muted-foreground font-medium">
+          <div className="mb-4">
+            <div className="text-[clamp(0.8rem,2.2vw,0.9rem)] font-semibold mb-3 flex items-center gap-2">
+              <Palette size={18} weight="fill" className="text-primary" />
               Map Style
             </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={mapStyle === 'liberty' ? 'default' : 'outline'}
+            <div className="grid grid-cols-3 gap-3">
+              <button
                 onClick={() => setMapStyle('liberty')}
-                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+                className={cn(
+                  "group relative overflow-hidden rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  mapStyle === 'liberty' ? 'border-primary shadow-md' : 'border-border hover:border-primary/50'
+                )}
               >
-                Liberty
-              </Button>
-              <Button
-                size="sm"
-                variant={mapStyle === 'bright' ? 'default' : 'outline'}
+                <div className="aspect-[4/3] bg-gradient-to-br from-slate-700 via-slate-600 to-slate-500 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-40">
+                    <div className="absolute top-2 left-2 right-2 h-px bg-white/20" />
+                    <div className="absolute top-4 left-2 right-2 h-px bg-white/20" />
+                    <div className="absolute top-6 left-2 right-2 h-px bg-white/15" />
+                    <div className="absolute bottom-4 left-2 w-12 h-12 rounded-full bg-blue-400/30 blur-sm" />
+                    <div className="absolute top-8 right-4 w-8 h-8 bg-green-400/20 blur-sm" />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-800/30 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <div className="flex gap-1">
+                      <div className="h-3 w-16 bg-white/30 rounded-sm backdrop-blur-sm" />
+                      <div className="h-3 w-10 bg-white/20 rounded-sm backdrop-blur-sm" />
+                    </div>
+                  </div>
+                </div>
+                <div className={cn(
+                  "p-2 text-center transition-colors",
+                  mapStyle === 'liberty' ? 'bg-primary/10' : 'bg-muted/30'
+                )}>
+                  <div className={cn(
+                    "font-semibold text-[clamp(0.75rem,2vw,0.85rem)]",
+                    mapStyle === 'liberty' ? 'text-primary' : 'text-foreground'
+                  )}>
+                    Liberty
+                  </div>
+                  <div className="text-[clamp(0.65rem,1.8vw,0.7rem)] text-muted-foreground">
+                    Detailed streets
+                  </div>
+                </div>
+                {mapStyle === 'liberty' && (
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4L6 11.5L2.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
+              </button>
+
+              <button
                 onClick={() => setMapStyle('bright')}
-                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+                className={cn(
+                  "group relative overflow-hidden rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  mapStyle === 'bright' ? 'border-primary shadow-md' : 'border-border hover:border-primary/50'
+                )}
               >
-                Bright
-              </Button>
-              <Button
-                size="sm"
-                variant={mapStyle === 'positron' ? 'default' : 'outline'}
+                <div className="aspect-[4/3] bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-50">
+                    <div className="absolute top-3 left-3 right-3 h-px bg-orange-300/40" />
+                    <div className="absolute top-5 left-3 right-3 h-px bg-orange-300/40" />
+                    <div className="absolute top-7 left-3 right-3 h-px bg-orange-200/30" />
+                    <div className="absolute bottom-5 left-3 w-10 h-10 rounded-full bg-cyan-300/40 blur-sm" />
+                    <div className="absolute top-6 right-5 w-6 h-6 bg-lime-300/40 blur-sm" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(251,191,36,0.1),transparent_50%)]" />
+                  </div>
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <div className="flex gap-1">
+                      <div className="h-3 w-14 bg-orange-400/40 rounded-sm" />
+                      <div className="h-3 w-8 bg-yellow-400/30 rounded-sm" />
+                    </div>
+                  </div>
+                </div>
+                <div className={cn(
+                  "p-2 text-center transition-colors",
+                  mapStyle === 'bright' ? 'bg-primary/10' : 'bg-muted/30'
+                )}>
+                  <div className={cn(
+                    "font-semibold text-[clamp(0.75rem,2vw,0.85rem)]",
+                    mapStyle === 'bright' ? 'text-primary' : 'text-foreground'
+                  )}>
+                    Bright
+                  </div>
+                  <div className="text-[clamp(0.65rem,1.8vw,0.7rem)] text-muted-foreground">
+                    Vibrant colors
+                  </div>
+                </div>
+                {mapStyle === 'bright' && (
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4L6 11.5L2.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
+              </button>
+
+              <button
                 onClick={() => setMapStyle('positron')}
-                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+                className={cn(
+                  "group relative overflow-hidden rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                  mapStyle === 'positron' ? 'border-primary shadow-md' : 'border-border hover:border-primary/50'
+                )}
               >
-                Positron
-              </Button>
+                <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-30">
+                    <div className="absolute top-3 left-3 right-3 h-px bg-gray-300/50" />
+                    <div className="absolute top-5 left-3 right-3 h-px bg-gray-300/50" />
+                    <div className="absolute top-7 left-3 right-3 h-px bg-gray-200/40" />
+                    <div className="absolute bottom-5 left-3 w-10 h-10 rounded-full bg-blue-200/30 blur-sm" />
+                    <div className="absolute top-6 right-5 w-6 h-6 bg-emerald-200/30 blur-sm" />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <div className="flex gap-1">
+                      <div className="h-3 w-12 bg-gray-300/50 rounded-sm" />
+                      <div className="h-3 w-8 bg-gray-200/40 rounded-sm" />
+                    </div>
+                  </div>
+                </div>
+                <div className={cn(
+                  "p-2 text-center transition-colors",
+                  mapStyle === 'positron' ? 'bg-primary/10' : 'bg-muted/30'
+                )}>
+                  <div className={cn(
+                    "font-semibold text-[clamp(0.75rem,2vw,0.85rem)]",
+                    mapStyle === 'positron' ? 'text-primary' : 'text-foreground'
+                  )}>
+                    Positron
+                  </div>
+                  <div className="text-[clamp(0.65rem,1.8vw,0.7rem)] text-muted-foreground">
+                    Clean & minimal
+                  </div>
+                </div>
+                {mapStyle === 'positron' && (
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4L6 11.5L2.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
+              </button>
             </div>
           </div>
           <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
