@@ -61,7 +61,7 @@ export function TrafficPatternComparison() {
     try {
       const dayTypeText = dayType === 'weekday' ? 'weekdays' : 'weekends'
       
-      const prompt = (window.spark.llmPrompt as any)`You are a New York City traffic and earnings optimization analyst for TLC drivers.
+      const promptText = `You are a New York City traffic and earnings optimization analyst for TLC drivers.
 
 Generate realistic NYC traffic and earnings patterns for ${dayTypeText}.
 
@@ -95,7 +95,7 @@ Return ONLY valid JSON with a single top-level object containing:
 { "patterns": [ array of 5 time slot objects ] }
 No markdown, no comments, no extra text.`
 
-      const result = await window.spark.llm(prompt, 'gpt-4o-mini', true)
+      const result = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(result)
       
       if (data.patterns && Array.isArray(data.patterns)) {

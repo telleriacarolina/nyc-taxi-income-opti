@@ -92,7 +92,7 @@ Driver's question: ${userMessage.content}
 
 Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging TLC Trip Record Data patterns (especially pickup location strategies) and NYC DOT real-time feeds for better positioning. When relevant, reference specific neighborhoods, times, or location-based patterns from TLC records and compare to the driver's start location history.`
 
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini')
+      const response = await spark.llm(promptText, 'gpt-4o-mini')
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

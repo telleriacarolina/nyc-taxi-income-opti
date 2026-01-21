@@ -241,7 +241,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Map View with Unknown Locations**: Locations not in NYC neighborhoods database default to Manhattan center coordinates, still show earnings data
 - **Map View Toggle**: Chart and Map views preserve selected location state when switching between views
 - **Map Marker Interactions**: Click map markers to view detailed location statistics, hover for location name and earnings preview
-- **OpenFreeMap Integration**: Uses free, open-source OpenFreeMap tiles from https://github.com/telleriacarolina/openfreemap (configured as git remote: `openfreemap`) with Liberty style for reliable, no-cost mapping. Fetch updates with `git fetch openfreemap`.
+- **OpenFreeMap Integration**: Uses free, open-source OpenFreeMap tiles (Liberty style) from https://tiles.openfreemap.org/ via Cloudflare CDN. Repository configured as git remote `openfreemap` tracking https://github.com/telleriacarolina/openfreemap. Fetch updates with `git fetch openfreemap`. See OPENFREEMAP.md integration guide for details on tile styles, self-hosting options, and development workflows.
 - **Duplicate Location Names**: Case-insensitive matching normalizes location names (e.g., "Manhattan" and "manhattan" treated as same)
 - **Location Names with Different Spellings**: Each unique spelling treated as separate location, shows importance of consistent naming
 - **Very Long Location Names**: Location labels truncated with ellipsis if needed for clean display
@@ -333,7 +333,7 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Components**:
   - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views; Secondary navigation for Chart vs Map view in Location Heatmap and Chat vs Fellow Drivers in Chatroom
-  - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, https://tiles.openfreemap.org/styles/liberty) for geographic visualization of earnings locations and traffic patterns. Repository configured as git remote `openfreemap` - fetch updates with `git fetch openfreemap`. See `.github/OPENFREEMAP.md` for integration details.
+  - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png) for geographic visualization of earnings locations and traffic patterns. Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking https://github.com/telleriacarolina/openfreemap - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
   - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
   - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides

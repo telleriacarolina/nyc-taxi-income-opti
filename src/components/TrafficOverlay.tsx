@@ -65,7 +65,7 @@ export function TrafficOverlay() {
   const fetchTrafficData = async () => {
     setIsLoading(true)
     try {
-      const prompt = (window.spark.llmPrompt as any)`You are a NYC DOT traffic data simulator. Generate realistic real-time traffic speed data for major NYC corridors based on current time patterns.
+      const promptText = `You are a NYC DOT traffic data simulator. Generate realistic real-time traffic speed data for major NYC corridors based on current time patterns.
 
 Generate 12 traffic speed records for major NYC streets across all boroughs. Include:
 - Manhattan: FDR Drive (NB/SB), West Side Highway (NB/SB), Broadway, Park Avenue
@@ -88,7 +88,7 @@ For each record provide:
 
 Return as JSON object with a single "trafficData" property containing the array.`
 
-      const response = await window.spark.llm(prompt, 'gpt-4o-mini', true)
+      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
       
       const formattedData: TrafficSpeed[] = data.trafficData.map((item: any) => ({
@@ -110,7 +110,7 @@ Return as JSON object with a single "trafficData" property containing the array.
   const fetchIncidents = async () => {
     setIsLoading(true)
     try {
-      const prompt = (window.spark.llmPrompt as any)`You are a NYC DOT incident tracker. Generate realistic current traffic incidents and planned construction for NYC.
+      const promptText = `You are a NYC DOT incident tracker. Generate realistic current traffic incidents and planned construction for NYC.
 
 Generate 8-10 realistic traffic incidents including:
 - Construction projects (ongoing street work, utility work)
@@ -130,7 +130,7 @@ For each incident provide:
 
 Return as JSON object with a single "incidents" property containing the array.`
 
-      const response = await window.spark.llm(prompt, 'gpt-4o-mini', true)
+      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
       
       const formattedIncidents: TrafficIncident[] = data.incidents.map((item: any) => ({

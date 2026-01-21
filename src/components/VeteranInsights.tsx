@@ -96,7 +96,7 @@ Format your response as valid JSON with this structure:
 
 Base all recommendations on real TLC Trip Record Data patterns, NYC geography, and practical use of NYC DOT real-time feeds. Be specific with locations, reference actual data patterns, and ensure every recommendation targets the $35+ per trip needed for $300/day 2025 goal.`
 
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
+      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
 
       setDayInsights(data.dailyInsights || [])

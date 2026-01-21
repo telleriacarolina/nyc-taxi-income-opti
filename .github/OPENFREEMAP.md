@@ -171,6 +171,81 @@ git log HEAD..openfreemap/main --oneline
 # Visit: https://github.com/telleriacarolina/openfreemap/releases
 ```
 
+## Automated Checking & Reminders
+
+### GitHub Actions (Recommended)
+
+The project includes automated monthly checks via GitHub Actions:
+
+**Workflow**: `.github/workflows/check-openfreemap.yml`
+- **Schedule**: Runs automatically on the 1st of each month at 9:00 AM UTC
+- **Action**: Fetches OpenFreeMap updates and creates a GitHub issue with commit summaries
+- **Manual Trigger**: Can be triggered anytime from the Actions tab
+
+**Enable Notifications**:
+1. Go to your repository on GitHub
+2. Click "Watch" → "Custom" → Check "Issues"
+3. You'll receive email notifications when new update issues are created
+
+**Manual Trigger**:
+```bash
+# From GitHub UI: Actions → Check OpenFreeMap Updates → Run workflow
+# Or use GitHub CLI:
+gh workflow run check-openfreemap.yml
+```
+
+### Local Reminders
+
+#### Option 1: Cron Job (Linux/Mac)
+
+Add to your crontab (`crontab -e`):
+
+```bash
+# Check OpenFreeMap updates on the 1st of each month at 9 AM
+0 9 1 * * cd /workspaces/spark-template && npm run check:openfreemap && notify-send "OpenFreeMap Check" "New updates available"
+```
+
+#### Option 2: Calendar Reminder
+
+Set a recurring calendar event:
+- **Frequency**: Monthly (1st of month)
+- **Action**: Run `npm run check:openfreemap` in project directory
+- **Note**: Review `.github/OPENFREEMAP_CHANGELOG.md` and update if needed
+
+#### Option 3: VS Code Tasks
+
+Add to `.vscode/tasks.json`:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Check OpenFreeMap Updates",
+      "type": "shell",
+      "command": "npm run check:openfreemap",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}
+```
+
+Then run via: `Ctrl+Shift+P` → "Tasks: Run Task" → "Check OpenFreeMap Updates"
+
+### Quick Check Command
+
+Add this alias to your shell profile (`.bashrc` or `.zshrc`):
+
+```bash
+alias check-ofm='cd /workspaces/spark-template && npm run check:openfreemap'
+```
+
+Then simply run `check-ofm` from anywhere in your terminal.
+
 ## Performance Considerations
 
 ### Marker Optimization

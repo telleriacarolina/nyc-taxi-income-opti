@@ -78,7 +78,7 @@ Return JSON in this exact format:
   "estimated_value": "great" | "good" | "average" | "below_average" | "poor"
 }`
 
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
+      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
       
       setRecommendation(data)

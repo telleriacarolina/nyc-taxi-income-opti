@@ -33,7 +33,7 @@ const NYC_NEIGHBORHOODS: Record<string, [number, number]> = {
   'upper east side': [40.7736, -73.9566],
   'harlem': [40.8116, -73.9465],
   'east harlem': [40.7957, -73.9389],
-  'financial district': [40.7074, -73.0089],
+  'financial district': [40.7074, -74.0089],
   'tribeca': [40.7163, -74.0086],
   'soho': [40.7233, -74.0030],
   'greenwich village': [40.7336, -74.0027],

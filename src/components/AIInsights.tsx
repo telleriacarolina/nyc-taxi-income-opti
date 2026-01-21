@@ -82,7 +82,7 @@ Return your response as JSON in this exact format:
   "content": "One specific recommendation about which neighborhoods/areas to START from based on their shift patterns and TLC Trip Record Data showing those zones' average pickup values. MUST reference specific location names. (2-3 sentences max)"
 }`
 
-      const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
+      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
       
       setInsight({
