@@ -26,10 +26,316 @@ This document outlines how AI and machine learning can leverage NYC TLC data sou
 
 **Coverage**: Monthly aggregates from 2015-present for 35+ FHV bases
 
+### High Volume For-Hire Vehicle (HVFH) Trip Records
+
+**Source**: [NYC Open Data - High Volume FHV Trip Records](https://data.cityofnewyork.us/d/8wbx-tsch)  
+**API Endpoint**: `https://data.cityofnewyork.us/resource/8wbx-tsch.json`
+
+**Dataset Structure:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `hvfhs_license_num` | String | HVFHS license number (e.g., HV0003 = Uber, HV0005 = Lyft) |
+| `dispatching_base_num` | String | TLC base number dispatching the trip |
+| `originating_base_num` | String | Base that received the original trip request |
+| `request_datetime` | DateTime | Date/time when passenger requested trip |
+| `on_scene_datetime` | DateTime | Date/time when driver arrived at pickup |
+| `pickup_datetime` | DateTime | Date/time when trip started |
+| `dropoff_datetime` | DateTime | Date/time when trip ended |
+| `PULocationID` | Integer | Pickup taxi zone ID (1-263) |
+| `DOLocationID` | Integer | Dropoff taxi zone ID (1-263) |
+| `trip_miles` | Float | Total trip distance in miles |
+| `trip_time` | Integer | Total trip time in seconds |
+| `base_passenger_fare` | Float | Base fare charged to passenger |
+| `tolls` | Float | Total tolls for trip |
+| `bcf` | Float | Black Car Fund fee |
+| `sales_tax` | Float | Sales tax on fare |
+| `congestion_surcharge` | Float | Congestion surcharge (if applicable) |
+| `airport_fee` | Float | Airport pickup/dropoff fee |
+| `tips` | Float | Tip amount |
+| `driver_pay` | Float | Total driver pay for trip |
+| `shared_request_flag` | String | Y/N if passenger requested shared ride |
+| `shared_match_flag` | String | Y/N if trip was shared with another passenger |
+| `access_a_ride_flag` | String | Y/N if trip was on behalf of Access-a-Ride |
+| `wav_request_flag` | String | Y/N if wheelchair accessible vehicle requested |
+| `wav_match_flag` | String | Y/N if wheelchair accessible vehicle dispatched |
+
+**Coverage**: Individual trip records from 2019-present for Uber, Lyft, Via, and other HVFHS providers
+
+**Key Insights Available:**
+- Exact pickup/dropoff zone patterns
+- Driver earnings per trip (driver_pay field)
+- Wait time analysis (request to pickup)
+- Surge/demand pricing indicators
+- Shared ride success rates
+- Airport trip profitability
+- Tip patterns by zone and time
+
+**HVFHS License Numbers:**
+- `HV0002`: Juno
+- `HV0003`: Uber
+- `HV0004`: Via
+- `HV0005`: Lyft
+
+### TLC Trip Record Data
+
+**Source**: [NYC Open Data - TLC Trip Record Data](https://data.cityofnewyork.us/d/uiay-nctu)  
+**API Endpoint**: `https://data.cityofnewyork.us/resource/uiay-nctu.json`
+
+**Dataset Structure:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `trip_id` | String | Unique trip identifier |
+| `hvfhs_license_num` | String | HVFHS license number |
+| `dispatching_base_num` | String | TLC base number dispatching the trip |
+| `originating_base_num` | String | Base that received the original trip request |
+| `request_datetime` | DateTime | Date/time when passenger requested trip |
+| `on_scene_datetime` | DateTime | Date/time when driver arrived at pickup |
+| `pickup_datetime` | DateTime | Date/time when trip started |
+| `dropoff_datetime` | DateTime | Date/time when trip ended |
+| `PULocationID` | Integer | Pickup taxi zone ID (1-263) |
+| `DOLocationID` | Integer | Dropoff taxi zone ID (1-263) |
+| `trip_miles` | Float | Total trip distance in miles |
+| `trip_time` | Integer | Total trip time in seconds |
+| `base_passenger_fare` | Float | Base fare charged to passenger |
+| `tolls` | Float | Total tolls for trip |
+| `bcf` | Float | Black Car Fund fee |
+| `sales_tax` | Float | Sales tax on fare |
+| `congestion_surcharge` | Float | Congestion surcharge (if applicable) |
+| `airport_fee` | Float | Airport pickup/dropoff fee |
+| `tips` | Float | Tip amount |
+| `driver_pay` | Float | Total driver pay for trip |
+| `shared_request_flag` | String | Y/N if passenger requested shared ride |
+| `shared_match_flag` | String | Y/N if trip was shared with another passenger |
+| `access_a_ride_flag` | String | Y/N if trip was on behalf of Access-a-Ride |
+| `wav_request_flag` | String | Y/N if wheelchair accessible vehicle requested |
+| `wav_match_flag` | String | Y/N if wheelchair accessible vehicle dispatched |
+
+**Coverage**: Comprehensive trip-level records with unique trip IDs for detailed analysis
+
+**Key Use Cases:**
+- Detailed trip-by-trip earnings tracking
+- Wait time optimization (request to on_scene to pickup)
+- Zone-to-zone route profitability analysis
+- Time-of-day demand patterns
+- Platform comparison at trip level
+- Driver efficiency metrics
+- Passenger wait time analysis
+
+**Example Query - High-Earning Routes:**
+```python
+import requests
+import pandas as pd
+
+# Fetch high-earning trips
+url = "https://data.cityofnewyork.us/resource/uiay-nctu.json"
+params = {
+    "$limit": 10000,
+    "$where": "pickup_datetime >= '2024-01-01' AND driver_pay > 50",
+    "$select": "hvfhs_license_num,pickup_datetime,PULocationID,DOLocationID,trip_miles,trip_time,driver_pay,tips,base_passenger_fare",
+    "$order": "driver_pay DESC"
+}
+
+response = requests.get(url, params=params)
+high_earners = pd.DataFrame(response.json())
+
+# Analyze route patterns
+route_analysis = high_earners.groupby(['PULocationID', 'DOLocationID']).agg({
+    'driver_pay': ['mean', 'median', 'count'],
+    'trip_miles': 'mean',
+    'tips': 'mean'
+}).round(2)
+
+print("Most profitable routes:")
+print(route_analysis.sort_values(('driver_pay', 'mean'), ascending=False).head(20))
+```
+
+### For-Hire Vehicle (FHV) Active Vehicles
+
+**Source**: [NYC Open Data - FHV Active Vehicles](https://data.cityofnewyork.us/Transportation/For-Hire-Vehicles-FHV-Active/cqsj-cfgu)  
+**API Endpoint**: `https://data.cityofnewyork.us/resource/cqsj-cfgu.json`
+
+**Dataset Structure:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `active_vehicles` | Integer | Number of active FHV vehicles |
+| `unique_vehicles` | Integer | Number of unique vehicles |
+| `veh` | String | Vehicle identifier |
+| `base_number` | String | TLC base license number |
+| `base_name` | String | Base company name |
+| `dba` | String | Doing Business As name |
+| `base_type` | String | Type of base (Livery, Black Car, Luxury Limo) |
+| `veh_year` | Integer | Vehicle model year |
+| `veh_make` | String | Vehicle manufacturer |
+| `veh_model` | String | Vehicle model |
+| `last_date_updated` | DateTime | Date record was last updated |
+| `last_time_updated` | Time | Time record was last updated |
+| `license_type` | String | Type of FHV license |
+| `certification_date` | DateTime | Date vehicle was certified |
+| `hack_up_date` | DateTime | Date hack license expires |
+| `vehicle_license_number` | String | TLC vehicle license number |
+
+**Coverage**: Real-time active vehicle inventory across all FHV bases
+
+**Key Insights Available:**
+- Total active fleet size by platform
+- Vehicle age distribution by base
+- Popular vehicle makes/models for rideshare
+- Fleet capacity by company
+- Vehicle certification status
+- Active vs inactive vehicle ratios
+
+**Example Query - Fleet Analysis:**
+```python
+import requests
+import pandas as pd
+
+# Fetch active vehicle data
+url = "https://data.cityofnewyork.us/resource/cqsj-cfgu.json"
+params = {
+    "$limit": 50000,
+    "$select": "base_number,base_name,veh_year,veh_make,veh_model,vehicle_license_number",
+}
+
+response = requests.get(url, params=params)
+vehicles = pd.DataFrame(response.json())
+
+# Platform mapping
+platform_bases = {
+    'Uber': ['B02764', 'B02617', 'B02598', 'B02682', 'B02765'],
+    'Lyft': ['B02510', 'B02844'],
+    'Via': ['B03136', 'B02800'],
+    'Juno': ['B02914', 'B02907', 'B02835', 'B02864']
+}
+
+vehicles['platform'] = vehicles['base_number'].apply(
+    lambda x: next((k for k, v in platform_bases.items() if x in v), 'Other')
+)
+
+# Fleet size analysis
+fleet_size = vehicles.groupby('platform').agg({
+    'vehicle_license_number': 'nunique'
+}).rename(columns={'vehicle_license_number': 'active_vehicles'})
+
+# Vehicle age analysis
+vehicles['veh_year'] = pd.to_numeric(vehicles['veh_year'], errors='coerce')
+vehicles['vehicle_age'] = 2026 - vehicles['veh_year']
+avg_age = vehicles.groupby('platform')['vehicle_age'].mean()
+
+# Popular vehicle models
+top_models = vehicles.groupby(['platform', 'veh_make', 'veh_model']).size().reset_index(name='count')
+top_models = top_models.sort_values('count', ascending=False)
+
+print("Fleet sizes by platform:")
+print(fleet_size)
+print("\nAverage vehicle age by platform:")
+print(avg_age.round(1))
+print("\nTop 10 vehicle models:")
+print(top_models.head(10))
+```
+
+**Strategic Uses:**
+- Compare fleet capacity when choosing platforms
+- Understand vehicle investment trends
+- Identify oversaturated platforms (too many active vehicles = lower earnings per driver)
+- Benchmark vehicle choices for new drivers
+
+### TLC New Driver Application Status
+
+**Source**: [NYC Open Data - TLC New Driver Application Status](https://data.cityofnewyork.us/Transportation/TLC-New-Driver-Application-Status/vqu8-xef9)  
+**API Endpoint**: `https://data.cityofnewyork.us/resource/vqu8-xef9.json`
+
+**Dataset Structure:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `app_no` | String | Application number |
+| `type` | String | License type (FHV Driver, Taxi Driver, etc.) |
+| `app_status` | String | Application status (Approved, Pending, Denied, etc.) |
+| `status_date` | DateTime | Date of current status |
+| `file_date` | DateTime | Date application was filed |
+| `completion_date` | DateTime | Date application was completed |
+| `drug_test` | String | Drug test status |
+| `wav_course` | String | Wheelchair Accessible Vehicle training status |
+| `defensive_driving` | String | Defensive driving course status |
+| `driver_exam` | String | TLC driver exam status |
+| `medical_clearance` | String | Medical clearance status |
+| `other_requirements` | String | Other requirements status |
+
+**Coverage**: Real-time new driver application pipeline data
+
+**Key Insights Available:**
+- Driver supply growth trends
+- Application approval rates by license type
+- Average time from application to approval
+- Training completion bottlenecks
+- Market entry barriers analysis
+- Seasonal driver supply patterns
+
+**Example Query - Driver Supply Analysis:**
+```python
+import requests
+import pandas as pd
+from datetime import datetime, timedelta
+
+# Fetch recent applications
+url = "https://data.cityofnewyork.us/resource/vqu8-xef9.json"
+params = {
+    "$limit": 10000,
+    "$where": "file_date >= '2024-01-01'",
+    "$select": "type,app_status,status_date,file_date,completion_date",
+    "$order": "file_date DESC"
+}
+
+response = requests.get(url, params=params)
+apps = pd.DataFrame(response.json())
+
+# Convert dates
+apps['file_date'] = pd.to_datetime(apps['file_date'])
+apps['status_date'] = pd.to_datetime(apps['status_date'])
+apps['completion_date'] = pd.to_datetime(apps['completion_date'], errors='coerce')
+
+# Calculate processing time
+apps['days_to_process'] = (apps['status_date'] - apps['file_date']).dt.days
+
+# Approval rates
+approval_rates = apps.groupby('type')['app_status'].value_counts(normalize=True).unstack(fill_value=0)
+
+# Monthly application trends
+apps['month'] = apps['file_date'].dt.to_period('M')
+monthly_apps = apps.groupby(['month', 'type']).size().unstack(fill_value=0)
+
+# Average processing time by status
+processing_time = apps.groupby(['type', 'app_status'])['days_to_process'].mean().round(1)
+
+print("Application approval rates:")
+print(approval_rates)
+print("\nMonthly applications (last 6 months):")
+print(monthly_apps.tail(6))
+print("\nAverage processing time (days):")
+print(processing_time)
+```
+
+**Strategic Market Insights:**
+- **Oversupply Indicators**: High approval rates + many new drivers = increased competition
+- **Entry Timing**: Apply when approval rates are slower (less competition when you start)
+- **Platform Saturation**: Track FHV driver approvals to predict platform oversaturation
+- **Competitive Advantage**: Monitor requirements to stay compliant while others delay
+- **Seasonal Patterns**: Identify low-competition entry windows
+
+**Use for Earnings Optimization:**
+- Predict when new driver influx will reduce per-driver earnings
+- Time market entry during low-approval periods
+- Anticipate platform capacity changes
+- Forecast competitive landscape shifts
+
 ### Secondary Sources
 
-- **Trip-Level Data**: Individual trip records (Yellow, Green, FHV, HVFHS)
-- **Taxi Zone Shapefiles**: Geographic boundaries for 265 NYC zones
+- **Yellow Taxi Trip Data**: Traditional yellow cab records
+- **Green Taxi Trip Data**: Boro taxi records (outside Manhattan)
+- **Taxi Zone Shapefiles**: Geographic boundaries for 263 NYC zones
 - **Weather Data**: Historical weather conditions (external source)
 - **Event Calendar**: NYC events, holidays, conventions (external source)
 
@@ -175,7 +481,99 @@ print(importance_df.head(10))
 - Impact of driver supply on individual earnings
 - Seasonal earnings patterns
 
-### 3. Optimization Recommendations
+### 3. Trip-Level Earnings Analysis
+
+**HVFH Driver Pay Insights**
+
+```python
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+
+# Fetch HVFH trip records
+hvfh_url = "https://data.cityofnewyork.us/resource/8wbx-tsch.json"
+params = {
+    "$limit": 50000,
+    "$where": "pickup_datetime >= '2024-01-01' AND pickup_datetime < '2024-02-01'",
+    "$select": "hvfhs_license_num,pickup_datetime,PULocationID,DOLocationID,trip_miles,trip_time,driver_pay,tips,base_passenger_fare,shared_match_flag,airport_fee",
+    "$order": "pickup_datetime DESC"
+}
+
+response = requests.get(hvfh_url, params=params)
+trips = pd.DataFrame(response.json())
+
+# Convert data types
+trips['pickup_datetime'] = pd.to_datetime(trips['pickup_datetime'])
+trips['driver_pay'] = pd.to_numeric(trips['driver_pay'], errors='coerce')
+trips['tips'] = pd.to_numeric(trips['tips'], errors='coerce')
+trips['trip_miles'] = pd.to_numeric(trips['trip_miles'], errors='coerce')
+trips['trip_time'] = pd.to_numeric(trips['trip_time'], errors='coerce')
+trips['base_passenger_fare'] = pd.to_numeric(trips['base_passenger_fare'], errors='coerce')
+
+# Calculate earnings metrics
+trips['total_earnings'] = trips['driver_pay'] + trips['tips']
+trips['earnings_per_mile'] = trips['total_earnings'] / trips['trip_miles'].replace(0, np.nan)
+trips['earnings_per_minute'] = trips['total_earnings'] / (trips['trip_time'] / 60).replace(0, np.nan)
+trips['driver_pct_of_fare'] = (trips['driver_pay'] / trips['base_passenger_fare'].replace(0, np.nan)) * 100
+
+# Time-based analysis
+trips['hour'] = trips['pickup_datetime'].dt.hour
+trips['day_of_week'] = trips['pickup_datetime'].dt.dayofweek
+trips['is_weekend'] = trips['day_of_week'].isin([5, 6]).astype(int)
+trips['is_rush_hour'] = trips['hour'].isin([7, 8, 9, 17, 18, 19]).astype(int)
+
+# Platform mapping
+platform_map = {
+    'HV0003': 'Uber',
+    'HV0005': 'Lyft',
+    'HV0004': 'Via',
+    'HV0002': 'Juno'
+}
+trips['platform'] = trips['hvfhs_license_num'].map(platform_map)
+
+# Analyze best earning opportunities
+hourly_earnings = trips.groupby(['platform', 'hour']).agg({
+    'total_earnings': 'mean',
+    'earnings_per_mile': 'mean',
+    'earnings_per_minute': 'mean',
+    'tips': 'mean',
+    'driver_pay': 'mean'
+}).round(2)
+
+# Zone profitability
+zone_earnings = trips.groupby(['platform', 'PULocationID']).agg({
+    'total_earnings': ['mean', 'median', 'std'],
+    'trip_miles': 'mean',
+    'tips': 'mean'
+}).round(2)
+
+# Airport trips analysis
+airport_zones = [1, 132, 138]  # JFK, LGA, EWR
+trips['is_airport'] = trips['PULocationID'].isin(airport_zones) | trips['DOLocationID'].isin(airport_zones)
+airport_comparison = trips.groupby(['platform', 'is_airport']).agg({
+    'total_earnings': 'mean',
+    'trip_miles': 'mean',
+    'tips': 'mean',
+    'driver_pay': 'mean'
+})
+
+print("Best earning hours by platform:")
+print(hourly_earnings.sort_values(('total_earnings', 'mean'), ascending=False).head(20))
+
+print("\nAirport vs Non-Airport Trip Earnings:")
+print(airport_comparison)
+```
+
+**Actionable Insights:**
+- Highest earning hours by platform (e.g., Uber 6-9 AM: $28.50/trip avg)
+- Best pickup zones for driver pay
+- Airport trip profitability analysis
+- Shared ride impact on earnings
+- Tip patterns by zone and time
+- Driver percentage of passenger fare by platform
+- Optimal trip distance for earnings per mile
+
+### 4. Optimization Recommendations
 
 **Platform Selection AI**
 
