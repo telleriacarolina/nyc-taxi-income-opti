@@ -484,21 +484,218 @@ uv tool update-shell  # Add tools to PATH
 - Project packages: Use `uv pip install package` in active venv
 - Missing activation: Run `source .venv/bin/activate` first
 
+### Using uv with Docker
+
+uv provides official Docker images for containerized Python development. See the [uv-docker-example](https://github.com/astral-sh/uv-docker-example) project for best practices.
+
+#### Available Images
+
+**Distroless images** (uv binaries only):
+- `ghcr.io/astral-sh/uv:latest`
+- `ghcr.io/astral-sh/uv:0.9.26` (version-pinned, recommended)
+- `ghcr.io/astral-sh/uv:0.9` (latest patch)
+
+**Derived images** (with OS + uv pre-installed):
+- Alpine: `ghcr.io/astral-sh/uv:alpine`, `ghcr.io/astral-sh/uv:alpine3.22`
+- Debian Slim: `ghcr.io/astral-sh/uv:debian-slim`, `ghcr.io/astral-sh/uv:bookworm-slim`
+- Debian Full: `ghcr.io/astral-sh/uv:debian`, `ghcr.io/astral-sh/uv:bookworm`
+- Python-Alpine: `ghcr.io/astral-sh/uv:python3.13-alpine`, `ghcr.io/astral-sh/uv:python3.12-alpine`
+- Python-Debian: `ghcr.io/astral-sh/uv:python3.13-bookworm-slim`, `ghcr.io/astral-sh/uv:python3.12-bookworm`
+
+**Run uv in a container:**
+
+```bash
+docker run --rm -it ghcr.io/astral-sh/uv:debian uv --help
+```
+
+#### Installing uv in Dockerfile
+
+**Method 1: Copy from distroless image (recommended):**
+
+```dockerfile
+FROM python:3.13-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
+```
+
+**Method 2: Use installer script:**
+
+```dockerfile
+FROM python:3.13-slim-bookworm
+
+# Install curl for the installer
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+
+# Download and run installer
+ADD https://astral.sh/uv/0.9.26/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# Add to PATH
+ENV PATH="/root/.local/bin/:$PATH"
+```
+
+**Best Practice: Pin specific SHA256 for reproducible builds:**
+
+```dockerfile
+COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
+```
+
+#### Building a Project in Docker
+
+**Basic Dockerfile:**
+
+```dockerfile
+# Install uv
+FROM python:3.13-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
+
+# Copy project files
+WORKDIR /app
+COPY . /app
+
+# Disable development dependencies
+ENV UV_NO_DEV=1
+
+# Sync dependencies and install project
+RUN uv sync --locked
+
+# Run application
+CMD ["uv", "run", "my_app"]
+```
+
+**Important:** Add `.venv` to `.dockerignore` to prevent local virtual environments from being copied into the image.
+
+#### Optimized Multi-Stage Build
+
+Use intermediate layers to cache dependencies separately from application code:
+
+```dockerfile
+# Install uv
+FROM python:3.13-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
+
+WORKDIR /app
+
+# Install dependencies (cached separately)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project
+
+# Copy application code
+COPY . /app
+
+# Install project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
+
+# Activate virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["python", "-m", "my_app"]
+```
+
+**Key optimizations:**
+- `--mount=type=cache` preserves uv cache across builds
+- `--no-install-project` separates dependency installation from app code
+- Dependencies layer rebuilds only when `uv.lock` or `pyproject.toml` change
+- App code changes don't invalidate dependency cache
+
+#### Docker Compose with Watch Mode
+
+Enable live reload during development:
+
+```yaml
+# compose.yaml
+services:
+  app:
+    build: .
+    develop:
+      watch:
+        # Sync code changes to container
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+        
+        # Rebuild on dependency changes
+        - action: rebuild
+          path: ./pyproject.toml
+```
+
+Run with:
+
+```bash
+docker compose watch
+```
+
+#### Additional Optimizations
+
+**Compile bytecode for faster startup:**
+
+```dockerfile
+ENV UV_COMPILE_BYTECODE=1
+RUN uv sync --locked
+```
+
+**Use system Python (skip venv creation):**
+
+```dockerfile
+ENV UV_SYSTEM_PYTHON=1
+RUN uv pip install -r requirements.txt
+```
+
+**Non-editable install (copy venv without source):**
+
+```dockerfile
+# Builder stage
+FROM python:3.13-slim-bookworm AS builder
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
+
+WORKDIR /app
+COPY . /app
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-editable
+
+# Runtime stage
+FROM python:3.13-slim-bookworm
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+CMD ["python", "-m", "my_app"]
+```
+
+#### Verifying Image Provenance
+
+Docker images are signed with GitHub attestations for security verification:
+
+```bash
+# Verify with GitHub CLI
+gh attestation verify --owner astral-sh oci://ghcr.io/astral-sh/uv:0.9.26
+
+# Verify with cosign
+REPO=astral-sh/uv
+gh attestation download --repo $REPO oci://ghcr.io/${REPO}:0.9.26
+docker buildx imagetools inspect ghcr.io/${REPO}:0.9.26 --format "{{json .Manifest}}" > manifest.json
+cosign verify-blob-attestation \
+    --new-bundle-format \
+    --bundle "$(jq -r .digest manifest.json).jsonl" \
+    --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+    --certificate-identity-regexp="^https://github\.com/${REPO}/.*" \
+    <(jq -j '.|del(.digest,.size)' manifest.json)
+```
+
+**Best Practice:** Verify attestations for production images to ensure they're from official sources.
+
 ### Learn More
 
 - [uv Documentation](https://docs.astral.sh/uv/)
+- [uv Docker Example Project](https://github.com/astral-sh/uv-docker-example)
 - [Installing Python Guide](https://docs.astral.sh/uv/guides/install-python/)
 - [Projects Guide](https://docs.astral.sh/uv/guides/projects/)
 - [Running Scripts Guide](https://docs.astral.sh/uv/guides/scripts/)
 - [Tools Guide](https://docs.astral.sh/uv/guides/tools/)
-
-
-
-
-
-
-
-
+- [Docker Guide](https://docs.astral.sh/uv/guides/integration/docker/)
 
 ## 📐 Typography System
 
@@ -1032,6 +1229,81 @@ rides.to_csv('app_format.csv', index=False)
 - [FHV Data Dictionary (PDF)](https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_fhv.pdf)
 - [HVFHS Data Dictionary (PDF)](https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_hvfhs.pdf)
 
+**NYC Open Data - FHV Base Aggregate Reports:**
+
+For AI-powered insights and aggregate market analysis, access the **FHV Base Aggregate Report** dataset:
+
+- **Dataset**: [FHV Base Aggregate Report](https://data.cityofnewyork.us/b7f2ea51-e357-4f19-90e9-e21657dcd6dd)
+- **What it contains**: Monthly aggregated statistics by TLC base license
+- **Key metrics**: Total trips, unique vehicles, unique drivers, total distance, total time
+- **Time range**: Monthly reports from 2015-present
+- **Use cases**:
+  - Compare performance across different FHV bases (Uber, Lyft, Via, Juno)
+  - Track market share trends over time
+  - Benchmark your earnings against platform averages
+  - Identify seasonal patterns and demand cycles
+  - Forecast future earnings based on historical trends
+
+**Example Analysis with Python:**
+
+```python
+import pandas as pd
+import requests
+
+# Load FHV Base Aggregate data from NYC Open Data
+url = "https://data.cityofnewyork.us/resource/2v9c-2k7f.json"
+params = {
+    "$limit": 5000,
+    "$where": "month >= '2024-01-01'",
+    "$order": "month DESC"
+}
+response = requests.get(url, params=params)
+base_stats = pd.DataFrame(response.json())
+
+# Filter for major app platforms
+uber_bases = ['B02764', 'B02617', 'B02598']  # Sample Uber bases
+lyft_bases = ['B02510', 'B02844']
+
+base_stats['platform'] = base_stats['base_number'].apply(
+    lambda x: 'Uber' if x in uber_bases else 
+              'Lyft' if x in lyft_bases else 
+              'Other'
+)
+
+# Calculate average trips per driver
+base_stats['avg_trips_per_driver'] = (
+    base_stats['total_trips'].astype(float) / 
+    base_stats['unique_drivers'].astype(float)
+)
+
+# Analyze by platform
+platform_summary = base_stats.groupby('platform').agg({
+    'total_trips': 'sum',
+    'unique_drivers': 'sum',
+    'unique_vehicles': 'sum',
+    'avg_trips_per_driver': 'mean'
+})
+
+print(platform_summary)
+```
+
+**API Access:**
+
+```bash
+# Query specific base and time period
+curl "https://data.cityofnewyork.us/resource/2v9c-2k7f.json?\$where=base_number='B02764'%20AND%20month>='2024-01-01'&\$limit=12"
+
+# Get latest month for all bases
+curl "https://data.cityofnewyork.us/resource/2v9c-2k7f.json?\$order=month%20DESC&\$limit=100"
+```
+
+**Insights You Can Generate:**
+- **Market positioning**: See how your chosen platform(s) compare in trip volume
+- **Driver efficiency**: Calculate trips per driver vs platform averages
+- **Capacity utilization**: Analyze vehicle-to-driver ratios
+- **Growth trends**: Track YoY changes in platform activity
+- **Seasonal planning**: Identify peak months for maximizing earnings
+
 ### Contact & Resources
 
 **Questions about TLC Data:**
@@ -1043,6 +1315,303 @@ rides.to_csv('app_format.csv', index=False)
 - This template's data structure is designed for driver earnings tracking
 - Compatible with TLC public data formats for analysis and import
 - Use Python (via uv) for data transformation and ETL workflows
+
+## 🗺️ Map Integration with OpenFreeMap
+
+This template can display ride locations on interactive maps using free, open-source map tiles from [OpenFreeMap](https://openfreemap.org/).
+
+### Why OpenFreeMap?
+
+- **Free & Open Source** - No API keys, rate limits, or costs
+- **Fast CDN** - Global tile delivery with Cloudflare
+- **Privacy-Focused** - No tracking or data collection
+- **Multiple Styles** - Liberty (colorful), Bright (clean), Positron (minimal)
+- **Self-Hosting Option** - Full planet Btrfs images available
+
+### Using MapLibre GL JS (Recommended)
+
+MapLibre GL JS is the modern, open-source alternative to Mapbox GL JS.
+
+**Installation via npm:**
+
+```bash
+npm install maplibre-gl
+# or
+uv run npm install maplibre-gl
+```
+
+**Or include via CDN:**
+
+```html
+<head>
+  <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+</head>
+```
+
+**Basic Usage:**
+
+```html
+<div id="map" style="width: 100%; height: 500px"></div>
+<script>
+  const map = new maplibregl.Map({
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    center: [13.388, 52.517], // [longitude, latitude]
+    zoom: 9.5,
+    container: 'map',
+  })
+</script>
+```
+
+**For NYC (Centered on Manhattan):**
+
+```javascript
+const map = new maplibregl.Map({
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [-73.9712, 40.7831], // Times Square coordinates
+  zoom: 12,
+  container: 'map',
+})
+```
+
+**Display Pickup/Dropoff Locations:**
+
+```javascript
+// Add markers for ride locations
+const pickupMarker = new maplibregl.Marker({ color: '#22c55e' }) // Green
+  .setLngLat([-73.9851, 40.7589]) // Pickup coordinates
+  .setPopup(new maplibregl.Popup().setHTML('<b>Pickup:</b> Times Square'))
+  .addTo(map)
+
+const dropoffMarker = new maplibregl.Marker({ color: '#ef4444' }) // Red
+  .setLngLat([-73.9712, 40.7831]) // Dropoff coordinates
+  .setPopup(new maplibregl.Popup().setHTML('<b>Dropoff:</b> Central Park'))
+  .addTo(map)
+
+// Draw route line
+map.on('load', () => {
+  map.addSource('route', {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: [
+          [-73.9851, 40.7589], // Pickup
+          [-73.9712, 40.7831]  // Dropoff
+        ]
+      }
+    }
+  })
+  
+  map.addLayer({
+    id: 'route',
+    type: 'line',
+    source: 'route',
+    paint: {
+      'line-color': '#3b82f6',
+      'line-width': 4
+    }
+  })
+})
+```
+
+### Available Styles
+
+OpenFreeMap provides three style options:
+
+| Style | URL | Best For |
+|-------|-----|----------|
+| **Liberty** | `https://tiles.openfreemap.org/styles/liberty` | Colorful, detailed, general use |
+| **Bright** | `https://tiles.openfreemap.org/styles/bright` | Clean, minimal, professional |
+| **Positron** | `https://tiles.openfreemap.org/styles/positron` | Light, minimal, data overlays |
+
+**Customize with Maputnik:**
+- [Customize Liberty](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/liberty)
+- [Customize Bright](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/bright)
+- [Customize Positron](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/positron)
+
+### Using with Leaflet
+
+If you prefer Leaflet, use [MapLibre GL Leaflet](https://github.com/maplibre/maplibre-gl-leaflet):
+
+```html
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Maplibre GL -->
+<link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+
+<!-- Maplibre GL Leaflet  -->
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"></script>
+
+<div id="map" style="width: 100%; height: 500px"></div>
+<script>
+  const map = L.map('map').setView([40.7831, -73.9712], 12) // NYC
+
+  L.maplibreGL({
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+  }).addTo(map)
+</script>
+```
+
+### Using with OpenLayers
+
+For OpenLayers, use [ol-mapbox-style](https://github.com/openlayers/ol-mapbox-style):
+
+```html
+<!-- OpenLayers -->
+<script src="https://unpkg.com/ol/dist/ol.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/ol/ol.css" />
+
+<!-- ol-mapbox-style -->
+<script src="https://unpkg.com/ol-mapbox-style/dist/olms.js"></script>
+
+<div id="map" style="width: 100%; height: 500px"></div>
+<script>
+  const openfreemap = new ol.layer.Group()
+  const map = new ol.Map({
+    layers: [openfreemap],
+    view: new ol.View({ 
+      center: ol.proj.fromLonLat([-73.9712, 40.7831]), // NYC
+      zoom: 12 
+    }),
+    target: 'map',
+  })
+  olms.apply(openfreemap, 'https://tiles.openfreemap.org/styles/liberty')
+</script>
+```
+
+### React Integration Example
+
+**Install dependencies:**
+
+```bash
+npm install maplibre-gl
+npm install --save-dev @types/maplibre-gl
+```
+
+**Create Map Component:**
+
+```typescript
+// src/components/RideMap.tsx
+import { useEffect, useRef } from 'react'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+
+interface RideMapProps {
+  pickup: { lng: number; lat: number }
+  dropoff: { lng: number; lat: number }
+}
+
+export function RideMap({ pickup, dropoff }: RideMapProps) {
+  const mapContainer = useRef<HTMLDivElement>(null)
+  const map = useRef<maplibregl.Map | null>(null)
+
+  useEffect(() => {
+    if (!mapContainer.current) return
+    if (map.current) return // Initialize map only once
+
+    map.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      center: [pickup.lng, pickup.lat],
+      zoom: 12
+    })
+
+    // Add pickup marker (green)
+    new maplibregl.Marker({ color: '#22c55e' })
+      .setLngLat([pickup.lng, pickup.lat])
+      .setPopup(new maplibregl.Popup().setHTML('<b>Pickup</b>'))
+      .addTo(map.current)
+
+    // Add dropoff marker (red)
+    new maplibregl.Marker({ color: '#ef4444' })
+      .setLngLat([dropoff.lng, dropoff.lat])
+      .setPopup(new maplibregl.Popup().setHTML('<b>Dropoff</b>'))
+      .addTo(map.current)
+
+    // Fit map to show both points
+    const bounds = new maplibregl.LngLatBounds()
+    bounds.extend([pickup.lng, pickup.lat])
+    bounds.extend([dropoff.lng, dropoff.lat])
+    map.current.fitBounds(bounds, { padding: 50 })
+
+    return () => {
+      map.current?.remove()
+    }
+  }, [pickup, dropoff])
+
+  return <div ref={mapContainer} style={{ width: '100%', height: '400px' }} />
+}
+```
+
+**Usage:**
+
+```tsx
+<RideMap 
+  pickup={{ lng: -73.9851, lat: 40.7589 }}  // Times Square
+  dropoff={{ lng: -73.9712, lat: 40.7831 }} // Central Park
+/>
+```
+
+### Converting TLC Zone IDs to Coordinates
+
+TLC data uses zone IDs (1-263). To display on a map, convert zone IDs to coordinates:
+
+**Download zone shapefile:**
+```bash
+curl -O https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip
+unzip taxi_zones.zip
+```
+
+**Process with Python:**
+
+```python
+import geopandas as gpd
+import pandas as pd
+
+# Read taxi zones shapefile
+zones = gpd.read_file('taxi_zones.shp')
+
+# Calculate zone centroids
+zones['longitude'] = zones.geometry.centroid.x
+zones['latitude'] = zones.geometry.centroid.y
+
+# Create lookup dictionary
+zone_coords = zones.set_index('LocationID')[['longitude', 'latitude']].to_dict('index')
+
+# Map ride data
+ride_pickup_coords = zone_coords[ride['PULocationID']]
+ride_dropoff_coords = zone_coords[ride['DOLocationID']]
+
+print(f"Pickup: {ride_pickup_coords}")
+print(f"Dropoff: {ride_dropoff_coords}")
+```
+
+### Mobile Apps
+
+For React Native or mobile apps, use [MapLibre Native](https://github.com/maplibre/maplibre-native) with the same OpenFreeMap styles.
+
+### Self-Hosting
+
+For production with high traffic, consider self-hosting:
+- Download [OpenFreeMap Btrfs images](https://github.com/hyperknot/openfreemap)
+- Host tiles on your infrastructure
+- Full control and no external dependencies
+
+### Resources
+
+- **OpenFreeMap**: [https://openfreemap.org/](https://openfreemap.org/)
+- **MapLibre GL JS**: [https://maplibre.org/maplibre-gl-js/docs/](https://maplibre.org/maplibre-gl-js/docs/)
+- **Maputnik Editor**: [https://maputnik.github.io/editor/](https://maputnik.github.io/editor/)
+- **NYC Taxi Zones Shapefile**: [https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip](https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip)
+
+**Sponsor OpenFreeMap:**
+If this helps save on map hosting costs, consider [sponsoring on GitHub](https://github.com/sponsors/hyperknot).
+
 🧹 Just Exploring?
 No problem! If you were just checking things out and don’t need to keep this code:
 
