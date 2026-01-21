@@ -251,7 +251,7 @@ export function EarningsOptimizer() {
       )}
 
       {platformStats.length > 0 && (
-        <PlatformComparison platformStats={platformStats} />
+        <PlatformComparison shifts={shifts || []} />
       )}
 
       <div className="flex items-center justify-between mb-3">

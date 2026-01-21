@@ -1,7 +1,13 @@
+import { useState } from 'react'
 import { Shift, EarningsStats } from '@/lib/earnings-types'
-import { getHourlyPatterns, getDailyPatterns, getPlatformStats, formatCurrency } from '@/lib/earnings-utils'
+import { getHourlyPatterns, getDailyPatterns, getPlatformStats, formatCurrency, calculateStats } from '@/lib/earnings-utils'
 import { Card } from '@/components/ui/card'
-import { Lightbulb, TrendUp, Clock, Calendar, ChartBar } from '@phosphor-icons/react'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar as CalendarComponent } from '@/components/ui/calendar'
+import { Lightbulb, TrendUp, Clock, Calendar, ChartBar, CalendarBlank, X } from '@phosphor-icons/react'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface EarningsInsightsProps {
   shifts: Shift[]
@@ -9,9 +15,33 @@ interface EarningsInsightsProps {
 }
 
 export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
-  const hourlyPatterns = getHourlyPatterns(shifts)
-  const dailyPatterns = getDailyPatterns(shifts)
-  const platformStats = getPlatformStats(shifts)
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  })
+
+  const handleClearDateRange = () => {
+    setDateRange({ from: undefined, to: undefined })
+  }
+
+  const filteredShifts = dateRange.from || dateRange.to
+    ? shifts.filter(shift => {
+        const shiftDate = new Date(shift.date)
+        if (dateRange.from && dateRange.to) {
+          return shiftDate >= dateRange.from && shiftDate <= dateRange.to
+        } else if (dateRange.from) {
+          return shiftDate >= dateRange.from
+        } else if (dateRange.to) {
+          return shiftDate <= dateRange.to
+        }
+        return true
+      })
+    : shifts
+
+  const filteredStats = calculateStats(filteredShifts)
+  const hourlyPatterns = getHourlyPatterns(filteredShifts)
+  const dailyPatterns = getDailyPatterns(filteredShifts)
+  const platformStats = getPlatformStats(filteredShifts)
 
   const topHours = hourlyPatterns
     .sort((a, b) => b.averageRate - a.averageRate)
@@ -27,8 +57,8 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
     const targetTripsMax = 10
     const targetPerTrip = targetEarnings / ((targetTripsMin + targetTripsMax) / 2)
 
-    if (stats.totalTrips > 0 && stats.averageTripEarnings > 0) {
-      const currentPerTrip = stats.averageTripEarnings
+    if (filteredStats.totalTrips > 0 && filteredStats.averageTripEarnings > 0) {
+      const currentPerTrip = filteredStats.averageTripEarnings
       if (currentPerTrip >= targetPerTrip) {
         insights.push(`Your ${formatCurrency(currentPerTrip)}/trip beats the 2025 target of ${formatCurrency(targetPerTrip)}/trip for $${targetEarnings} on ${targetTripsMin}-${targetTripsMax} rides.`)
       } else {
@@ -37,11 +67,11 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
       }
     }
 
-    if (topHours.length > 0 && topHours[0].averageRate > stats.averageHourlyRate * 1.2) {
+    if (topHours.length > 0 && topHours[0].averageRate > filteredStats.averageHourlyRate * 1.2) {
       insights.push(`Your best earning hours are around ${topHours[0].hour}, averaging ${formatCurrency(topHours[0].averageRate)}/hr - 20% above your average.`)
     }
 
-    if (topDays.length > 0 && topDays[0].averageRate > stats.averageHourlyRate * 1.15) {
+    if (topDays.length > 0 && topDays[0].averageRate > filteredStats.averageHourlyRate * 1.15) {
       insights.push(`${topDays[0].day}s are your most profitable day, earning ${formatCurrency(topDays[0].averageRate)}/hr on average.`)
     }
 
@@ -53,8 +83,8 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
       }
     }
 
-    if (stats.totalTips > 0 && stats.totalEarnings > 0) {
-      const tipPercentage = (stats.totalTips / stats.totalEarnings) * 100
+    if (filteredStats.totalTips > 0 && filteredStats.totalEarnings > 0) {
+      const tipPercentage = (filteredStats.totalTips / filteredStats.totalEarnings) * 100
       if (tipPercentage > 15) {
         insights.push(`Your tips make up ${Math.round(tipPercentage)}% of earnings - you're providing excellent service!`)
       }
@@ -75,11 +105,77 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
         <div className="rounded-full bg-accent/20 p-2">
           <Lightbulb size={20} className="text-accent" weight="fill" />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">Earnings Insights</h2>
           <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-1">Data-driven recommendations to optimize your earnings</p>
         </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              size="sm"
+              variant="outline"
+              className={cn(
+                "h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 flex-shrink-0",
+                (dateRange.from || dateRange.to) && "border-primary bg-primary/5"
+              )}
+            >
+              <CalendarBlank size={16} weight="bold" />
+              <span className="hidden sm:inline">
+                {dateRange.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "MMM d")} - {format(dateRange.to, "MMM d")}
+                    </>
+                  ) : (
+                    format(dateRange.from, "MMM d, yyyy")
+                  )
+                ) : (
+                  "Date Range"
+                )}
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <CalendarComponent
+              mode="range"
+              selected={{ from: dateRange.from, to: dateRange.to }}
+              onSelect={(range) => {
+                setDateRange({ from: range?.from, to: range?.to })
+              }}
+              numberOfMonths={2}
+              disabled={(date) => date > new Date()}
+            />
+            {(dateRange.from || dateRange.to) && (
+              <div className="p-3 border-t">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleClearDateRange}
+                  className="w-full gap-1.5 h-8 text-[clamp(0.7rem,2vw,0.8rem)]"
+                >
+                  <X size={16} weight="bold" />
+                  Clear Dates
+                </Button>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
+
+      {(dateRange.from || dateRange.to) && (
+        <div className="mb-3 px-3 py-2 bg-primary/10 border border-primary/30 rounded-lg">
+          <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-primary font-medium">
+            {dateRange.from && dateRange.to ? (
+              <>Showing data from {format(dateRange.from, "MMM d, yyyy")} to {format(dateRange.to, "MMM d, yyyy")}</>
+            ) : dateRange.from ? (
+              <>Showing data from {format(dateRange.from, "MMM d, yyyy")} onwards</>
+            ) : (
+              <>Showing data until {format(dateRange.to!, "MMM d, yyyy")}</>
+            )}
+            {' '}• {filteredShifts.length} {filteredShifts.length === 1 ? 'shift' : 'shifts'}
+          </p>
+        </div>
+      )}
 
       <div className="space-y-2.5 mb-4">
         {insights.map((insight, index) => (
