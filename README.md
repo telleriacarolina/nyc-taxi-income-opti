@@ -201,6 +201,43 @@ uv build --wheel              # Build wheel only
 uv build --sdist              # Build source distribution only
 ```
 
+**Exporting Lockfiles:**
+
+Export your `uv.lock` to different formats for integration with other tools:
+
+```bash
+# Export to requirements.txt (pip-compatible)
+uv export --format requirements.txt
+uv export --format requirements.txt --output-file requirements.txt
+
+# Export to pylock.toml (PEP 751 standard format)
+uv export --format pylock.toml
+uv export --format pylock.toml --output-file pylock.toml
+
+# Export to CycloneDX SBOM (Software Bill of Materials)
+uv export --format cyclonedx1.5
+uv export --format cyclonedx1.5 --output-file sbom.json
+```
+
+**Export Formats:**
+
+- **`requirements.txt`** - Traditional pip-compatible format, widely supported
+  - Use with `uv pip install` or standard `pip`
+  - Good for legacy workflows and tool compatibility
+  
+- **`pylock.toml`** - PEP 751 standardized Python lockfile format
+  - TOML-based, machine-readable
+  - Modern standard for Python lockfiles
+  
+- **`cyclonedx1.5`** - Industry-standard SBOM format (preview)
+  - JSON-encoded CycloneDX v1.5 specification
+  - Comprehensive software component inventory
+  - Useful for security auditing, compliance, and supply chain transparency
+  - Supported by security scanning tools and SCA platforms
+  - Includes custom properties: `uv:package:marker` and `uv:workspace:path`
+
+**Note:** The `uv.lock` format is more powerful than `requirements.txt` and includes features that cannot be expressed in the traditional format. Consider using `uv.lock` directly when possible.
+
 **Important Notes:**
 - `uv run` automatically keeps lockfile and environment in sync
 - Lockfile (`uv.lock`) should be committed to version control

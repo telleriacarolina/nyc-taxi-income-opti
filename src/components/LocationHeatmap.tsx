@@ -70,11 +70,11 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     if (!container) return
 
     const width = container.clientWidth
-    const height = Math.max(400, locationData.length * 50)
+    const height = Math.max(450, Math.min(locationData.length * 60, 800))
 
     svg.attr('width', width).attr('height', height)
 
-    const margin = { top: 20, right: 20, bottom: 40, left: 150 }
+    const margin = { top: 20, right: 80, bottom: 40, left: 140 }
     const innerWidth = width - margin.left - margin.right
     const innerHeight = height - margin.top - margin.bottom
 
@@ -82,68 +82,201 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
       .attr('transform', `translate(${margin.left},${margin.top})`)
 
     const maxEarnings = d3.max(locationData, d => d.earnings) || 1
+    const minEarnings = d3.min(locationData, d => d.earnings) || 0
     
     const colorScale = d3.scaleSequential()
-      .domain([0, maxEarnings])
-      .interpolator(d3.interpolateRgb('#f0f4f8', '#2563eb'))
+      .domain([minEarnings, maxEarnings])
+      .interpolator(t => {
+        if (t < 0.2) return d3.interpolateRgb('#f0f4f8', '#bfdbfe')(t * 5)
+        if (t < 0.5) return d3.interpolateRgb('#bfdbfe', '#60a5fa')(t * 2)
+        if (t < 0.8) return d3.interpolateRgb('#60a5fa', '#3b82f6')(t * 1.5)
+        return d3.interpolateRgb('#3b82f6', '#1e40af')(t * 1.2)
+      })
 
     const yScale = d3.scaleBand()
       .domain(locationData.map(d => d.location))
       .range([0, innerHeight])
-      .padding(0.2)
+      .padding(0.15)
 
     const xScale = d3.scaleLinear()
-      .domain([0, maxEarnings])
+      .domain([0, maxEarnings * 1.1])
       .range([0, innerWidth])
 
-    g.selectAll('rect')
+    const barHeight = Math.min(yScale.bandwidth(), 45)
+
+    const defs = svg.append('defs')
+    const gradient = defs.append('linearGradient')
+      .attr('id', 'barGradient')
+      .attr('x1', '0%')
+      .attr('x2', '100%')
+    
+    gradient.append('stop')
+      .attr('offset', '0%')
+      .attr('stop-opacity', 0.9)
+    
+    gradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-opacity', 1)
+
+    const bars = g.selectAll('.bar-group')
       .data(locationData)
-      .join('rect')
-      .attr('y', d => yScale(d.location) || 0)
-      .attr('height', yScale.bandwidth())
-      .attr('x', 0)
+      .join('g')
+      .attr('class', 'bar-group')
+      .attr('transform', d => `translate(0, ${yScale(d.location) || 0})`)
+
+    bars.append('rect')
+      .attr('class', 'bar-shadow')
+      .attr('x', 2)
+      .attr('y', 2)
+      .attr('height', barHeight)
+      .attr('width', 0)
+      .attr('fill', '#000')
+      .attr('opacity', 0.1)
+      .attr('rx', 6)
+      .transition()
+      .duration(800)
+      .delay((d, i) => i * 50)
       .attr('width', d => xScale(d.earnings))
+
+    bars.append('rect')
+      .attr('class', 'bar-main')
+      .attr('y', 0)
+      .attr('height', barHeight)
+      .attr('x', 0)
+      .attr('width', 0)
       .attr('fill', d => colorScale(d.earnings))
-      .attr('rx', 4)
+      .attr('rx', 6)
       .style('cursor', 'pointer')
+      .style('filter', 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))')
+      .transition()
+      .duration(800)
+      .delay((d, i) => i * 50)
+      .attr('width', d => xScale(d.earnings))
+
+    bars.selectAll('.bar-main')
       .on('mouseenter', function(event, d) {
         d3.select(this)
           .transition()
-          .duration(200)
-          .attr('opacity', 0.8)
+          .duration(150)
+          .style('filter', 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))')
+          .attr('transform', 'translateY(-2px)')
         setSelectedLocation(d)
       })
       .on('mouseleave', function() {
         d3.select(this)
           .transition()
-          .duration(200)
-          .attr('opacity', 1)
+          .duration(150)
+          .style('filter', 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))')
+          .attr('transform', 'translateY(0)')
       })
+
+    bars.append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', barHeight / 2)
+      .attr('y2', barHeight / 2)
+      .attr('stroke', d => {
+        const baseColor = colorScale(d.earnings)
+        return d3.color(baseColor)?.darker(0.8).toString() || baseColor
+      })
+      .attr('stroke-width', 2)
+      .attr('opacity', 0.3)
+      .transition()
+      .duration(800)
+      .delay((d, i) => i * 50)
+      .attr('x2', d => xScale(d.earnings))
 
     g.selectAll('.label')
       .data(locationData)
       .join('text')
       .attr('class', 'label')
       .attr('x', -10)
-      .attr('y', d => (yScale(d.location) || 0) + yScale.bandwidth() / 2)
+      .attr('y', d => (yScale(d.location) || 0) + barHeight / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'end')
-      .style('font-size', '12px')
-      .style('fill', '#64748b')
-      .style('font-weight', '500')
+      .style('font-size', '13px')
+      .style('fill', '#475569')
+      .style('font-weight', '600')
+      .style('opacity', 0)
       .text(d => d.location)
+      .transition()
+      .duration(600)
+      .delay((d, i) => i * 50)
+      .style('opacity', 1)
 
     g.selectAll('.value')
       .data(locationData)
       .join('text')
       .attr('class', 'value')
-      .attr('x', d => xScale(d.earnings) + 8)
-      .attr('y', d => (yScale(d.location) || 0) + yScale.bandwidth() / 2)
+      .attr('x', d => xScale(d.earnings) + 10)
+      .attr('y', d => (yScale(d.location) || 0) + barHeight / 2)
       .attr('dy', '0.35em')
-      .style('font-size', '12px')
+      .style('font-size', '14px')
       .style('fill', '#0f172a')
-      .style('font-weight', '600')
+      .style('font-weight', '700')
+      .style('opacity', 0)
       .text(d => `$${d.earnings.toFixed(0)}`)
+      .transition()
+      .duration(600)
+      .delay((d, i) => i * 50)
+      .style('opacity', 1)
+
+    g.selectAll('.hourly-rate')
+      .data(locationData)
+      .join('text')
+      .attr('class', 'hourly-rate')
+      .attr('x', d => xScale(d.earnings) + 10)
+      .attr('y', d => (yScale(d.location) || 0) + barHeight / 2 + 14)
+      .style('font-size', '10px')
+      .style('fill', '#64748b')
+      .style('font-weight', '500')
+      .style('opacity', 0)
+      .text(d => `$${d.avgHourly.toFixed(0)}/hr`)
+      .transition()
+      .duration(600)
+      .delay((d, i) => i * 50)
+      .style('opacity', 1)
+
+    const legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${margin.left}, ${height - 25})`)
+
+    const legendWidth = 200
+    const legendHeight = 10
+    const legendSteps = 20
+
+    for (let i = 0; i < legendSteps; i++) {
+      legend.append('rect')
+        .attr('x', i * (legendWidth / legendSteps))
+        .attr('width', legendWidth / legendSteps)
+        .attr('height', legendHeight)
+        .attr('fill', colorScale(minEarnings + (i / legendSteps) * (maxEarnings - minEarnings)))
+        .attr('rx', i === 0 ? 2 : i === legendSteps - 1 ? 2 : 0)
+    }
+
+    legend.append('text')
+      .attr('x', 0)
+      .attr('y', legendHeight + 14)
+      .style('font-size', '10px')
+      .style('fill', '#64748b')
+      .text(`$${minEarnings.toFixed(0)}`)
+
+    legend.append('text')
+      .attr('x', legendWidth)
+      .attr('y', legendHeight + 14)
+      .attr('text-anchor', 'end')
+      .style('font-size', '10px')
+      .style('fill', '#64748b')
+      .text(`$${maxEarnings.toFixed(0)}`)
+
+    legend.append('text')
+      .attr('x', legendWidth / 2)
+      .attr('y', -5)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '11px')
+      .style('fill', '#475569')
+      .style('font-weight', '600')
+      .text('Earnings Intensity')
 
   }, [locationData])
 
@@ -154,50 +287,52 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   const topLocation = locationData[0]
   const totalEarnings = locationData.reduce((sum, d) => sum + d.earnings, 0)
 
+  const avgHourlyAcrossAll = locationData.reduce((sum, d) => sum + d.avgHourly, 0) / locationData.length
+
   return (
-    <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30">
+    <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/5 border-primary/30 shadow-lg">
       <div className="flex items-start gap-3 mb-4">
-        <div className="rounded-full bg-primary/20 p-2">
-          <MapPin size={20} className="text-primary" weight="fill" />
+        <div className="rounded-full bg-gradient-to-br from-primary to-primary/80 p-2.5 shadow-md">
+          <MapPin size={22} className="text-primary-foreground" weight="fill" />
         </div>
         <div className="flex-1">
-          <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">
-            Earnings by Start Location
+          <h2 className="text-[clamp(0.95rem,2.8vw,1.2rem)] font-bold mb-0.5 line-clamp-1 tracking-tight">
+            Neighborhood Earnings Map
           </h2>
           <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-1">
-            Which pickup areas generate the most income
+            Identify high-earning pickup zones across NYC
           </p>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-3 mb-4">
-        <div className="bg-card rounded-lg p-3 border">
+      <div className="grid md:grid-cols-4 gap-3 mb-4">
+        <div className="bg-gradient-to-br from-success/20 to-success/10 rounded-lg p-3 border border-success/30">
           <div className="flex items-center gap-2 mb-1">
             <TrendUp size={16} className="text-success flex-shrink-0" weight="fill" />
-            <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground uppercase tracking-wide">
-              Top Location
+            <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-success/90 uppercase tracking-wide font-semibold">
+              Top Zone
             </div>
           </div>
-          <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] line-clamp-1">
+          <div className="font-bold text-[clamp(1rem,3vw,1.25rem)] line-clamp-1 text-success">
             {topLocation.location}
           </div>
-          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">
-            ${topLocation.earnings.toFixed(0)} total earnings
+          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-success/80 mt-0.5">
+            ${topLocation.earnings.toFixed(0)} earned
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-3 border">
+        <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg p-3 border border-primary/30">
           <div className="flex items-center gap-2 mb-1">
             <CurrencyDollar size={16} className="text-primary flex-shrink-0" weight="fill" />
-            <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground uppercase tracking-wide">
-              Avg Hourly
+            <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-primary/90 uppercase tracking-wide font-semibold">
+              Best Rate
             </div>
           </div>
-          <div className="font-bold text-[clamp(1rem,3vw,1.2rem)]">
+          <div className="font-bold text-[clamp(1rem,3vw,1.25rem)] text-primary">
             ${topLocation.avgHourly.toFixed(2)}/hr
           </div>
-          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">
-            From {topLocation.location}
+          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-primary/80 mt-0.5 line-clamp-1">
+            {topLocation.location}
           </div>
         </div>
 
@@ -205,53 +340,105 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
           <div className="flex items-center gap-2 mb-1">
             <MapPin size={16} className="text-accent flex-shrink-0" weight="fill" />
             <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground uppercase tracking-wide">
-              Locations
+              Zones
             </div>
           </div>
-          <div className="font-bold text-[clamp(1rem,3vw,1.2rem)]">
+          <div className="font-bold text-[clamp(1rem,3vw,1.25rem)]">
             {locationData.length}
           </div>
           <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">
             Areas tracked
           </div>
         </div>
+
+        <div className="bg-card rounded-lg p-3 border">
+          <div className="flex items-center gap-2 mb-1">
+            <CurrencyDollar size={16} className="text-muted-foreground flex-shrink-0" weight="fill" />
+            <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground uppercase tracking-wide">
+              Avg Rate
+            </div>
+          </div>
+          <div className="font-bold text-[clamp(1rem,3vw,1.25rem)]">
+            ${avgHourlyAcrossAll.toFixed(2)}/hr
+          </div>
+          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">
+            All zones
+          </div>
+        </div>
       </div>
 
-      <div className="bg-card rounded-lg p-4 border mb-4">
+      <div className="bg-card rounded-lg p-4 border shadow-sm mb-4">
         <svg ref={svgRef} className="w-full" />
       </div>
 
       {selectedLocation && (
-        <div className="bg-accent/10 border border-accent/30 rounded-lg p-3">
-          <div className="flex items-start gap-2 mb-2">
-            <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" weight="fill" />
+        <div className="bg-gradient-to-br from-accent/15 to-accent/5 border-2 border-accent/40 rounded-lg p-4 shadow-md">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="rounded-full bg-accent/30 p-2">
+              <MapPin size={20} className="text-accent flex-shrink-0" weight="fill" />
+            </div>
             <div className="flex-1">
-              <div className="font-semibold text-[clamp(0.85rem,2.6vw,1rem)] mb-1 line-clamp-1">
+              <div className="font-bold text-[clamp(0.9rem,2.8vw,1.1rem)] mb-2 line-clamp-1">
                 {selectedLocation.location}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[clamp(0.7rem,2.2vw,0.8rem)]">
-                <div>
-                  <span className="text-muted-foreground">Earnings: </span>
-                  <span className="font-semibold">${selectedLocation.earnings.toFixed(0)}</span>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-card/80 rounded-md p-2 border">
+                  <div className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground mb-0.5 uppercase tracking-wide">
+                    Total Earned
+                  </div>
+                  <div className="font-bold text-[clamp(0.95rem,3vw,1.15rem)] text-success">
+                    ${selectedLocation.earnings.toFixed(0)}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Hourly: </span>
-                  <span className="font-semibold">${selectedLocation.avgHourly.toFixed(2)}</span>
+                
+                <div className="bg-card/80 rounded-md p-2 border">
+                  <div className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground mb-0.5 uppercase tracking-wide">
+                    Hourly Rate
+                  </div>
+                  <div className="font-bold text-[clamp(0.95rem,3vw,1.15rem)] text-primary">
+                    ${selectedLocation.avgHourly.toFixed(2)}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Trips: </span>
-                  <span className="font-semibold">{selectedLocation.trips}</span>
+                
+                <div className="bg-card/80 rounded-md p-2 border">
+                  <div className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground mb-0.5 uppercase tracking-wide">
+                    Total Trips
+                  </div>
+                  <div className="font-bold text-[clamp(0.95rem,3vw,1.15rem)]">
+                    {selectedLocation.trips}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Shifts: </span>
-                  <span className="font-semibold">{selectedLocation.count}</span>
+                
+                <div className="bg-card/80 rounded-md p-2 border">
+                  <div className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground mb-0.5 uppercase tracking-wide">
+                    Shifts
+                  </div>
+                  <div className="font-bold text-[clamp(0.95rem,3vw,1.15rem)]">
+                    {selectedLocation.count}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground">
-            {((selectedLocation.earnings / totalEarnings) * 100).toFixed(1)}% of total earnings from this location
+          
+          <div className="flex items-center justify-between pt-3 border-t border-accent/20">
+            <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground">
+              <span className="font-semibold text-foreground">{((selectedLocation.earnings / totalEarnings) * 100).toFixed(1)}%</span> of total earnings
+            </div>
+            <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground">
+              <span className="font-semibold text-foreground">{(selectedLocation.hours).toFixed(1)} hrs</span> worked here
+            </div>
           </div>
+          
+          {selectedLocation.avgHourly > topLocation.avgHourly * 0.8 && (
+            <div className="mt-3 pt-3 border-t border-accent/20">
+              <div className="flex items-start gap-2 text-[clamp(0.7rem,2.2vw,0.8rem)] text-success">
+                <TrendUp size={16} className="flex-shrink-0 mt-0.5" weight="fill" />
+                <span className="font-medium">High-earning zone • Consider prioritizing this area during peak hours</span>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </Card>
