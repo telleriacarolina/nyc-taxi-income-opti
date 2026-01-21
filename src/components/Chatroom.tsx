@@ -771,7 +771,7 @@ export function Chatroom() {
                   </div>
                 ) : (
                   (messages || []).map((message) => {
-                    const isCurrentUser = currentUser && message.senderId === currentUser.id
+                    const replyTo = message.replyToId ? findMessageById(message.replyToId, false) : null
                     const replyTo = message.replyToId ? findMessageById(message.replyToId, false) : null
                     
                     return (
@@ -791,17 +791,17 @@ export function Chatroom() {
                         playVoiceMessage={playVoiceMessage}
                         addReaction={addReaction}
                         onEdit={editMessage}
-                        onDelete={deleteMessage}
+                        onReply={handleReply}
                         onReply={() => handleReply(message)}
                         isDM={false}
                         emojis={EMOJIS}
-                        isEdited={message.isEdited}
                         replyToId={message.replyToId}
                         replyToMessage={replyTo ? {
                           senderName: replyTo.senderName,
                           text: replyTo.text,
                           attachments: replyTo.attachments
                         } : null}
+                        replyCount={getReplyCount(message.id, false)}
                         replyCount={getReplyCount(message.id, false)}
                       />
                     )
