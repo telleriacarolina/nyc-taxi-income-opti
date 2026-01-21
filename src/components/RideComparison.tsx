@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Ride } from '@/lib/ride-types'
 import { calculateRideStats, getPlatformRideStats, formatDistance, formatDuration } from '@/lib/ride-utils'
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { RideDialog } from './RideDialog'
 import { RideCard } from './RideCard'
+import { RideFilters, RideFilterOptions } from './RideFilters'
 import { 
   Plus, 
   MapTrifold, 
@@ -25,9 +26,45 @@ export function RideComparison() {
   const [rides, setRides] = useKV<Ride[]>('driver-rides', [])
   const [isRideDialogOpen, setIsRideDialogOpen] = useState(false)
   const [editingRide, setEditingRide] = useState<Ride | null>(null)
+  const [filters, setFilters] = useState<RideFilterOptions>({
+    platforms: [],
+    dateFrom: '',
+    dateTo: '',
+    datePreset: 'all'
+  })
 
-  const stats = calculateRideStats(rides || [])
-  const platformStats = getPlatformRideStats(rides || [])
+  const availablePlatforms = useMemo(() => {
+    const platforms = new Set((rides || []).map(r => r.platform))
+    return Array.from(platforms).sort()
+  }, [rides])
+
+  const filteredRides = useMemo(() => {
+    let filtered = rides || []
+
+    if (filters.platforms.length > 0) {
+      filtered = filtered.filter(ride => filters.platforms.includes(ride.platform))
+    }
+
+    if (filters.dateFrom) {
+      filtered = filtered.filter(ride => ride.date >= filters.dateFrom)
+    }
+
+    if (filters.dateTo) {
+      filtered = filtered.filter(ride => ride.date <= filters.dateTo)
+    }
+
+    return filtered
+  }, [rides, filters])
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0
+    if (filters.platforms.length > 0) count++
+    if (filters.dateFrom || filters.dateTo) count++
+    return count
+  }, [filters])
+
+  const stats = calculateRideStats(filteredRides)
+  const platformStats = getPlatformRideStats(filteredRides)
 
   const handleSaveRide = (ride: Ride) => {
     setRides((currentRides) => {
@@ -55,7 +92,7 @@ export function RideComparison() {
     setIsRideDialogOpen(true)
   }
 
-  const sortedRides = [...(rides || [])].sort((a, b) => {
+  const sortedRides = [...filteredRides].sort((a, b) => {
     const dateTimeA = new Date(a.date + 'T' + a.time).getTime()
     const dateTimeB = new Date(b.date + 'T' + b.time).getTime()
     return dateTimeB - dateTimeA
@@ -79,6 +116,15 @@ export function RideComparison() {
       </div>
 
       {(rides || []).length > 0 && (
+        <RideFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          availablePlatforms={availablePlatforms}
+          activeFiltersCount={activeFiltersCount}
+        />
+      )}
+
+      {filteredRides.length > 0 && (
         <>
           <div className="grid gap-4 md:grid-cols-4 mb-6">
             <Card className="p-5">
@@ -224,6 +270,34 @@ export function RideComparison() {
               </div>
             </Card>
           )}
+
+          {filteredRides.length !== (rides || []).length && (
+            <Card className="p-4 mb-6 bg-accent/10 border-accent/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge variant="secondary" className="font-mono text-sm">
+                    {filteredRides.length} of {(rides || []).length} rides
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    Showing filtered results
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setFilters({
+                    platforms: [],
+                    dateFrom: '',
+                    dateTo: '',
+                    datePreset: 'all'
+                  })}
+                  className="text-accent hover:text-accent/90"
+                >
+                  View All Rides
+                </Button>
+              </div>
+            </Card>
+          )}
         </>
       )}
 
@@ -253,6 +327,27 @@ export function RideComparison() {
           >
             <Plus size={20} weight="bold" className="mr-2" />
             Log Your First Ride
+          </Button>
+        </Card>
+      ) : filteredRides.length === 0 ? (
+        <Card className="p-12 text-center border-2 border-dashed">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/50 mb-4">
+            <MapTrifold size={32} className="text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">No Rides Match Your Filters</h3>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            Try adjusting your date range or platform filters to see more results
+          </p>
+          <Button 
+            variant="outline"
+            onClick={() => setFilters({
+              platforms: [],
+              dateFrom: '',
+              dateTo: '',
+              datePreset: 'all'
+            })}
+          >
+            Clear Filters
           </Button>
         </Card>
       ) : (
