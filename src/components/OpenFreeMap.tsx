@@ -10,12 +10,13 @@
  * to display NYC taxi ride locations without API keys or rate limits.
  * 
  * Features:
- * - Liberty style tiles from OpenFreeMap CDN
+ * - Multiple style options: Liberty (default), Bright, and Positron
  * - Custom markers for earnings visualization
  * - Interactive popups with ride details
  * - Marker clustering for large datasets (improves performance with 100+ markers)
  * - Color-coded cluster sizes (small: 1-20, medium: 21-100, large: 100+)
  * - Centered on NYC by default
+ * - Dynamic style switching without remounting the map
  */
 
 import { useEffect, useRef } from 'react'
@@ -24,6 +25,8 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+
+export type MapStyle = 'liberty' | 'bright' | 'positron'
 
 interface OpenFreeMapProps {
   center?: [number, number]
@@ -37,6 +40,7 @@ interface OpenFreeMapProps {
   onMarkerClick?: (label: string) => void
   enableClustering?: boolean
   clusterRadius?: number
+  style?: MapStyle
 }
 
 export function OpenFreeMap({
@@ -46,11 +50,13 @@ export function OpenFreeMap({
   className = '',
   onMarkerClick,
   enableClustering = true,
-  clusterRadius = 80
+  clusterRadius = 80,
+  style = 'liberty'
 }: OpenFreeMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersLayerRef = useRef<L.LayerGroup | L.MarkerClusterGroup | null>(null)
+  const tileLayerRef = useRef<L.TileLayer | null>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -61,7 +67,7 @@ export function OpenFreeMap({
       zoomControl: true
     })
 
-    L.tileLayer('https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png', {
+    tileLayerRef.current = L.tileLayer(`https://tiles.openfreemap.org/styles/${style}/{z}/{x}/{y}.png`, {
       maxZoom: 19,
       attribution: '© OpenFreeMap contributors'
     }).addTo(map)
@@ -108,6 +114,12 @@ export function OpenFreeMap({
     if (!mapInstanceRef.current) return
     mapInstanceRef.current.setView(center, zoom)
   }, [center, zoom])
+
+  useEffect(() => {
+    if (!mapInstanceRef.current || !tileLayerRef.current) return
+
+    tileLayerRef.current.setUrl(`https://tiles.openfreemap.org/styles/${style}/{z}/{x}/{y}.png`)
+  }, [style])
 
   useEffect(() => {
     if (!markersLayerRef.current || !mapInstanceRef.current) return

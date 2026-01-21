@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe } from '@phosphor-icons/react'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe, Palette } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
 import { toast } from 'sonner'
 import * as d3 from 'd3'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { OpenFreeMap } from '@/components/OpenFreeMap'
+import { OpenFreeMap, MapStyle } from '@/components/OpenFreeMap'
+import { useKV } from '@github/spark/hooks'
 
 interface LocationData {
   location: string
@@ -75,6 +76,7 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     to: undefined
   })
   const [viewMode, setViewMode] = useState<'chart' | 'map'>('chart')
+  const [mapStyle, setMapStyle] = useKV<MapStyle>('map-style', 'liberty')
 
   const handleClearDateRange = () => {
     setDateRange({ from: undefined, to: undefined })
@@ -605,12 +607,44 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
         </TabsContent>
 
         <TabsContent value="map" className="space-y-4">
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="text-[clamp(0.75rem,2.2vw,0.85rem)] text-muted-foreground font-medium">
+              Map Style
+            </div>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant={mapStyle === 'liberty' ? 'default' : 'outline'}
+                onClick={() => setMapStyle('liberty')}
+                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+              >
+                Liberty
+              </Button>
+              <Button
+                size="sm"
+                variant={mapStyle === 'bright' ? 'default' : 'outline'}
+                onClick={() => setMapStyle('bright')}
+                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+              >
+                Bright
+              </Button>
+              <Button
+                size="sm"
+                variant={mapStyle === 'positron' ? 'default' : 'outline'}
+                onClick={() => setMapStyle('positron')}
+                className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)]"
+              >
+                Positron
+              </Button>
+            </div>
+          </div>
           <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
             <OpenFreeMap
               center={[40.7128, -74.0060]}
               zoom={11}
               markers={mapMarkers}
               className="rounded-lg"
+              style={mapStyle}
               onMarkerClick={(label) => {
                 const location = locationData.find(loc => loc.location === label)
                 if (location) {
