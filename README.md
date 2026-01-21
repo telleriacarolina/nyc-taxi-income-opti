@@ -8,10 +8,136 @@ This template is your blank canvas. It comes with a minimal setup to help you ge
 - Pre-configured for local development
 - Ready to scale with your ideas
 - Three-layer typography system for responsive, elegant text handling
+- **uv** - Modern Python package manager pre-installed
   
 🧠 What Can You Do?
 
 Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
+
+## 🐍 Python Development with uv
+
+This template includes **uv** - an extremely fast Python package manager and project management tool.
+
+### What is uv?
+
+uv is a modern Python toolchain written in Rust that provides:
+- ⚡ **10-100x faster** than pip for package installation
+- 🔧 Complete Python version management
+- 📦 Project and dependency management
+- 🛠️ Tool execution without installation
+- 🔄 Drop-in replacement for pip, pip-tools, virtualenv, and more
+
+### Installation
+
+uv is pre-installed in this dev container. To install on your local system:
+
+**macOS and Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows:**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**Alternative methods:**
+- Homebrew: `brew install uv`
+- pip: `pipx install uv` or `pip install uv`
+- WinGet: `winget install --id=astral-sh.uv -e`
+
+### Quick Start
+
+**Python Version Management:**
+```bash
+uv python install              # Install latest Python
+uv python install 3.12         # Install specific version
+uv python list                 # View available versions
+uv python install --default    # Install with python/python3 commands
+```
+
+**Running Scripts:**
+```bash
+uv run script.py               # Run a Python script
+uv add --script requests       # Add dependency to a script
+uvx ruff check .               # Run a tool without installing
+```
+
+**Project Management:**
+```bash
+uv init myproject              # Create new project
+uv add requests                # Add dependency
+uv sync                        # Sync dependencies
+uv lock                        # Create lockfile
+uv build                       # Build distribution
+```
+
+**Virtual Environments:**
+```bash
+uv venv                        # Create virtual environment
+uv pip install package         # Install packages (pip-compatible)
+uv pip freeze                  # List installed packages
+```
+
+**Tools:**
+```bash
+uvx black .                    # Run black formatter
+uvx ruff check .               # Run ruff linter
+uv tool install pytest         # Install tool globally
+uv tool list                   # List installed tools
+```
+
+### Key Features
+
+#### 🐍 Python Versions
+- `uv python install` - Install Python versions
+- `uv python list` - View available Python versions
+- `uv python find` - Find an installed Python version
+- `uv python pin` - Pin project to specific Python version
+- `uv python uninstall` - Uninstall a Python version
+
+#### 📜 Scripts
+- `uv run` - Run standalone Python scripts
+- `uv add --script` - Add script dependencies
+- `uv remove --script` - Remove script dependencies
+
+#### 📦 Projects
+- `uv init` - Create new Python project
+- `uv add` / `uv remove` - Manage dependencies
+- `uv sync` / `uv lock` - Handle dependencies
+- `uv tree` - View dependency tree
+- `uv build` / `uv publish` - Build and publish packages
+
+#### 🛠️ Tools
+- `uvx <tool>` - Run tools in temporary environment
+- `uv tool install` / `uninstall` / `list` - Manage global tools
+- `uv tool update-shell` - Update shell for tool executables
+
+#### 🔄 pip Interface
+- `uv venv` - Create virtual environments
+- `uv pip install` / `uninstall` / `list` / `freeze` - Package management
+- `uv pip compile` / `sync` - Lock dependencies
+- `uv pip tree` - View dependency tree
+
+#### 🧹 Utilities
+- `uv cache clean` / `prune` / `dir` - Manage cache
+- `uv python dir` / `uv tool dir` - Show directories
+- `uv self update` - Update uv itself
+
+### Installed Python
+
+This dev container has **Python 3.14.2** pre-installed via uv with the following executables:
+- `python` - Generic Python executable
+- `python3` - Python 3 executable
+- `python3.14` - Versioned executable
+
+### Learn More
+
+- [uv Documentation](https://docs.astral.sh/uv/)
+- [Installing Python Guide](https://docs.astral.sh/uv/guides/install-python/)
+- [Projects Guide](https://docs.astral.sh/uv/guides/projects/)
+- [Running Scripts Guide](https://docs.astral.sh/uv/guides/scripts/)
+- [Tools Guide](https://docs.astral.sh/uv/guides/tools/)
 
 
 

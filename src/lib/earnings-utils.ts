@@ -142,3 +142,32 @@ export function formatHours(hours: number): string {
   const m = Math.round((hours - h) * 60)
   return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
+
+export interface DailyEarnings {
+  date: string
+  earnings: number
+  trips: number
+  hours: number
+}
+
+export function getDailyEarnings(shifts: Shift[]): DailyEarnings[] {
+  const dailyMap: Record<string, DailyEarnings> = {}
+
+  shifts.forEach(shift => {
+    if (!dailyMap[shift.date]) {
+      dailyMap[shift.date] = {
+        date: shift.date,
+        earnings: 0,
+        trips: 0,
+        hours: 0
+      }
+    }
+    dailyMap[shift.date].earnings += shift.earnings
+    dailyMap[shift.date].trips += shift.trips
+    dailyMap[shift.date].hours += shift.hours
+  })
+
+  return Object.values(dailyMap).sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+}

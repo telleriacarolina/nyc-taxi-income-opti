@@ -89,6 +89,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: View opens → Cards display metrics → 2025 target card shows $35/trip goal, current average per trip, and projected daily earnings → Updates in real-time as shifts are added → Visual indicators show if on-target or gap to close
 - **Success criteria**: Driver can see total earnings, hourly rate, trip count, tips at a glance, and immediately understand how their performance compares to 2025 realistic targets
 
+### Daily Goal Tracker
+- **Functionality**: Track individual daily earnings progress toward customizable goal range ($500-$1000 default) with visual progress bars and achievement statistics
+- **Purpose**: Help drivers monitor their daily performance against personal income targets and identify which days are meeting goals
+- **Trigger**: Automatically displayed when shifts are logged on Earnings Optimizer tab
+- **Progression**: View opens → System aggregates shifts by day → Displays last 7 days with earnings, trips, hours → Shows progress bar with min/max goal markers → Color-codes days (green for max met, blue for min met, yellow/orange for under goal) → Summary stats show days at min goal, days at max goal, average daily earnings
+- **Success criteria**: Driver can instantly see which days met their $500-$1000 target range, track overall progress, and understand their daily earning patterns at a glance
+
 ### Peak Performance Insights
 - **Functionality**: Analyze shift data to identify best earning hours, days, and platforms with personalized recommendations
 - **Purpose**: Guide drivers to work during their most profitable times and on their best-performing platforms

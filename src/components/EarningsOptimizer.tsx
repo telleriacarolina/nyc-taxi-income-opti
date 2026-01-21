@@ -1,24 +1,31 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Shift } from '@/lib/earnings-types'
-import { calculateStats, formatCurrency, formatHours, getPlatformStats } from '@/lib/earnings-utils'
+import { calculateStats, formatCurrency, formatHours, getPlatformStats, getDailyEarnings } from '@/lib/earnings-utils'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb } from '@phosphor-icons/react'
+import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb, Target } from '@phosphor-icons/react'
 import { ShiftDialog } from './ShiftDialog'
 import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { AIInsights } from './AIInsights'
 import { VeteranInsights } from './VeteranInsights'
+import { Progress } from '@/components/ui/progress'
 
 export function EarningsOptimizer() {
   const [shifts, setShifts] = useKV<Shift[]>('driver-shifts', [])
+  const [dailyGoalMin] = useKV<number>('daily-goal-min', 500)
+  const [dailyGoalMax] = useKV<number>('daily-goal-max', 1000)
   const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false)
   const [editingShift, setEditingShift] = useState<Shift | null>(null)
 
   const stats = calculateStats(shifts || [])
   const platformStats = getPlatformStats(shifts || [])
+  const dailyEarnings = getDailyEarnings(shifts || [])
+  
+  const goalMin = dailyGoalMin ?? 500
+  const goalMax = dailyGoalMax ?? 1000
 
   const handleSaveShift = (shift: Shift) => {
     setShifts((currentShifts) => {
@@ -97,6 +104,98 @@ export function EarningsOptimizer() {
           </div>
         </Card>
       </div>
+
+      {dailyEarnings.length > 0 && (
+        <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="rounded-full bg-primary/20 p-2">
+              <Target size={20} className="text-primary" weight="fill" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">Daily Goal Tracker</h2>
+              <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-1">
+                Target: {formatCurrency(goalMin)} - {formatCurrency(goalMax)} per day
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {dailyEarnings.slice(0, 7).map((day) => {
+              const minProgress = Math.min((day.earnings / goalMin) * 100, 100)
+              const maxProgress = Math.min((day.earnings / goalMax) * 100, 100)
+              const isMinMet = day.earnings >= goalMin
+              const isMaxMet = day.earnings >= goalMax
+              
+              return (
+                <div key={day.date} className="bg-card rounded-lg p-3 border">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-medium text-[clamp(0.8rem,2.5vw,0.9rem)] line-clamp-1">
+                        {new Date(day.date).toLocaleDateString('en-US', { 
+                          weekday: 'short', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}
+                      </div>
+                      <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                        {day.trips} trips · {formatHours(day.hours)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`font-bold text-[clamp(1rem,3vw,1.25rem)] ${
+                        isMaxMet ? 'text-success' : isMinMet ? 'text-primary' : 'text-foreground'
+                      }`}>
+                        {formatCurrency(day.earnings)}
+                      </div>
+                      <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                        {isMaxMet ? '🎯 Max goal!' : isMinMet ? '✓ Min goal' : `${formatCurrency(goalMin - day.earnings)} to min`}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={`absolute h-full transition-all duration-300 ${
+                        isMaxMet ? 'bg-success' : isMinMet ? 'bg-primary' : 'bg-warning'
+                      }`}
+                      style={{ width: `${maxProgress}%` }}
+                    />
+                    {!isMaxMet && (
+                      <div 
+                        className="absolute h-full border-r-2 border-primary/50"
+                        style={{ left: `${(goalMin / goalMax) * 100}%` }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {dailyEarnings.length > 0 && (
+            <div className="mt-3 pt-3 border-t grid grid-cols-3 gap-2">
+              <div className="text-center">
+                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Min</div>
+                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-primary">
+                  {dailyEarnings.filter(d => d.earnings >= goalMin).length}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Max</div>
+                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-success">
+                  {dailyEarnings.filter(d => d.earnings >= goalMax).length}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Avg Daily</div>
+                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)]">
+                  {formatCurrency(dailyEarnings.reduce((sum, d) => sum + d.earnings, 0) / dailyEarnings.length)}
+                </div>
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
 
       {(shifts || []).length > 0 && (
         <Card className="p-4 mb-4 bg-gradient-to-br from-success/10 to-success/5 border-success/30">
