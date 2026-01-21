@@ -15,7 +15,10 @@ interface ShiftCardProps {
 const platformColors = {
   uber: 'bg-black text-white',
   lyft: 'bg-[#FF00BF] text-white',
-  via: 'bg-[#00D0A0] text-white',
+  via: 'bg-[#00D4AA] text-white',
+  curb: 'bg-[#00B14F] text-white',
+  revel: 'bg-[#5B7FFF] text-white',
+  juno: 'bg-[#6C5CE7] text-white',
   other: 'bg-muted text-muted-foreground'
 }
 

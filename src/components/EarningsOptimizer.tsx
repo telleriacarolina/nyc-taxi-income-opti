@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Shift } from '@/lib/earnings-types'
-import { calculateStats, formatCurrency, formatHours } from '@/lib/earnings-utils'
+import { calculateStats, formatCurrency, formatHours, getPlatformStats } from '@/lib/earnings-utils'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb } from '@phosphor-icons/react'
 import { ShiftDialog } from './ShiftDialog'
 import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
+import { PlatformComparison } from './PlatformComparison'
 
 export function EarningsOptimizer() {
   const [shifts, setShifts] = useKV<Shift[]>('driver-shifts', [])
@@ -15,6 +16,7 @@ export function EarningsOptimizer() {
   const [editingShift, setEditingShift] = useState<Shift | null>(null)
 
   const stats = calculateStats(shifts || [])
+  const platformStats = getPlatformStats(shifts || [])
 
   const handleSaveShift = (shift: Shift) => {
     setShifts((currentShifts) => {
@@ -96,6 +98,10 @@ export function EarningsOptimizer() {
 
       {(shifts || []).length >= 3 && (
         <EarningsInsights shifts={shifts || []} stats={stats} />
+      )}
+
+      {platformStats.length > 0 && (
+        <PlatformComparison platformStats={platformStats} />
       )}
 
       <div className="flex items-center justify-between mb-4">

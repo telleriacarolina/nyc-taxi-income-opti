@@ -47,6 +47,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Click add → Modal opens → Enter shift details (platform, time, earnings, trips, expenses) → Save → Shift added to history with calculated hourly rate
 - **Success criteria**: Driver can log a complete shift in under 60 seconds
 
+### Platform-Specific Earnings Tracking
+- **Functionality**: Track and compare earnings performance across all rideshare platforms (Uber, Lyft, Via, Curb, Revel, Juno, Other)
+- **Purpose**: Identify which platforms are most profitable for individual driver patterns and optimize multi-apping strategy
+- **Trigger**: Automatically generated after logging shifts on different platforms
+- **Progression**: Log shifts on multiple platforms → System aggregates earnings by platform → Displays comparison chart showing total earnings, hourly rate, trips, and earning share per platform → Shows performance insights highlighting top earner and rate differences
+- **Success criteria**: Driver can see at a glance which platforms generate the most income and highest hourly rates for their driving pattern
+
 ### Earnings Analytics Dashboard
 - **Functionality**: Display key metrics including net earnings, average hourly rate, total trips, and tips
 - **Purpose**: Provide clear overview of financial performance across all logged shifts
@@ -96,6 +103,8 @@ This is a multi-view application with document tracking, deadline management, sh
 - **First-Time User (License Tab)**: Show helpful onboarding hints about what documents are required
 - **No Shifts Logged**: Display empty state on Earnings tab with clear explanation of benefits and CTA to log first shift
 - **Insufficient Data for Insights**: Show message that 3+ shifts are needed for pattern analysis
+- **Single Platform Usage**: Platform comparison displays one platform with encouragement to try multi-apping
+- **No Platform Data**: Platform comparison hidden until at least one shift is logged
 - **Overlapping Shifts**: Allow entry but highlight in UI for driver to review
 - **Zero or Negative Earnings**: Allow entry for tracking purposes (bad days happen)
 - **Missing Expense Data**: Optional field, calculations work with or without it
@@ -157,9 +166,10 @@ Animations should provide clear feedback for status changes and guide attention 
   - **Dialog**: Modal for adding/editing license, documents, and shift information
   - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
   - **Input**: Text fields for license numbers, document names, earnings amounts, and shift details
-  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Other) and document types
+  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other) and document types
   - **Textarea**: Notes fields for documents and shifts
   - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
+  - **Progress**: Visual bars showing relative earnings performance between platforms
   - **Separator**: Dividers between document and shift groups
   - **Scroll Area**: For long lists of documents and shifts on mobile
 
@@ -167,13 +177,15 @@ Animations should provide clear feedback for status changes and guide attention 
   - Custom colored borders on Cards based on status (green/orange/red for compliance, gradient for earnings)
   - Badge variants with status-specific colors and icons
   - Custom stat cards with large numbers and icon accents
-  - Platform badges with brand colors (black for Uber, pink for Lyft, teal for Via)
+  - Platform badges with brand colors (black for Uber, pink for Lyft, teal for Via, green for Curb, blue for Revel, purple for Juno)
   - Platform cards with color-coded left borders matching brand identity
+  - Platform comparison cards showing earnings breakdown with progress bars and percentage of total earnings
   - Insight cards with gradient backgrounds to draw attention to optimization recommendations
   - Custom date display showing "X days remaining" countdown
   - Hourly rate calculation display showing $/hr alongside shift totals
   - Favorite/star toggle button for marking preferred platforms
   - Commission rate comparison display with visual emphasis
+  - Platform performance metrics showing earnings share, hourly rate, trip count, and earnings per trip
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale

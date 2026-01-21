@@ -3,7 +3,7 @@ export interface Shift {
   date: string
   startTime: string
   endTime: string
-  platform: 'uber' | 'lyft' | 'via' | 'other'
+  platform: 'uber' | 'lyft' | 'via' | 'curb' | 'revel' | 'juno' | 'other'
   earnings: number
   hours: number
   trips: number

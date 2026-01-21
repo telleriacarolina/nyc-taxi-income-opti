@@ -123,6 +123,9 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
                   <SelectItem value="uber">Uber</SelectItem>
                   <SelectItem value="lyft">Lyft</SelectItem>
                   <SelectItem value="via">Via</SelectItem>
+                  <SelectItem value="curb">Curb</SelectItem>
+                  <SelectItem value="revel">Revel</SelectItem>
+                  <SelectItem value="juno">Juno</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
