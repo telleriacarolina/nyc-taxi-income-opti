@@ -27,7 +27,7 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
   const netEarnings = shift.earnings - (shift.expenses || 0)
 
   return (
-    <Card className="p-5 hover:shadow-md transition-all">
+    <Card className="p-4 hover:shadow-md transition-all">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1 min-w-0">
           <div className="shrink-0">

@@ -19,7 +19,7 @@ export function DocumentCard({ document, onEdit }: DocumentCardProps) {
   }[document.status]
 
   return (
-    <Card className={cn('p-5 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
+    <Card className={cn('p-4 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
       <div className="flex items-start justify-between mb-3 gap-2">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className={cn(

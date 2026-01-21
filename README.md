@@ -13,6 +13,14 @@ This template is your blank canvas. It comes with a minimal setup to help you ge
 
 Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
 
+
+
+
+
+
+
+
+
 ## 📐 Typography System
 
 This template includes a three-layer text handling system for responsive, elegant typography across all screen sizes:

@@ -71,23 +71,23 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
   }
 
   return (
-    <Card className="p-5 hover:shadow-md transition-all group">
-      <div className="flex items-start justify-between mb-4">
+    <Card className="p-4 hover:shadow-md transition-all group">
+      <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div 
-            className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-[clamp(0.7rem,2vw,0.8rem)]"
             style={{ backgroundColor: PLATFORM_COLORS[ride.platform] }}
           >
             {ride.platform.charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-lg capitalize">{ride.platform}</span>
-              <Badge variant="outline" className="font-mono text-xs">
+              <span className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] capitalize line-clamp-1">{ride.platform}</span>
+              <Badge variant="outline" className="font-mono text-[clamp(0.625rem,1.8vw,0.7rem)]">
                 {format(new Date(ride.date + 'T' + ride.time), 'MMM d, h:mm a')}
               </Badge>
               {ride.vehicleType && (
-                <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                <Badge variant="secondary" className="text-[clamp(0.625rem,1.8vw,0.7rem)] flex items-center gap-1">
                   {getVehicleIcon()}
                   {getVehicleLabel()}
                 </Badge>
@@ -100,7 +100,7 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
               {Array.from({ length: 5 - efficiencyScore }).map((_, i) => (
                 <Star key={i} size={14} weight="regular" className="text-muted-foreground" />
               ))}
-              <span className="ml-1 text-xs">Efficiency</span>
+              <span className="ml-1 text-[clamp(0.625rem,1.8vw,0.7rem)]">Efficiency</span>
             </div>
           </div>
         </div>
@@ -125,96 +125,96 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
         </div>
       </div>
 
-      <div className="space-y-3 mb-4">
+      <div className="space-y-2.5 mb-3">
         <div className="flex items-start gap-2">
-          <MapPin size={20} className="text-success mt-0.5 flex-shrink-0" weight="fill" />
+          <MapPin size={18} className="text-success mt-0.5 flex-shrink-0" weight="fill" />
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium truncate">{ride.pickupLocation}</div>
+            <div className="text-[clamp(0.75rem,2.4vw,0.875rem)] font-medium truncate">{ride.pickupLocation}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 pl-7">
-          <ArrowRight size={16} className="text-muted-foreground" weight="bold" />
+        <div className="flex items-center gap-2 pl-6">
+          <ArrowRight size={14} className="text-muted-foreground" weight="bold" />
           <div className="h-px flex-1 bg-border" />
         </div>
 
         <div className="flex items-start gap-2">
-          <MapPin size={20} className="text-destructive mt-0.5 flex-shrink-0" weight="fill" />
+          <MapPin size={18} className="text-destructive mt-0.5 flex-shrink-0" weight="fill" />
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium truncate">{ride.dropoffLocation}</div>
+            <div className="text-[clamp(0.75rem,2.4vw,0.875rem)] font-medium truncate">{ride.dropoffLocation}</div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
-          <Path size={20} className="text-primary" weight="bold" />
+      <div className="grid grid-cols-2 gap-2.5 mb-3">
+        <div className="flex items-center gap-2 p-2.5 bg-secondary/50 rounded-lg">
+          <Path size={18} className="text-primary" weight="bold" />
           <div className="flex-1">
-            <div className="text-xs text-muted-foreground">Distance</div>
-            <div className="font-semibold font-mono">{formatDistance(ride.distance)}</div>
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground">Distance</div>
+            <div className="font-semibold font-mono text-[clamp(0.75rem,2.4vw,0.875rem)]">{formatDistance(ride.distance)}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
-          <Clock size={20} className="text-primary" weight="bold" />
+        <div className="flex items-center gap-2 p-2.5 bg-secondary/50 rounded-lg">
+          <Clock size={18} className="text-primary" weight="bold" />
           <div className="flex-1">
-            <div className="text-xs text-muted-foreground">Duration</div>
-            <div className="font-semibold font-mono">{formatDuration(ride.duration)}</div>
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground">Duration</div>
+            <div className="font-semibold font-mono text-[clamp(0.75rem,2.4vw,0.875rem)]">{formatDuration(ride.duration)}</div>
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-4">
-        <div className="grid grid-cols-3 gap-4">
+      <div className="border-t pt-3">
+        <div className="grid grid-cols-3 gap-3">
           <div>
-            <div className="text-xs text-muted-foreground mb-1">Gross Pay</div>
-            <div className="font-semibold font-mono">{formatCurrency(ride.grossPay)}</div>
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Gross Pay</div>
+            <div className="font-semibold font-mono text-[clamp(0.75rem,2.4vw,0.875rem)]">{formatCurrency(ride.grossPay)}</div>
           </div>
           
           <div>
-            <div className="text-xs text-muted-foreground mb-1">Fees ({feePercentage.toFixed(0)}%)</div>
-            <div className="font-semibold font-mono text-destructive">-{formatCurrency(ride.fees)}</div>
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Fees ({feePercentage.toFixed(0)}%)</div>
+            <div className="font-semibold font-mono text-destructive text-[clamp(0.75rem,2.4vw,0.875rem)]">-{formatCurrency(ride.fees)}</div>
           </div>
 
           <div>
-            <div className="text-xs text-muted-foreground mb-1">Net Pay</div>
-            <div className="font-bold text-lg font-mono text-success">{formatCurrency(ride.netPay)}</div>
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Net Pay</div>
+            <div className="font-bold text-[clamp(1rem,3vw,1.125rem)] font-mono text-success">{formatCurrency(ride.netPay)}</div>
           </div>
         </div>
 
         {fuelCost > 0 && (
-          <div className="mt-3 pt-3 border-t">
-            <div className="grid grid-cols-3 gap-4">
+          <div className="mt-2.5 pt-2.5 border-t">
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <div className="text-xs text-muted-foreground mb-1">
+                <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">
                   {ride.vehicleType === 'electric' ? 'Charging' : 'Fuel'} Cost
                 </div>
-                <div className="font-semibold font-mono text-warning">-{formatCurrency(fuelCost)}</div>
+                <div className="font-semibold font-mono text-warning text-[clamp(0.75rem,2.4vw,0.875rem)]">-{formatCurrency(fuelCost)}</div>
               </div>
               
               <div>
-                <div className="text-xs text-muted-foreground mb-1">Cost/Mile</div>
-                <div className="font-semibold font-mono text-xs">
+                <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Cost/Mile</div>
+                <div className="font-semibold font-mono text-[clamp(0.625rem,1.8vw,0.7rem)]">
                   {formatCurrency(ride.distance > 0 ? fuelCost / ride.distance : 0)}
                 </div>
               </div>
 
               <div>
-                <div className="text-xs text-muted-foreground mb-1">Profit</div>
-                <div className="font-bold text-lg font-mono text-accent">{formatCurrency(profit)}</div>
+                <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Profit</div>
+                <div className="font-bold text-[clamp(1rem,3vw,1.125rem)] font-mono text-accent">{formatCurrency(profit)}</div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t">
+        <div className="grid grid-cols-2 gap-3 mt-2.5 pt-2.5 border-t">
           <div className="flex items-center gap-2">
             <CurrencyDollar size={16} className="text-accent" weight="bold" />
             <div className="flex-1">
-              <div className="text-xs text-muted-foreground">
+              <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground">
                 {fuelCost > 0 ? 'Profit/Mile' : 'Pay/Mile'}
               </div>
-              <div className="font-semibold font-mono text-sm">
+              <div className="font-semibold font-mono text-[clamp(0.75rem,2.4vw,0.875rem)]">
                 {formatCurrency(fuelCost > 0 ? profitPerMile : payPerMile)}
               </div>
             </div>
@@ -223,15 +223,15 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
           <div className="flex items-center gap-2">
             <Clock size={16} className="text-accent" weight="bold" />
             <div className="flex-1">
-              <div className="text-xs text-muted-foreground">Per Minute</div>
-              <div className="font-semibold font-mono text-sm">{formatCurrency(payPerMinute)}</div>
+              <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground">Per Minute</div>
+              <div className="font-semibold font-mono text-[clamp(0.75rem,2.4vw,0.875rem)]">{formatCurrency(payPerMinute)}</div>
             </div>
           </div>
         </div>
 
         {ride.rating && (
-          <div className="mt-3 pt-3 border-t">
-            <div className="text-xs text-muted-foreground mb-1">Your Rating</div>
+          <div className="mt-2.5 pt-2.5 border-t">
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Your Rating</div>
             <div className="flex items-center gap-1">
               {Array.from({ length: ride.rating }).map((_, i) => (
                 <Star key={i} size={16} weight="fill" className="text-accent" />
@@ -241,9 +241,9 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
         )}
 
         {ride.notes && (
-          <div className="mt-3 pt-3 border-t">
-            <div className="text-xs text-muted-foreground mb-1">Notes</div>
-            <div className="text-sm">{ride.notes}</div>
+          <div className="mt-2.5 pt-2.5 border-t">
+            <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Notes</div>
+            <div className="text-[clamp(0.75rem,2.4vw,0.875rem)] line-clamp-2">{ride.notes}</div>
           </div>
         )}
       </div>

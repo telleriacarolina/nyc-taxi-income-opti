@@ -55,35 +55,35 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
   const insights = generateInsights()
 
   return (
-    <Card className="p-6 mb-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-      <div className="flex items-start gap-3 mb-4">
+    <Card className="p-4 mb-4 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+      <div className="flex items-start gap-3 mb-3">
         <div className="rounded-full bg-accent/20 p-2">
-          <Lightbulb size={24} className="text-accent" weight="fill" />
+          <Lightbulb size={20} className="text-accent" weight="fill" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-1">Earnings Insights</h2>
-          <p className="text-sm text-muted-foreground">Data-driven recommendations to optimize your earnings</p>
+          <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">Earnings Insights</h2>
+          <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-1">Data-driven recommendations to optimize your earnings</p>
         </div>
       </div>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-2.5 mb-4">
         {insights.map((insight, index) => (
-          <div key={index} className="flex items-start gap-2 text-sm">
+          <div key={index} className="flex items-start gap-2 text-[clamp(0.75rem,2.4vw,0.875rem)]">
             <TrendUp size={16} className="text-success mt-0.5 shrink-0" weight="bold" />
             <p>{insight}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="bg-card rounded-lg p-4 border">
-          <div className="flex items-center gap-2 mb-3">
-            <Clock size={20} className="text-primary" weight="fill" />
-            <h3 className="font-semibold text-sm">Peak Hours</h3>
+      <div className="grid md:grid-cols-3 gap-3">
+        <div className="bg-card rounded-lg p-3 border">
+          <div className="flex items-center gap-2 mb-2.5">
+            <Clock size={18} className="text-primary" weight="fill" />
+            <h3 className="font-semibold text-[clamp(0.75rem,2.4vw,0.875rem)]">Peak Hours</h3>
           </div>
           <div className="space-y-2">
             {topHours.slice(0, 3).map((hour, index) => (
-              <div key={index} className="flex justify-between items-center text-sm">
+              <div key={index} className="flex justify-between items-center text-[clamp(0.75rem,2.4vw,0.875rem)]">
                 <span className="font-mono">{hour.hour}</span>
                 <span className="font-semibold text-success">{formatCurrency(hour.averageRate)}/hr</span>
               </div>
@@ -91,14 +91,14 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar size={20} className="text-primary" weight="fill" />
-            <h3 className="font-semibold text-sm">Best Days</h3>
+        <div className="bg-card rounded-lg p-3 border">
+          <div className="flex items-center gap-2 mb-2.5">
+            <Calendar size={18} className="text-primary" weight="fill" />
+            <h3 className="font-semibold text-[clamp(0.75rem,2.4vw,0.875rem)]">Best Days</h3>
           </div>
           <div className="space-y-2">
             {topDays.map((day, index) => (
-              <div key={index} className="flex justify-between items-center text-sm">
+              <div key={index} className="flex justify-between items-center text-[clamp(0.75rem,2.4vw,0.875rem)]">
                 <span>{day.day}</span>
                 <span className="font-semibold text-success">{formatCurrency(day.averageRate)}/hr</span>
               </div>
@@ -106,14 +106,14 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border">
-          <div className="flex items-center gap-2 mb-3">
-            <ChartBar size={20} className="text-primary" weight="fill" />
-            <h3 className="font-semibold text-sm">Platform Performance</h3>
+        <div className="bg-card rounded-lg p-3 border">
+          <div className="flex items-center gap-2 mb-2.5">
+            <ChartBar size={18} className="text-primary" weight="fill" />
+            <h3 className="font-semibold text-[clamp(0.75rem,2.4vw,0.875rem)]">Platform Performance</h3>
           </div>
           <div className="space-y-2">
             {platformStats.map((platform, index) => (
-              <div key={index} className="flex justify-between items-center text-sm">
+              <div key={index} className="flex justify-between items-center text-[clamp(0.75rem,2.4vw,0.875rem)]">
                 <span>{platform.platform}</span>
                 <span className="font-semibold text-success">{formatCurrency(platform.averageRate)}/hr</span>
               </div>

@@ -14,8 +14,8 @@ interface LicenseCardProps {
 export function LicenseCard({ license, onEdit }: LicenseCardProps) {
   if (!license) {
     return (
-      <Card className="p-6">
-        <div className="flex flex-col items-center justify-center py-8 text-center">
+      <Card className="p-4">
+        <div className="flex flex-col items-center justify-center py-6 text-center">
           <div className="rounded-full bg-secondary p-4 mb-4">
             <IdentificationCard size={48} className="text-muted-foreground" />
           </div>
@@ -42,8 +42,8 @@ export function LicenseCard({ license, onEdit }: LicenseCardProps) {
   }[status]
 
   return (
-    <Card className={cn('p-6 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
-      <div className="flex items-start justify-between mb-4 gap-3">
+    <Card className={cn('p-4 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
+      <div className="flex items-start justify-between mb-3 gap-3">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="rounded-lg bg-primary/10 p-3 flex-shrink-0">
             <IdentificationCard size={32} className="text-primary" weight="fill" />
