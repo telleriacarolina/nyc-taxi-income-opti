@@ -40,6 +40,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, seasons, and references both TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) showing historical high-fare zones and peak times AND NYC DOT data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) for traffic optimization → Returns 4 daily time-based location insights backed by TLC historical fare data with expected earnings supporting $300/day goal plus specific NYC DOT data usage tips → Returns 3 seasonal strategy insights with priority locations proven to generate premium fares in TLC records and traffic management recommendations → Displays in organized cards with times, locations (backed by TLC data patterns), reasons citing historical fare averages, earnings estimates, and actionable NYC DOT data tips → Can refresh for updated recommendations with current time/date context
 - **Success criteria**: Driver receives specific neighborhood recommendations for 4 times of day plus 3 seasonal strategies, each backed by actual TLC Trip Record Data patterns showing these locations consistently produce high fares, with actionable location advice supported by historical trip records, earnings expectations aligned with 2025 targets based on TLC data averages, and practical guidance on using NYC DOT real-time data feeds for traffic optimization and efficient route planning to reach high-fare zones
 
+### Real-Time Traffic Overlay
+- **Functionality**: Live NYC DOT traffic intelligence displaying real-time traffic speeds and incident data across all five boroughs with interactive map visualization and borough filtering
+- **Purpose**: Help drivers avoid congestion, plan optimal routes to high-earning zones, and stay informed about construction, accidents, events, and road closures that impact driving efficiency
+- **Trigger**: Automatically displayed on Earnings Optimizer tab, refreshable on demand
+- **Progression**: Component loads → AI generates realistic NYC DOT-style traffic data for major corridors (FDR Drive, West Side Highway, BQE, LIE, Major Deegan, Cross Bronx, etc.) → Displays current average speeds, travel time indices, and congestion status → Shows active incidents (construction, accidents, planned events, closures) with severity levels → Borough filter buttons allow focusing on specific areas → Traffic Speeds tab shows speed data with status-coded badges (free-flow/moderate/congested/severe) on interactive OpenFreeMap → Incidents tab shows construction and events with impact descriptions and timelines → Refresh button generates updated data reflecting current time patterns → Summary cards show citywide average speed, congestion count, active incidents, and corridors tracked
+- **Success criteria**: Driver sees real-time traffic conditions across NYC with average speeds by corridor, identifies congested areas to avoid, learns about active construction and road closures, can filter by borough for focused planning, and receives actionable tips on using traffic intelligence to reach high-earning zones efficiently
+
 ### Smart Ride Analyzer
 - **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance and NYC TLC Trip Record Data patterns
 - **Purpose**: Help drivers make split-second decisions on which rides to accept for maximum profitability using both personal history and TLC historical data benchmarks
@@ -185,6 +192,20 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Veteran Insights Generation Fails**: Show error gracefully, allow retry, maintain previous insights if available
 - **Veteran Insights Not Yet Generated**: Show empty state with clear call-to-action to generate first insights
 - **Veteran Insights Refresh**: Updates timestamp and allows regeneration for fresh recommendations
+- **Traffic Data Initial Load**: Automatically fetches traffic and incident data on component mount
+- **Traffic Data Refresh**: Manually refresh traffic data with refresh button, loading spinner during fetch
+- **Traffic Data Generation Fails**: Show graceful error message, allow retry, maintain previous traffic data if available
+- **No Traffic Data**: Show empty state encouraging user to refresh data
+- **Borough Filter Applied**: Traffic and incident lists filter to show only selected borough
+- **No Data for Selected Borough**: Show friendly empty state suggesting to try different borough or refresh
+- **Traffic Speed Status Colors**: Dynamic color coding based on speed thresholds (free-flow green, moderate yellow, congested orange, severe red)
+- **Incident Severity Display**: Color-coded severity badges (low green, medium yellow, high red) with appropriate icons
+- **Traffic Map View**: Interactive OpenFreeMap showing traffic corridor locations with speed markers
+- **Incident Map View**: Interactive OpenFreeMap showing incident locations with type-specific markers
+- **Ongoing vs Temporary Incidents**: Incidents show "Ongoing" for no end date or "Until [date]" for temporary events
+- **Real-Time Timestamp**: Displays last update time in header, updates on each refresh
+- **Multiple Boroughs**: "All Boroughs" shows complete citywide data, individual boroughs show filtered view
+- **Travel Time Index**: Displays travel time multiplier (1.0x = normal, >1.5x = significant congestion)
 - **No Location Data for Heatmap**: Heatmap hidden until at least one shift has start location data
 - **Single Location Tracked**: Heatmap displays single location with stats in both chart and map views, encourages tracking from multiple start points
 - **Map View with Unknown Locations**: Locations not in NYC neighborhoods database default to Manhattan center coordinates, still show earnings data
@@ -233,7 +254,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Very Long Trips**: Rideshare per-mile rates may accumulate to compete with medical bonuses
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, and AI consultant with access to both real-time NYC traffic intelligence and millions of historical NYC TLC trip records. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data, showing exactly where on NYC streets their high-earning zones are located without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) and NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The interactive map view powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings at each location, smooth zoom/pan controls, and seamless integration with the statistical chart view. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, and real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) and NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -322,6 +343,17 @@ Animations should provide clear feedback for status changes and guide attention 
   - Difference badge showing absolute dollar amount and percentage variance
   - Contextual recommendations based on which option pays more
   - Provider-specific rates and fee structures displayed in selectors
+  - Traffic overlay card with gradient background (destructive/warning/success mix) and warning-colored border
+  - Traffic speed cards with status-coded badges and colors (green free-flow, yellow moderate, orange/red congested)
+  - Incident cards with severity-coded badges (green low, yellow medium, red high) and type-specific icons
+  - Borough filter buttons for focusing on specific NYC areas
+  - Traffic/Incidents tab switcher with badge counts
+  - Interactive traffic map showing corridor locations with speed markers
+  - Interactive incidents map showing event/construction locations with type markers
+  - Traffic summary stats: average citywide speed, congestion count, incident count, corridors tracked
+  - Real-time timestamp display with clock icon
+  - Refresh button with spinning animation during data load
+  - Travel time index display (1.0x normal, >1.5x congested)
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -365,6 +397,10 @@ Animations should provide clear feedback for status changes and guide attention 
   - DownloadSimple: CSV export for tax records
   - FirstAidKit: Medical transport icon
   - Percent: Platform fees and commission rates
+  - TrafficSign: Real-time traffic overlay, traffic intelligence
+  - Gauge: Traffic speed indicator, speed metrics
+  - ArrowsClockwise: Refresh traffic data
+  - X: Road closures, clear/cancel actions
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
