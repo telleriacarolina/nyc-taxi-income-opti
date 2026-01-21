@@ -55,6 +55,7 @@ interface Message {
   timestamp: number
   attachments?: Attachment[]
   reactions?: Reaction[]
+  isEdited?: boolean
 }
 
 interface DirectMessage {
@@ -68,6 +69,7 @@ interface DirectMessage {
   read: boolean
   attachments?: Attachment[]
   reactions?: Reaction[]
+  isEdited?: boolean
 }
 
 interface Driver {
@@ -318,6 +320,38 @@ export function Chatroom() {
         })
       )
     }
+  }
+
+  const editMessage = (messageId: string, newText: string) => {
+    setMessages((current) =>
+      (current || []).map(msg =>
+        msg.id === messageId
+          ? { ...msg, text: newText, isEdited: true }
+          : msg
+      )
+    )
+    toast.success('Message edited')
+  }
+
+  const editDirectMessage = (messageId: string, newText: string) => {
+    setDirectMessages((current) =>
+      (current || []).map(msg =>
+        msg.id === messageId
+          ? { ...msg, text: newText, isEdited: true }
+          : msg
+      )
+    )
+    toast.success('Message edited')
+  }
+
+  const deleteMessage = (messageId: string) => {
+    setMessages((current) => (current || []).filter(msg => msg.id !== messageId))
+    toast.success('Message deleted')
+  }
+
+  const deleteDirectMessage = (messageId: string) => {
+    setDirectMessages((current) => (current || []).filter(msg => msg.id !== messageId))
+    toast.success('Message deleted')
   }
 
   const getReactionCounts = (reactions?: Reaction[]) => {
@@ -725,8 +759,11 @@ export function Chatroom() {
                         playingVoiceId={playingVoiceId}
                         playVoiceMessage={playVoiceMessage}
                         addReaction={addReaction}
+                        onEdit={editMessage}
+                        onDelete={deleteMessage}
                         isDM={false}
                         emojis={EMOJIS}
+                        isEdited={message.isEdited}
                       />
                     )
                   })
@@ -932,8 +969,11 @@ export function Chatroom() {
                           playingVoiceId={playingVoiceId}
                           playVoiceMessage={playVoiceMessage}
                           addReaction={addReaction}
+                          onEdit={editDirectMessage}
+                          onDelete={deleteDirectMessage}
                           isDM={true}
                           emojis={EMOJIS}
+                          isEdited={dm.isEdited}
                         />
                       )
                     })
