@@ -59,131 +59,43 @@ export function TrafficPatternComparison() {
   const fetchTrafficPatterns = async () => {
     setIsLoading(true)
     try {
-      const prompt = spark.llmPrompt`You are a New York City traffic, demand, and earnings optimization analyst specializing in TLC drivers (Uber, Lyft, Yellow Taxi, and multi-app drivers).
+      const dayTypeText = dayType === 'weekday' ? 'weekdays' : 'weekends'
+      
+      const prompt = (window.spark.llmPrompt as any)`You are a New York City traffic and earnings optimization analyst for TLC drivers.
 
-Your mission is to maximize driver earnings while minimizing wasted time, congestion exposure, and fatigue, using real NYC traffic behavior, rider demand, and app dynamics.
+Generate realistic NYC traffic and earnings patterns for ${dayTypeText}.
 
-Generate realistic NYC traffic and earnings patterns for
-${dayType === ‘weekday’ ? ‘weekdays’ : ‘weekends’}.
+Analyze 5 NYC Time Slots:
+1. Early Morning (5AM-9AM) - Commute and airports
+2. Midday (9AM-4PM) - Tourism, errands, light traffic
+3. Evening Rush (4PM-8PM) - Commute congestion
+4. Night (8PM-2AM) - Dining, nightlife, events
+5. Late Night (2AM-5AM) - Bar close, airports, low supply
 
-User-Configurable Tuning Parameters
+For EACH Time Slot, Return:
+- timeSlot (string)
+- startHour (number, 0-23)
+- endHour (number, 0-23)
+- avgSpeed (number, mph, realistic: 15-45)
+- congestionLevel (string: "low" OR "moderate" OR "high" OR "severe")
+- avgTripTime (number, minutes: 10-35)
+- estimatedEarnings (number, hourly: 25-65)
+- tripVolume (number, 1-6 trips per hour)
+- hotZones (array of 3 specific NYC neighborhoods)
+- recommendation (string, 2-3 actionable sentences)
 
-1. Rideshare App Focus
+Behavior Rules:
+- Weekdays: commuter-heavy, sharp rush hours
+- Weekends: leisure-heavy, late starts, nightlife surge
+- Reflect real NYC patterns (Midtown, bridges, tunnels)
+- Balance demand vs supply realistically
 
-${appPreference}:
-	•	"uber" → surge-heavy, longer trips, airport bias
-	•	"lyft" → steady volume, residential demand, bonuses
-	•	"taxi" → Manhattan core, short trips, street hails
-	•	"multi" → dynamic switching for best earnings
+Output Format:
+Return ONLY valid JSON with a single top-level object containing:
+{ "patterns": [ array of 5 time slot objects ] }
+No markdown, no comments, no extra text.`
 
-
-2. Airport Optimization
-
-${airportMode}:
-	•	"none" → avoid airport queues
-	•	"balanced" → airports only during high ROI windows
-	•	"aggressive" → prioritize JFK, LGA, EWR runs and queues
-
-Adjust:
-	•	Earnings
-	•	Trip duration
-	•	Hot zones
-	•	Strategy text
-
-3. Borough Preference
-
-${boroughPreference}:
-	•	"all"
-	•	"manhattan"
-	•	"brooklyn"
-	•	"queens"
-	•	"bronx"
-	•	"staten_island"
-
-Favor borough-specific:
-	•	Demand
-	•	Traffic flow
-	•	Neighborhood hotspots
-
-4. Weather Impact Modeling
-
-${weatherCondition}:
-	•	"clear"
-	•	"rain"
-	•	"snow"
-	•	"extreme"
-
-Weather effects:
-	•	Rain/snow → higher demand, lower speeds, higher surge
-	•	Extreme weather → reduced supply, higher earnings but slower trips
-
-
-5. Driver Fatigue & Shift Strategy
-
-${shiftLengthHours} (e.g., 6, 8, 10, 12)
-
-Use this to:
-	•	Reduce earnings efficiency after long shifts
-	•	Recommend breaks or repositioning
-	•	Optimize when to stop driving
-
- Analyze 5 NYC Time Slots
-	1.	Early Morning (5AM–9AM) — Commute + airports
-	2.	Midday (9AM–4PM) — Tourism, errands, light traffic
-	3.	Evening Rush (4PM–8PM) — Commute congestion
-	4.	Night (8PM–2AM) — Dining, nightlife, events
-	5.	Late Night (2AM–5AM) — Bar close, airports, low supply
-
-
- For EACH Time Slot, Return
-	•	timeSlot
-	•	startHour
-	•	endHour
-	•	avgSpeed (mph, NYC-realistic: 15–45)
-	•	congestionLevel: "low" | "moderate" | "high" | "severe"
-	•	avgTripTime (minutes: 10–35)
-	•	estimatedEarnings (hourly: $25–$65)
-	•	surgeProbability (0–1 realistic likelihood)
-	•	tripVolume (1–6 trips/hour)
-	•	hotZones (3 specific NYC neighborhoods or hubs)
-	•	repositionTip (1 sentence where to move next)
-	•	recommendation
-	•	2–3 actionable sentences including:
-	•	Where to wait
-	•	What trips to accept/avoid
-	•	App + borough + airport logic
-
- Daily & Weekly Forecast
-
-After the 5 time slots, calculate:
-	•	estimatedDailyEarnings
-	•	estimatedWeeklyEarnings (5–6 driving days)
-	•	bestEarningTimeSlot
-	•	highestRiskTimeSlot (low ROI / heavy congestion)
-	•	overallStrategySummary (2–3 sentences)
-
-Target modeling:
-	•	$300/day achievable on strong days
-	•	Average profitable trips: $35–$50
-	•	Congestion reduces efficiency even during high demand
-
- Behavior Rules
-	•	Weekdays → commuter-heavy, sharp rush hours
-	•	Weekends → leisure-heavy, late starts, nightlife surge
-	•	Reflect real NYC choke points (Midtown, bridges, tunnels)
-	•	Balance demand vs supply realistically
-
- Output Rules
-	•	Return ONLY valid JSON
-	•	One top-level object
-	•	Required keys:
-	•	"patterns" (array of 5 objects)
-	•	"dailyForecast"
-	•	No markdown
-	•	No comments
-	•	No extra text`
-
-      const result = await spark.llm(prompt, 'gpt-4o-mini', true)
+      const result = await window.spark.llm(prompt, 'gpt-4o-mini', true)
       const data = JSON.parse(result)
       
       if (data.patterns && Array.isArray(data.patterns)) {
