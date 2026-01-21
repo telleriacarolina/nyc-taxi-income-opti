@@ -1,5 +1,5 @@
-# Monthly OpenFreeMap Update Check
-# Automatically checks for new OpenFreeMap commits and creates an issue if updates are available
+# Monthly OpenFreeMap Update Check with Auto-PR
+# Automatically checks for new OpenFreeMap commits and creates a pull request with changelog
 
 name: Check OpenFreeMap Updates
 
@@ -12,11 +12,20 @@ on:
 jobs:
   check-updates:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Fetch OpenFreeMap remote
         run: |
@@ -33,60 +42,128 @@ jobs:
           # Get recent commit messages
           if [ "$NEW_COMMITS" -gt 0 ]; then
             echo "commits<<EOF" >> $GITHUB_OUTPUT
-            git log openfreemap/main --oneline -10 >> $GITHUB_OUTPUT
+            git log openfreemap/main --oneline -20 >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            
+            # Get detailed commit info for changelog
+            echo "detailed_commits<<EOF" >> $GITHUB_OUTPUT
+            git log openfreemap/main --pretty=format:"- **%h** %s (%ar)" -20 >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           fi
       
-      - name: Create issue if updates available
+      - name: Create update branch and changelog
+        if: steps.check.outputs.new_commits > 0
+        run: |
+          # Create a new branch
+          BRANCH_NAME="openfreemap-updates-$(date +%Y-%m)"
+          git checkout -b "$BRANCH_NAME"
+          
+          # Update the changelog
+          CURRENT_DATE=$(date +"%B %Y")
+          sed -i "s/^## Review History/## Review History\n\n### $CURRENT_DATE\n\n**New Commits Found**: ${{ steps.check.outputs.new_commits }}\n\n${{ steps.check.outputs.detailed_commits }}\n\n**Status**: Auto-detected by GitHub Actions\n\n**Action Required**: Review commits and cherry-pick relevant changes\n/" .github/OPENFREEMAP_CHANGELOG.md
+          
+          # Commit the changelog update
+          git add .github/OPENFREEMAP_CHANGELOG.md
+          git commit -m "chore: auto-update OpenFreeMap changelog with ${{ steps.check.outputs.new_commits }} new commits"
+          
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        id: update
+      
+      - name: Create Pull Request
         if: steps.check.outputs.new_commits > 0
         uses: actions/github-script@v7
         with:
           script: |
             const newCommits = '${{ steps.check.outputs.new_commits }}';
             const commits = `${{ steps.check.outputs.commits }}`;
+            const detailedCommits = `${{ steps.check.outputs.detailed_commits }}`;
+            const branchName = '${{ steps.update.outputs.branch_name }}';
             
-            const body = `## 🗺️ OpenFreeMap Updates Available
+            const body = `## 🗺️ OpenFreeMap Updates Auto-Detected
             
-            There are **${newCommits} new commit(s)** in the OpenFreeMap repository.
+            This PR automatically updates the changelog with **${newCommits} new commit(s)** from the OpenFreeMap repository.
+            
+            ### What Changed
+            
+            ✅ Updated \`.github/OPENFREEMAP_CHANGELOG.md\` with new commits
             
             ### Recent Commits
+            
+            ${detailedCommits}
+            
+            <details>
+            <summary>View commit hashes</summary>
+            
             \`\`\`
             ${commits}
             \`\`\`
+            </details>
             
-            ### What to do
+            ### Action Required
             
-            1. **Review the commits**:
+            1. **Review the commits** to identify relevant changes:
                \`\`\`bash
-               git log openfreemap/main --oneline -20
+               npm run review:openfreemap
                \`\`\`
             
-            2. **Check for relevant changes**:
+            2. **Check for tile/map improvements**:
                \`\`\`bash
-               git log openfreemap/main --grep="tile|map|performance" --oneline
+               git log openfreemap/main --grep="tile|leaflet|map|performance" --oneline
                \`\`\`
             
             3. **Compare implementations**:
                \`\`\`bash
-               git diff main openfreemap/main -- src/components/
+               git diff main openfreemap/main -- '*.md' '*.json'
                \`\`\`
             
-            4. **If you find useful improvements**:
-               - Create a test branch
-               - Cherry-pick the commit
-               - Test thoroughly
-               - Merge if successful
+            4. **If useful changes found**:
+               - Cherry-pick specific commits
+               - Test in development
+               - Update implementation notes in the changelog
+            
+            5. **Merge this PR** to update the changelog (no code changes)
+            
+            ### Quick Commands
+            
+            \`\`\`bash
+            # Fetch latest OpenFreeMap updates
+            npm run fetch:openfreemap
+            
+            # View specific commit details
+            git show openfreemap/main~5  # 5 commits ago
+            
+            # Search for specific features
+            git log openfreemap/main --grep="vector tiles" --oneline
+            \`\`\`
             
             ### Documentation
+            
+            - [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md)
             - [Quick Reference](.github/QUICK_REFERENCE.md)
-            - [Integration Guide](.github/OPENFREEMAP.md)
+            - [Git Remotes Documentation](.github/GIT_REMOTES.md)
             
-            Close this issue once you've reviewed the updates.`;
+            ---
             
-            await github.rest.issues.create({
+            🤖 *This PR was automatically created by GitHub Actions*`;
+            
+            const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '🗺️ OpenFreeMap Updates Available',
-              body: body,
-              labels: ['openfreemap', 'enhancement', 'dependencies']
+              title: `🗺️ OpenFreeMap Updates - ${newCommits} new commits`,
+              head: branchName,
+              base: 'main',
+              body: body
             });
+            
+            // Add labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.data.number,
+              labels: ['openfreemap', 'dependencies', 'automated']
+            });
+            
+            console.log(`Created PR #${pr.data.number}`);

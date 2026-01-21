@@ -1,7 +1,7 @@
 /**
  * OpenFreeMap Component
  * 
- * Interactive map component using Leaflet and OpenFreeMap tiles.
+ * Interactive map component using Leaflet and OpenFreeMap tiles with marker clustering.
  * 
  * @see https://openfreemap.org/ - OpenFreeMap website and documentation
  * @see https://github.com/telleriacarolina/openfreemap - Git remote repository (fetch with: git fetch openfreemap)
@@ -13,12 +13,17 @@
  * - Liberty style tiles from OpenFreeMap CDN
  * - Custom markers for earnings visualization
  * - Interactive popups with ride details
+ * - Marker clustering for large datasets (improves performance with 100+ markers)
+ * - Color-coded cluster sizes (small: 1-20, medium: 21-100, large: 100+)
  * - Centered on NYC by default
  */
 
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 interface OpenFreeMapProps {
   center?: [number, number]
@@ -30,6 +35,8 @@ interface OpenFreeMapProps {
   }>
   className?: string
   onMarkerClick?: (label: string) => void
+  enableClustering?: boolean
+  clusterRadius?: number
 }
 
 export function OpenFreeMap({
@@ -37,11 +44,13 @@ export function OpenFreeMap({
   zoom = 12,
   markers = [],
   className = '',
-  onMarkerClick
+  onMarkerClick,
+  enableClustering = true,
+  clusterRadius = 80
 }: OpenFreeMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
-  const markersLayerRef = useRef<L.LayerGroup | null>(null)
+  const markersLayerRef = useRef<L.LayerGroup | L.MarkerClusterGroup | null>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -58,13 +67,42 @@ export function OpenFreeMap({
     }).addTo(map)
 
     mapInstanceRef.current = map
-    markersLayerRef.current = L.layerGroup().addTo(map)
+    
+    if (enableClustering) {
+      markersLayerRef.current = L.markerClusterGroup({
+        maxClusterRadius: clusterRadius,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        iconCreateFunction: (cluster) => {
+          const count = cluster.getChildCount()
+          let size = 'small'
+          let sizeClass = 'marker-cluster-small'
+          
+          if (count > 100) {
+            size = 'large'
+            sizeClass = 'marker-cluster-large'
+          } else if (count > 20) {
+            size = 'medium'
+            sizeClass = 'marker-cluster-medium'
+          }
+          
+          return L.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: `marker-cluster ${sizeClass}`,
+            iconSize: L.point(40, 40)
+          })
+        }
+      }).addTo(map)
+    } else {
+      markersLayerRef.current = L.layerGroup().addTo(map)
+    }
 
     return () => {
       map.remove()
       mapInstanceRef.current = null
     }
-  }, [])
+  }, [enableClustering, clusterRadius])
 
   useEffect(() => {
     if (!mapInstanceRef.current) return
@@ -102,7 +140,6 @@ export function OpenFreeMap({
       })
 
       const leafletMarker = L.marker(marker.position, { icon })
-        .addTo(markersLayerRef.current!)
 
       const popupContent = `
         <div style="font-family: Inter, sans-serif; padding: 4px;">
@@ -116,13 +153,18 @@ export function OpenFreeMap({
       if (onMarkerClick) {
         leafletMarker.on('click', () => onMarkerClick(marker.label))
       }
+
+      markersLayerRef.current!.addLayer(leafletMarker)
     })
 
-    if (markers.length > 0) {
+    if (markers.length > 0 && !enableClustering) {
       const bounds = L.latLngBounds(markers.map(m => m.position))
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] })
+    } else if (markers.length > 0 && enableClustering) {
+      const bounds = L.latLngBounds(markers.map(m => m.position))
+      mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 })
     }
-  }, [markers, onMarkerClick])
+  }, [markers, onMarkerClick, enableClustering])
 
   return (
     <div

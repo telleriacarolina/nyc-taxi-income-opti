@@ -127,6 +127,53 @@ body {
   font-family: 'JetBrains Mono', 'Courier New', monospace;
 }
 
+.marker-cluster-small {
+  background-color: oklch(0.70 0.15 260 / 0.8);
+}
+
+.marker-cluster-small div {
+  background-color: oklch(0.60 0.15 260 / 0.9);
+}
+
+.marker-cluster-medium {
+  background-color: oklch(0.60 0.15 260 / 0.8);
+}
+
+.marker-cluster-medium div {
+  background-color: oklch(0.50 0.15 260 / 0.9);
+}
+
+.marker-cluster-large {
+  background-color: oklch(0.50 0.15 260 / 0.8);
+}
+
+.marker-cluster-large div {
+  background-color: oklch(0.40 0.15 260 / 0.9);
+}
+
+.marker-cluster {
+  background-clip: padding-box;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.marker-cluster div {
+  width: 32px;
+  height: 32px;
+  margin-left: 4px;
+  margin-top: 4px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 32px;
+  color: white;
+}
+
+.marker-cluster span {
+  line-height: 32px;
+}
+
 @keyframes pulse-soft {
   0%, 100% {
     opacity: 1;

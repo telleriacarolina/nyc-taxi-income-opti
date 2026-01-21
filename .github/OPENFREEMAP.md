@@ -173,19 +173,37 @@ git log HEAD..openfreemap/main --oneline
 
 ## Automated Checking & Reminders
 
-### GitHub Actions (Recommended)
+### GitHub Actions (Recommended) - Auto-PR
 
-The project includes automated monthly checks via GitHub Actions:
+The project includes automated monthly checks via GitHub Actions that **automatically creates a pull request** with changelog updates:
 
 **Workflow**: `.github/workflows/check-openfreemap.yml`
 - **Schedule**: Runs automatically on the 1st of each month at 9:00 AM UTC
-- **Action**: Fetches OpenFreeMap updates and creates a GitHub issue with commit summaries
+- **Action**: 
+  1. Fetches OpenFreeMap updates
+  2. Creates a new branch (e.g., `openfreemap-updates-2026-01`)
+  3. Auto-updates `.github/OPENFREEMAP_CHANGELOG.md` with new commits
+  4. Creates a Pull Request with detailed commit summaries
 - **Manual Trigger**: Can be triggered anytime from the Actions tab
+
+**What You Get**:
+- ✅ **Automated changelog updates** - No manual tracking needed
+- ✅ **Pull Request with details** - Review commits in a structured PR
+- ✅ **Labels applied** - `openfreemap`, `dependencies`, `automated`
+- ✅ **Quick commands** - Pre-filled commands to review changes
+- ✅ **Email notifications** - Automatic PR notifications
 
 **Enable Notifications**:
 1. Go to your repository on GitHub
-2. Click "Watch" → "Custom" → Check "Issues"
-3. You'll receive email notifications when new update issues are created
+2. Click "Watch" → "Custom" → Check "Pull Requests"
+3. You'll receive email notifications when new PRs are created
+
+**Workflow**:
+1. GitHub Actions creates a PR on the 1st of each month (if updates exist)
+2. Review the PR and commit details
+3. Run `npm run review:openfreemap` to examine commits locally
+4. Cherry-pick any relevant improvements (optional)
+5. Merge the PR to update your changelog
 
 **Manual Trigger**:
 ```bash
