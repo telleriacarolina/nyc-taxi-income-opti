@@ -9,10 +9,17 @@ This template is your blank canvas. It comes with a minimal setup to help you ge
 - Ready to scale with your ideas
 - Three-layer typography system for responsive, elegant text handling
 - **uv** - Modern Python package manager pre-installed
+- **OpenFreeMap integration** - Free, open-source mapping with git remote configured ([see integration guide](.github/OPENFREEMAP.md))
   
 🧠 What Can You Do?
 
 Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
+
+## 📚 Quick Links
+
+- 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
+- 📋 [Product Requirements](PRD.md) - Full feature specifications
+- 🗺️ [Map Integration Documentation](#🗺️-map-integration-with-openfreemap) - Jump to mapping section below
 
 ## 🐍 Python Development with uv
 
@@ -1324,6 +1331,13 @@ This template can display ride locations on interactive maps using free, open-so
 
 This project includes the OpenFreeMap repository as a git remote for development and customization purposes.
 
+**Quick Verification:**
+```bash
+# Verify OpenFreeMap remote configuration
+chmod +x verify-openfreemap.sh
+./verify-openfreemap.sh
+```
+
 **Git Remote Setup:**
 ```bash
 # Remote is already configured as 'openfreemap'
@@ -1343,6 +1357,7 @@ git log openfreemap/main --oneline
 - **URL**: https://github.com/telleriacarolina/openfreemap.git
 - **Purpose**: MapLibre-based open-source mapping solution
 - **Usage**: Reference implementation for tile serving and map styles
+- **Documentation**: See [.github/OPENFREEMAP.md](.github/OPENFREEMAP.md) for complete guide
 
 ### Why OpenFreeMap?
 

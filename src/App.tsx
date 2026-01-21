@@ -6,8 +6,9 @@ import { EarningsOptimizer } from '@/components/EarningsOptimizer'
 import { RideShareApps } from '@/components/RideShareApps'
 import { RideComparison } from '@/components/RideComparison'
 import { TripCalculator } from '@/components/TripCalculator'
+import { Chatroom } from '@/components/Chatroom'
 import { AIAssistant } from '@/components/AIAssistant'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator } from '@phosphor-icons/react'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -27,7 +28,7 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-5 max-w-4xl h-9">
+            <TabsList className="grid w-full grid-cols-6 max-w-5xl h-9">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -47,6 +48,10 @@ function App() {
               <TabsTrigger value="calculator" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Calculator size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Calc</span>
+              </TabsTrigger>
+              <TabsTrigger value="chatroom" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <ChatCircleDots size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Chat</span>
               </TabsTrigger>
             </TabsList>
 
@@ -68,6 +73,10 @@ function App() {
 
             <TabsContent value="calculator" className="space-y-4">
               <TripCalculator />
+            </TabsContent>
+
+            <TabsContent value="chatroom" className="space-y-4">
+              <Chatroom />
             </TabsContent>
           </Tabs>
         </div>

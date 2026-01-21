@@ -62,11 +62,18 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver gets clear accept/skip guidance with confidence level and reasoning referencing both personal history and TLC Trip Record Data patterns within 3 seconds
 
 ### Tabbed Navigation
-- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, and Trip Calculator views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, platform information, and trip income calculator
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, platform information, trip income calculator, and driver communication
+
+### The Chatroom
+- **Functionality**: Real-time communication hub where drivers can send messages to connect with the TLC driver community and maintain a list of fellow drivers with online/offline status indicators
+- **Purpose**: Build community, share real-time traffic updates, coordinate with fellow drivers, and maintain professional network connections
+- **Trigger**: Navigate to Chatroom tab
+- **Progression**: Tab opens → See chat messages with timestamps and online driver count → Switch between Chat and Fellow Drivers tabs → In Chat: Type message and send to general channel → Messages display with sender avatar, name, time, and message bubble → Scroll through conversation history → In Fellow Drivers: Add driver by name to personal network list → View online/offline status with badges → Remove drivers from list as needed → See when each driver was added
+- **Success criteria**: Drivers can send and receive messages in the general chat with clear sender identification and timestamps, maintain a personal list of fellow drivers with visible status indicators, and quickly see who's online in their network
 
 ### License Status Dashboard
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
@@ -194,6 +201,22 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly compare income potential between rideshare and medical transport for any trip and understand which option pays better and why
 
 ## Edge Case Handling
+- **No Messages in Chatroom**: Display empty state encouraging users to start first conversation
+- **Message Without Current User**: Prevent sending messages until user identity is initialized
+- **Empty Message Input**: Disable send button when message field is empty or whitespace-only
+- **Long Messages**: Messages wrap within bubble with max-width constraint
+- **Message Timestamp Formatting**: Smart relative time display (just now, minutes ago, hours, or full date)
+- **No Fellow Drivers**: Show empty state with call-to-action to add first driver
+- **Duplicate Driver Names**: Prevent adding drivers with exact same name (case-insensitive)
+- **Empty Driver Name Input**: Disable add button and show validation error
+- **Removing Driver**: Shows confirmation via toast with removed driver name
+- **Current User vs Other Messages**: Visually distinguish own messages (right-aligned, primary color) from others (left-aligned, muted)
+- **Online Status**: Random online/offline status simulated for fellow drivers, displayed with animated indicator
+- **Long Driver Names**: Truncate with ellipsis in fellow drivers list
+- **Scroll Behavior**: Auto-scroll to latest message when new messages arrive
+- **Message List Growth**: ScrollArea handles long conversation history with smooth scrolling
+- **Chat Tab vs Drivers Tab**: Maintain separate state, show count badges appropriately
+- **Online Count Display**: Real-time count of online drivers in header badge
 - **No Data for AI**: AI Assistant works with minimal data, provides general TLC driver advice when no shifts/rides logged
 - **AI Generation Fails**: Show graceful error message, allow retry, maintain previous insight if available
 - **Veteran Insights Generation Fails**: Show error gracefully, allow retry, maintain previous insights if available
@@ -261,7 +284,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Very Long Trips**: Rideshare per-mile rates may accumulate to compete with medical bonuses
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, and real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) and NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records, and a supportive driver community network. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Chatroom should feel welcoming and community-focused, like having a driver's lounge where colleagues share real-time traffic tips, coordinate meetups, and build professional relationships - with clean message bubbles, clear sender identification, and intuitive online/offline status indicators that make connecting with fellow drivers effortless. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) and NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -309,7 +332,7 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, and Trip Calculator views; Secondary navigation for Chart vs Map view in Location Heatmap
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views; Secondary navigation for Chart vs Map view in Location Heatmap and Chat vs Fellow Drivers in Chatroom
   - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, https://tiles.openfreemap.org/styles/liberty) for geographic visualization of earnings locations and traffic patterns. Repository configured as git remote `openfreemap` - fetch updates with `git fetch openfreemap`. See `.github/OPENFREEMAP.md` for integration details.
   - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
@@ -361,6 +384,14 @@ Animations should provide clear feedback for status changes and guide attention 
   - Real-time timestamp display with clock icon
   - Refresh button with spinning animation during data load
   - Travel time index display (1.0x normal, >1.5x congested)
+  - Chat message bubbles with rounded corners and directional tail (sender vs current user styling)
+  - Message timestamp display with smart relative time formatting
+  - Fellow driver cards with avatar, name, online/offline badge, and remove action
+  - Online driver count badge in chatroom header
+  - Auto-scrolling chat interface with smooth scroll behavior
+  - Message input with send button and Enter key support
+  - Driver input field with add button and Enter key support
+  - Empty states for no messages and no fellow drivers with encouraging CTAs
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -373,7 +404,7 @@ Animations should provide clear feedback for status changes and guide attention 
 - **Icon Selection**:
   - Brain: AI Assistant, intelligent features
   - Sparkle: AI insights, smart recommendations, AI-generated content
-  - PaperPlaneRight: Send message to AI
+  - PaperPlaneRight: Send message to AI, send chat message
   - Lightning: Quick AI analysis, fast recommendations
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab, Chart view in heatmap
@@ -381,9 +412,11 @@ Animations should provide clear feedback for status changes and guide attention 
   - CarProfile: Ride share vehicles, Apps tab
   - MapTrifold: Individual rides, Ride Comparison tab
   - Calculator: Trip income calculator, Calculator tab
-  - FileText: Document tracking
-  - CalendarBlank: Date/expiration displays, seasonal insights
-  - Clock: Time and duration displays, daily timing insights
+  - ChatCircleDots: Chatroom tab, chat interface, messaging
+  - Users: Fellow drivers, multi-apping tips, online count
+  - UserPlus: Add fellow driver
+  - UserMinus: Remove fellow driver
+  - Clock: Time and duration displays, daily timing insights, message timestamps
   - CurrencyDollar: Earnings and financial metrics
   - Car: Trip counts and ride metrics
   - TrendUp: Performance improvements and best rates, best rides, expected earnings
@@ -391,7 +424,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - Lightbulb: Insights and recommendations
   - Lightning: Quick features and fast pay, rideshare advantages
   - Star: Favorite/preferred platforms, ride ratings
-  - Users: Multi-apping tips
+  - Users: Multi-apping tips, fellow drivers
   - Globe: Platform availability
   - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap
   - Path: Distance metrics, trip details
@@ -408,6 +441,8 @@ Animations should provide clear feedback for status changes and guide attention 
   - Gauge: Traffic speed indicator, speed metrics
   - ArrowsClockwise: Refresh traffic data
   - X: Road closures, clear/cancel actions
+  - FileText: Document tracking
+  - CalendarBlank: Date/expiration displays, seasonal insights
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
@@ -419,11 +454,13 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets, 5-column grid on larger screens wrapping as needed
+  - Tabs span full width with clear touch targets, 6-column grid on larger screens wrapping as needed
   - Stat grid collapses to 2 columns on mobile
   - Platform cards stack in single column on mobile
   - Ride cards stack in single column on mobile, 2-column grid on desktop
   - Calculator comparison cards stack vertically on mobile, side-by-side on desktop
+  - Chat interface optimized for mobile with full-width message bubbles
+  - Fellow drivers list stacks in single column with touch-friendly cards
   - Larger touch targets (min 44px) for all interactive elements
   - Bottom sheet dialog variant for forms on mobile
   - Sticky tab navigation at top
