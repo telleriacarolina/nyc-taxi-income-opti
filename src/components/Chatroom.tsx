@@ -16,10 +16,23 @@ import {
   ChatCircleDots,
   Clock,
   ArrowLeft,
-  Chats
+  Chats,
+  Paperclip,
+  Image as ImageIcon,
+  File,
+  X,
+  DownloadSimple
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
+
+interface Attachment {
+  id: string
+  name: string
+  type: 'image' | 'document'
+  url: string
+  size: number
+}
 
 interface Message {
   id: string
@@ -27,6 +40,7 @@ interface Message {
   senderName: string
   text: string
   timestamp: number
+  attachments?: Attachment[]
 }
 
 interface DirectMessage {
@@ -38,6 +52,7 @@ interface DirectMessage {
   text: string
   timestamp: number
   read: boolean
+  attachments?: Attachment[]
 }
 
 interface Driver {
@@ -56,7 +71,9 @@ export function Chatroom() {
   const [driverNameInput, setDriverNameInput] = useState('')
   const [currentUser] = useKV<Driver | null>('current-user', null)
   const [activeDM, setActiveDM] = useState<string | null>(null)
+  const [attachments, setAttachments] = useState<Attachment[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [, setCurrentUser] = useKV<Driver | null>('current-user', null)
 
@@ -83,19 +100,74 @@ export function Chatroom() {
     }
   }, [messages, activeDM, directMessages])
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+
+    const maxSize = 10 * 1024 * 1024
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    const allowedDocTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain']
+
+    Array.from(files).forEach((file) => {
+      if (file.size > maxSize) {
+        toast.error(`${file.name} is too large. Max size is 10MB.`)
+        return
+      }
+
+      const isImage = allowedImageTypes.includes(file.type)
+      const isDocument = allowedDocTypes.includes(file.type)
+
+      if (!isImage && !isDocument) {
+        toast.error(`${file.name} is not a supported file type.`)
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const newAttachment: Attachment = {
+          id: 'attach-' + Date.now() + '-' + Math.random(),
+          name: file.name,
+          type: isImage ? 'image' : 'document',
+          url: e.target?.result as string,
+          size: file.size
+        }
+        setAttachments((current) => [...current, newAttachment])
+        toast.success(`${file.name} attached`)
+      }
+      reader.readAsDataURL(file)
+    })
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const removeAttachment = (attachmentId: string) => {
+    setAttachments((current) => current.filter(a => a.id !== attachmentId))
+  }
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  }
+
   const sendMessage = () => {
-    if (!messageInput.trim() || !currentUser) return
+    if (!messageInput.trim() && attachments.length === 0) return
+    if (!currentUser) return
 
     const newMessage: Message = {
       id: 'msg-' + Date.now(),
       senderId: currentUser.id,
       senderName: currentUser.name,
       text: messageInput.trim(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      attachments: attachments.length > 0 ? [...attachments] : undefined
     }
 
     setMessages((current) => [...(current || []), newMessage])
     setMessageInput('')
+    setAttachments([])
     toast.success('Message sent')
   }
 
@@ -134,7 +206,8 @@ export function Chatroom() {
   }
 
   const sendDirectMessage = (recipientId: string) => {
-    if (!messageInput.trim() || !currentUser) return
+    if (!messageInput.trim() && attachments.length === 0) return
+    if (!currentUser) return
 
     const recipient = (fellowDrivers || []).find(d => d.id === recipientId)
     if (!recipient) return
@@ -147,11 +220,13 @@ export function Chatroom() {
       recipientName: recipient.name,
       text: messageInput.trim(),
       timestamp: Date.now(),
-      read: false
+      read: false,
+      attachments: attachments.length > 0 ? [...attachments] : undefined
     }
 
     setDirectMessages((current) => [...(current || []), newDM])
     setMessageInput('')
+    setAttachments([])
     toast.success('Message sent')
   }
 
@@ -310,7 +385,72 @@ export function Chatroom() {
                               ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                               : 'bg-muted text-foreground rounded-tl-sm'
                           }`}>
-                            <p className="text-sm leading-relaxed">{message.text}</p>
+                            {message.text && <p className="text-sm leading-relaxed">{message.text}</p>}
+                            {message.attachments && message.attachments.length > 0 && (
+                              <div className={`space-y-2 ${message.text ? 'mt-2' : ''}`}>
+                                {message.attachments.map((attachment) => (
+                                  <div key={attachment.id}>
+                                    {attachment.type === 'image' ? (
+                                      <div className="rounded-lg overflow-hidden border border-border/20">
+                                        <img 
+                                          src={attachment.url} 
+                                          alt={attachment.name}
+                                          className="max-w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                          onClick={() => window.open(attachment.url, '_blank')}
+                                        />
+                                        <div className={`px-2 py-1.5 text-xs flex items-center justify-between ${
+                                          isCurrentUser ? 'bg-primary-foreground/10' : 'bg-background/50'
+                                        }`}>
+                                          <span className="truncate flex-1">{attachment.name}</span>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-6 w-6 p-0 ml-2"
+                                            onClick={() => {
+                                              const link = document.createElement('a')
+                                              link.href = attachment.url
+                                              link.download = attachment.name
+                                              link.click()
+                                            }}
+                                          >
+                                            <DownloadSimple size={14} weight="bold" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className={`flex items-center gap-2 p-3 rounded-lg border ${
+                                        isCurrentUser 
+                                          ? 'border-primary-foreground/20 bg-primary-foreground/10' 
+                                          : 'border-border bg-background/50'
+                                      }`}>
+                                        <div className={`p-2 rounded ${
+                                          isCurrentUser ? 'bg-primary-foreground/20' : 'bg-muted'
+                                        }`}>
+                                          <File size={20} weight="fill" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-xs font-medium truncate">{attachment.name}</p>
+                                          <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-8 w-8 p-0"
+                                          onClick={() => {
+                                            const link = document.createElement('a')
+                                            link.href = attachment.url
+                                            link.download = attachment.name
+                                            link.click()
+                                          }}
+                                        >
+                                          <DownloadSimple size={16} weight="bold" />
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -323,18 +463,78 @@ export function Chatroom() {
             <Separator />
 
             <div className="p-4">
+              {attachments.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {attachments.map((attachment) => (
+                    <div 
+                      key={attachment.id} 
+                      className="relative group"
+                    >
+                      {attachment.type === 'image' ? (
+                        <div className="relative">
+                          <img 
+                            src={attachment.url} 
+                            alt={attachment.name}
+                            className="h-16 w-16 object-cover rounded-lg border border-border"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeAttachment(attachment.id)}
+                          >
+                            <X size={12} weight="bold" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted">
+                          <File size={16} weight="fill" />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-medium truncate max-w-[120px]">{attachment.name}</span>
+                            <span className="text-xs text-muted-foreground">{formatFileSize(attachment.size)}</span>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeAttachment(attachment.id)}
+                          >
+                            <X size={12} weight="bold" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="gap-2"
+                >
+                  <Paperclip size={18} weight="bold" />
+                </Button>
                 <Input
                   id="message-input"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                   placeholder="Type your message..."
                   className="flex-1"
                 />
                 <Button 
                   onClick={sendMessage} 
-                  disabled={!messageInput.trim()}
+                  disabled={!messageInput.trim() && attachments.length === 0}
                   className="gap-2"
                 >
                   <PaperPlaneRight size={18} weight="fill" />
@@ -426,7 +626,72 @@ export function Chatroom() {
                                 ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                                 : 'bg-muted text-foreground rounded-tl-sm'
                             }`}>
-                              <p className="text-sm leading-relaxed">{dm.text}</p>
+                              {dm.text && <p className="text-sm leading-relaxed">{dm.text}</p>}
+                              {dm.attachments && dm.attachments.length > 0 && (
+                                <div className={`space-y-2 ${dm.text ? 'mt-2' : ''}`}>
+                                  {dm.attachments.map((attachment) => (
+                                    <div key={attachment.id}>
+                                      {attachment.type === 'image' ? (
+                                        <div className="rounded-lg overflow-hidden border border-border/20">
+                                          <img 
+                                            src={attachment.url} 
+                                            alt={attachment.name}
+                                            className="max-w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                            onClick={() => window.open(attachment.url, '_blank')}
+                                          />
+                                          <div className={`px-2 py-1.5 text-xs flex items-center justify-between ${
+                                            isCurrentUser ? 'bg-primary-foreground/10' : 'bg-background/50'
+                                          }`}>
+                                            <span className="truncate flex-1">{attachment.name}</span>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-6 w-6 p-0 ml-2"
+                                              onClick={() => {
+                                                const link = document.createElement('a')
+                                                link.href = attachment.url
+                                                link.download = attachment.name
+                                                link.click()
+                                              }}
+                                            >
+                                              <DownloadSimple size={14} weight="bold" />
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className={`flex items-center gap-2 p-3 rounded-lg border ${
+                                          isCurrentUser 
+                                            ? 'border-primary-foreground/20 bg-primary-foreground/10' 
+                                            : 'border-border bg-background/50'
+                                        }`}>
+                                          <div className={`p-2 rounded ${
+                                            isCurrentUser ? 'bg-primary-foreground/20' : 'bg-muted'
+                                          }`}>
+                                            <File size={20} weight="fill" />
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-xs font-medium truncate">{attachment.name}</p>
+                                            <p className="text-xs opacity-70">{formatFileSize(attachment.size)}</p>
+                                          </div>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 w-8 p-0"
+                                            onClick={() => {
+                                              const link = document.createElement('a')
+                                              link.href = attachment.url
+                                              link.download = attachment.name
+                                              link.click()
+                                            }}
+                                          >
+                                            <DownloadSimple size={16} weight="bold" />
+                                          </Button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -439,18 +704,70 @@ export function Chatroom() {
               <Separator />
 
               <div className="p-4">
+                {attachments.length > 0 && (
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {attachments.map((attachment) => (
+                      <div 
+                        key={attachment.id} 
+                        className="relative group"
+                      >
+                        {attachment.type === 'image' ? (
+                          <div className="relative">
+                            <img 
+                              src={attachment.url} 
+                              alt={attachment.name}
+                              className="h-16 w-16 object-cover rounded-lg border border-border"
+                            />
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeAttachment(attachment.id)}
+                            >
+                              <X size={12} weight="bold" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted">
+                            <File size={16} weight="fill" />
+                            <div className="flex flex-col">
+                              <span className="text-xs font-medium truncate max-w-[120px]">{attachment.name}</span>
+                              <span className="text-xs text-muted-foreground">{formatFileSize(attachment.size)}</span>
+                            </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeAttachment(attachment.id)}
+                            >
+                              <X size={12} weight="bold" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="gap-2"
+                  >
+                    <Paperclip size={18} weight="bold" />
+                  </Button>
                   <Input
                     id="dm-input"
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && sendDirectMessage(activeDM)}
+                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendDirectMessage(activeDM)}
                     placeholder="Type your message..."
                     className="flex-1"
                   />
                   <Button 
                     onClick={() => sendDirectMessage(activeDM)} 
-                    disabled={!messageInput.trim()}
+                    disabled={!messageInput.trim() && attachments.length === 0}
                     className="gap-2"
                   >
                     <PaperPlaneRight size={18} weight="fill" />
@@ -513,10 +830,23 @@ export function Chatroom() {
                                 )}
                               </div>
                               {lastMessage ? (
-                                <p className="text-sm text-muted-foreground truncate">
-                                  {lastMessage.senderId === currentUser?.id ? 'You: ' : ''}
-                                  {lastMessage.text}
-                                </p>
+                                <div className="flex items-center gap-1.5">
+                                  {lastMessage.attachments && lastMessage.attachments.length > 0 && (
+                                    <>
+                                      {lastMessage.attachments[0].type === 'image' ? (
+                                        <ImageIcon size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                                      ) : (
+                                        <File size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                                      )}
+                                    </>
+                                  )}
+                                  <p className="text-sm text-muted-foreground truncate">
+                                    {lastMessage.senderId === currentUser?.id ? 'You: ' : ''}
+                                    {lastMessage.text || (lastMessage.attachments && lastMessage.attachments.length > 0 
+                                      ? `${lastMessage.attachments[0].type === 'image' ? 'Photo' : 'Document'}`
+                                      : '')}
+                                  </p>
+                                </div>
                               ) : (
                                 <p className="text-xs text-muted-foreground italic">
                                   No messages yet
