@@ -12,6 +12,27 @@ This is a multi-view application with document tracking, deadline management, sh
 
 ## Essential Features
 
+### AI Driver Assistant
+- **Functionality**: Floating AI chat assistant that provides personalized advice on earnings optimization, compliance, multi-apping strategies, and shift planning
+- **Purpose**: Give drivers instant access to intelligent insights and answers based on their actual data and NYC TLC context
+- **Trigger**: Click floating AI button in bottom-right corner
+- **Progression**: Click AI button → Chat window opens → User types question or selects suggested question → AI analyzes driver's data (shifts, rides, license) → Returns personalized, actionable advice → Conversation continues with context
+- **Success criteria**: Driver receives relevant, data-driven answers within 5 seconds that help them make better business decisions
+
+### AI-Powered Earnings Insights
+- **Functionality**: Automatically generated insights on earnings patterns, best performing times, platforms, and optimization opportunities
+- **Purpose**: Surface actionable intelligence from shift data without requiring manual analysis
+- **Trigger**: Automatically generated when driver has 3+ shifts logged, refreshable on demand
+- **Progression**: System analyzes shifts → Identifies patterns (best hours, days, platforms, strategies) → Generates one focused insight with title and recommendation → Displays in gradient card with AI icon → Updates when new data added or manually refreshed
+- **Success criteria**: Driver receives one specific, actionable recommendation backed by their actual shift data
+
+### Smart Ride Analyzer
+- **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance
+- **Purpose**: Help drivers make split-second decisions on which rides to accept for maximum profitability
+- **Trigger**: Driver enters ride details (distance, duration, platform, gross pay) and clicks "Analyze Ride"
+- **Progression**: Enter ride parameters → Click analyze → AI compares against driver's historical averages → Evaluates pay per mile and pay per minute → Returns accept/skip recommendation with confidence level → Shows specific reasons → Displays estimated value rating
+- **Success criteria**: Driver gets clear accept/skip guidance with confidence level and reasoning within 3 seconds
+
 ### Tabbed Navigation
 - **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, and Trip Calculator views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
@@ -138,6 +159,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly compare income potential between rideshare and medical transport for any trip and understand which option pays better and why
 
 ## Edge Case Handling
+- **No Data for AI**: AI Assistant works with minimal data, provides general TLC driver advice when no shifts/rides logged
+- **AI Generation Fails**: Show graceful error message, allow retry, maintain previous insight if available
+- **Incomplete Ride Data for Analysis**: Smart Ride Analyzer requires all fields (distance, duration, platform, pay) before enabling analysis
+- **First Time AI User**: Suggested questions help guide initial interactions with AI Assistant
+- **AI Response Too Long**: Responses constrained to 2-3 paragraphs for readability in chat interface
+- **Slow AI Response**: Loading indicators with animated dots maintain user confidence during API calls
+- **Multiple Quick AI Requests**: Disable send button during analysis to prevent duplicate requests
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
 - **Multiple Expired Items**: Prioritize display by expiration date (most urgent first)
@@ -170,7 +198,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Very Long Trips**: Rideshare per-mile rates may accumulate to compete with medical bonuses
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, and AI consultant. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket, always ready with personalized insights.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -265,6 +293,10 @@ Animations should provide clear feedback for status changes and guide attention 
   - Shift cards: Hover shadow lift, edit/delete buttons appear on hover
 
 - **Icon Selection**:
+  - Brain: AI Assistant, intelligent features
+  - Sparkle: AI insights, smart recommendations, AI-generated content
+  - PaperPlaneRight: Send message to AI
+  - Lightning: Quick AI analysis, fast recommendations
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab
   - CarProfile: Ride share vehicles, Apps tab

@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import { RideDialog } from './RideDialog'
 import { RideCard } from './RideCard'
 import { RideFilters, RideFilterOptions } from './RideFilters'
+import { SmartRideRecommender } from './SmartRideRecommender'
 import { toast } from 'sonner'
 import { 
   Plus, 
@@ -138,6 +139,8 @@ export function RideComparison() {
           </div>
         </div>
       </div>
+
+      <SmartRideRecommender />
 
       {(rides || []).length > 0 && (
         <RideFilters

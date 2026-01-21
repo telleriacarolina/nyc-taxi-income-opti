@@ -6,6 +6,7 @@ import { EarningsOptimizer } from '@/components/EarningsOptimizer'
 import { RideShareApps } from '@/components/RideShareApps'
 import { RideComparison } from '@/components/RideComparison'
 import { TripCalculator } from '@/components/TripCalculator'
+import { AIAssistant } from '@/components/AIAssistant'
 import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
@@ -72,6 +73,7 @@ function App() {
         </div>
       </div>
 
+      <AIAssistant />
       <Toaster position="top-center" />
     </>
   )
