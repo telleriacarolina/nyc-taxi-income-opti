@@ -10,6 +10,7 @@ import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { AIInsights } from './AIInsights'
+import { VeteranInsights } from './VeteranInsights'
 
 export function EarningsOptimizer() {
   const [shifts, setShifts] = useKV<Shift[]>('driver-shifts', [])
@@ -98,6 +99,8 @@ export function EarningsOptimizer() {
       </div>
 
       <AIInsights />
+
+      <VeteranInsights />
 
       {(shifts || []).length >= 3 && (
         <EarningsInsights shifts={shifts || []} stats={stats} />

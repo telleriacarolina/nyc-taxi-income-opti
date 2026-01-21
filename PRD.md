@@ -26,6 +26,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: System analyzes shifts → Identifies patterns (best hours, days, platforms, strategies) → Generates one focused insight with title and recommendation → Displays in gradient card with AI icon → Updates when new data added or manually refreshed
 - **Success criteria**: Driver receives one specific, actionable recommendation backed by their actual shift data
 
+### Veteran Location & Timing Insights
+- **Functionality**: AI-powered recommendations on optimal locations and time periods throughout the day and year for experienced NYC TLC drivers
+- **Purpose**: Leverage veteran driver knowledge and NYC traffic patterns to guide drivers to high-earning locations at the right times
+- **Trigger**: Click "Generate" button in Veteran Driver Insights card on Earnings tab
+- **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, and seasons → Returns 4 daily time-based location insights with expected earnings → Returns 3 seasonal strategy insights with priority locations → Displays in organized cards with times, locations, reasons, and earnings estimates → Can refresh for updated recommendations
+- **Success criteria**: Driver receives specific neighborhood recommendations for 4 times of day plus 3 seasonal strategies, each with actionable location advice and earnings expectations
+
 ### Smart Ride Analyzer
 - **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance
 - **Purpose**: Help drivers make split-second decisions on which rides to accept for maximum profitability
@@ -161,6 +168,9 @@ This is a multi-view application with document tracking, deadline management, sh
 ## Edge Case Handling
 - **No Data for AI**: AI Assistant works with minimal data, provides general TLC driver advice when no shifts/rides logged
 - **AI Generation Fails**: Show graceful error message, allow retry, maintain previous insight if available
+- **Veteran Insights Generation Fails**: Show error gracefully, allow retry, maintain previous insights if available
+- **Veteran Insights Not Yet Generated**: Show empty state with clear call-to-action to generate first insights
+- **Veteran Insights Refresh**: Updates timestamp and allows regeneration for fresh recommendations
 - **Incomplete Ride Data for Analysis**: Smart Ride Analyzer requires all fields (distance, duration, platform, pay) before enabling analysis
 - **First Time AI User**: Suggested questions help guide initial interactions with AI Assistant
 - **AI Response Too Long**: Responses constrained to 2-3 paragraphs for readability in chat interface
@@ -267,6 +277,9 @@ Animations should provide clear feedback for status changes and guide attention 
   - Platform cards with color-coded left borders matching brand identity
   - Platform comparison cards showing earnings breakdown with progress bars and percentage of total earnings
   - Insight cards with gradient backgrounds to draw attention to optimization recommendations
+  - Veteran insights cards with time-of-day recommendations showing location, timing, reason, and expected hourly earnings
+  - Seasonal strategy cards displaying multiple priority locations as pill badges with strategic guidance
+  - Location insight cards with MapPin icons and expected earnings badges
   - Custom date display showing "X days remaining" countdown
   - Hourly rate calculation display showing $/hr alongside shift totals
   - Favorite/star toggle button for marking preferred platforms
@@ -303,18 +316,18 @@ Animations should provide clear feedback for status changes and guide attention 
   - MapTrifold: Individual rides, Ride Comparison tab
   - Calculator: Trip income calculator, Calculator tab
   - FileText: Document tracking
-  - CalendarBlank: Date/expiration displays
-  - Clock: Time and duration displays
+  - CalendarBlank: Date/expiration displays, seasonal insights
+  - Clock: Time and duration displays, daily timing insights
   - CurrencyDollar: Earnings and financial metrics
   - Car: Trip counts and ride metrics
-  - TrendUp: Performance improvements and best rates, best rides
+  - TrendUp: Performance improvements and best rates, best rides, expected earnings
   - TrendDown: Lowest value rides
   - Lightbulb: Insights and recommendations
   - Lightning: Quick features and fast pay, rideshare advantages
   - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips
   - Globe: Platform availability
-  - MapPin: Location markers for pickup/dropoff
+  - MapPin: Location markers for pickup/dropoff, veteran location insights
   - Path: Distance metrics, trip details
   - ArrowRight: Route direction indicator
   - Warning/WarningCircle: Expiring/expired alerts, important considerations
