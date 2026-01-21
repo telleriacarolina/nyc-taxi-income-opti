@@ -13,11 +13,11 @@ This is a multi-view application with document tracking, deadline management, sh
 ## Essential Features
 
 ### Tabbed Navigation
-- **Functionality**: Switch between License Manager, Earnings Optimizer, and Ride Share Apps views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, and Ride Share Apps views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, and platform information
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, and platform information
 
 ### License Status Dashboard
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
@@ -95,6 +95,34 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Tips card shows → Driver reads strategies for multi-apping → Applies knowledge to daily driving routine
 - **Success criteria**: Driver learns actionable strategies to improve earnings through platform diversification
 
+### Individual Ride Tracking
+- **Functionality**: Log individual rides with pickup/dropoff locations, distance, duration, gross pay, fees, and net pay
+- **Purpose**: Enable granular comparison of ride quality and profitability beyond aggregate shift data
+- **Trigger**: Click "Add Ride" button on Rides tab
+- **Progression**: Click add → Modal opens → Enter ride details (platform, locations, distance, time, earnings, fees) → Save → Ride added to comparison view with efficiency score
+- **Success criteria**: Driver can log a complete ride in under 45 seconds with automatic net pay calculation
+
+### Ride Efficiency Rating
+- **Functionality**: Automatically calculate and display a 1-5 star efficiency rating for each ride based on pay per mile and pay per minute
+- **Purpose**: Provide quick visual feedback on ride quality to help identify patterns in profitable rides
+- **Trigger**: Automatically calculated when ride is saved
+- **Progression**: Ride saved → System calculates pay per mile and pay per minute → Normalizes against benchmarks → Displays 1-5 star rating on ride card
+- **Success criteria**: Each ride has a clear visual efficiency indicator that correlates with actual profitability
+
+### Platform Ride Performance Comparison
+- **Functionality**: Compare rides across platforms showing average pay per mile, pay per minute, and fee percentages
+- **Purpose**: Identify which platforms consistently offer the best value rides, not just overall earnings
+- **Trigger**: Automatically displayed when rides from multiple platforms are logged
+- **Progression**: Multiple rides logged → System aggregates by platform → Shows comparison with progress bars → Highlights best performer → Shows fee impact per platform
+- **Success criteria**: Driver can see which platform gives best value per mile and lowest fees for individual rides
+
+### Best and Worst Ride Insights
+- **Functionality**: Automatically identify and highlight the best value ride (highest $/mile) and worst ride to show earning patterns
+- **Purpose**: Help drivers recognize what types of rides to accept and which to avoid
+- **Trigger**: Displayed after 3+ rides are logged on Rides tab
+- **Progression**: 3+ rides logged → System identifies best and worst by pay per mile → Displays in insight card with route details → Provides actionable tips
+- **Success criteria**: Driver receives specific guidance on ride types to prioritize based on their actual logged data
+
 ## Edge Case Handling
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
@@ -110,9 +138,16 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Missing Expense Data**: Optional field, calculations work with or without it
 - **No Favorite Apps**: Apps tab displays all platforms equally without favorites filter
 - **Single Platform Driver**: Tips section still valuable for learning about alternatives
+- **No Rides Logged**: Display empty state on Rides tab encouraging user to track individual rides
+- **Insufficient Ride Data**: Show ride insights after 3+ rides are logged
+- **Single Ride Platform**: Platform comparison hidden until rides from 2+ platforms exist
+- **Automatic Net Pay Calculation**: Net pay automatically calculated from gross pay minus fees
+- **Invalid Ride Values**: Validate distance > 0, duration > 0, gross pay > 0 before allowing save
+- **Zero Distance/Duration**: Prevent save and show validation error
+- **High Fee Percentage**: Display fee percentage on each ride to highlight commission differences
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -160,18 +195,18 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, and Ride Share Apps views
-  - **Card**: Primary container for license info, document groups, shift entries, stat displays, and platform details
-  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants
-  - **Dialog**: Modal for adding/editing license, documents, and shift information
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, and Ride Share Apps views
+  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, and platform details
+  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges
+  - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides
   - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
-  - **Input**: Text fields for license numbers, document names, earnings amounts, and shift details
+  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, and pay amounts
   - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other) and document types
-  - **Textarea**: Notes fields for documents and shifts
+  - **Textarea**: Notes fields for documents, shifts, and rides
   - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
-  - **Progress**: Visual bars showing relative earnings performance between platforms
+  - **Progress**: Visual bars showing relative earnings performance between platforms and ride comparisons
   - **Separator**: Dividers between document and shift groups
-  - **Scroll Area**: For long lists of documents and shifts on mobile
+  - **Scroll Area**: For long lists of documents, shifts, and rides on mobile
 
 - **Customizations**:
   - Custom colored borders on Cards based on status (green/orange/red for compliance, gradient for earnings)
@@ -186,6 +221,12 @@ Animations should provide clear feedback for status changes and guide attention 
   - Favorite/star toggle button for marking preferred platforms
   - Commission rate comparison display with visual emphasis
   - Platform performance metrics showing earnings share, hourly rate, trip count, and earnings per trip
+  - Ride cards with route visualization (pickup → dropoff with arrow)
+  - Efficiency star rating (1-5 stars) automatically calculated and displayed on ride cards
+  - Net pay auto-calculation from gross pay minus fees
+  - Pay per mile and pay per minute metrics prominently displayed
+  - Fee percentage displayed to highlight commission impact
+  - Best/worst ride comparison cards with visual indicators
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -199,23 +240,27 @@ Animations should provide clear feedback for status changes and guide attention 
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab
   - CarProfile: Ride share vehicles, Apps tab
+  - MapTrifold: Individual rides, Ride Comparison tab
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays
   - Clock: Time and duration displays
   - CurrencyDollar: Earnings and financial metrics
   - Car: Trip counts and ride metrics
-  - TrendUp: Performance improvements and best rates
+  - TrendUp: Performance improvements and best rates, best rides
+  - TrendDown: Lowest value rides
   - Lightbulb: Insights and recommendations
   - Lightning: Quick features and fast pay
-  - Star: Favorite/preferred platforms
+  - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips
   - Globe: Platform availability
-  - MapPin: Location-based features
+  - MapPin: Location markers for pickup/dropoff
+  - Path: Distance metrics
+  - ArrowRight: Route direction indicator
   - Warning/WarningCircle: Expiring/expired alerts
   - CheckCircle: Current/valid status
-  - Plus: Add new document or shift
+  - Plus: Add new document, shift, or ride
   - PencilSimple: Edit existing entries
-  - Trash: Delete shifts
+  - Trash: Delete shifts or rides
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
@@ -227,9 +272,10 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets, 3-column grid on tablets and up
+  - Tabs span full width with clear touch targets, 4-column grid on tablets and up
   - Stat grid collapses to 2 columns on mobile
   - Platform cards stack in single column on mobile
+  - Ride cards stack in single column on mobile, 2-column grid on desktop
   - Larger touch targets (min 44px) for all interactive elements
   - Bottom sheet dialog variant for forms on mobile
   - Sticky tab navigation at top
