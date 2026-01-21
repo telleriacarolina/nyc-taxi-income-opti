@@ -16,7 +16,9 @@ import {
   Pencil,
   Trash,
   Check,
-  X
+  X,
+  ArrowBendUpLeft,
+  ChatTeardropText
 } from '@phosphor-icons/react'
 import { useState } from 'react'
 
@@ -51,9 +53,13 @@ interface MessageBubbleProps {
   addReaction: (messageId: string, emoji: string, isDM: boolean) => void
   onEdit?: (messageId: string, newText: string) => void
   onDelete?: (messageId: string) => void
+  onReply?: (messageId: string) => void
   isDM?: boolean
   emojis: string[]
   isEdited?: boolean
+  replyToId?: string
+  replyToMessage?: { senderName: string; text: string; attachments?: Attachment[] } | null
+  replyCount?: number
 }
 
 export function MessageBubble({
@@ -72,9 +78,13 @@ export function MessageBubble({
   addReaction,
   onEdit,
   onDelete,
+  onReply,
   isDM = false,
   emojis,
-  isEdited = false
+  isEdited = false,
+  replyToId,
+  replyToMessage,
+  replyCount = 0
 }: MessageBubbleProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedText, setEditedText] = useState(text)
@@ -178,6 +188,21 @@ export function MessageBubble({
                   ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                   : 'bg-muted text-foreground rounded-tl-sm'
               }`}>
+                {replyToMessage && (
+                  <div className={`mb-2 pb-2 border-l-2 pl-2 text-xs opacity-80 ${
+                    isCurrentUser ? 'border-primary-foreground/30' : 'border-border'
+                  }`}>
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <ArrowBendUpLeft size={12} weight="bold" />
+                      <span className="font-medium">{replyToMessage.senderName}</span>
+                    </div>
+                    <p className="truncate">
+                      {replyToMessage.text || (replyToMessage.attachments && replyToMessage.attachments.length > 0 
+                        ? `${replyToMessage.attachments[0].type === 'image' ? '📷 Photo' : replyToMessage.attachments[0].type === 'voice' ? '🎤 Voice message' : '📄 Document'}`
+                        : '')}
+                    </p>
+                  </div>
+                )}
                 {text && <p className="text-sm leading-relaxed">{text}</p>}
                 {attachments && attachments.length > 0 && (
                   <div className={`space-y-2 ${text ? 'mt-2' : ''}`}>
@@ -285,6 +310,15 @@ export function MessageBubble({
               </div>
               
               <div className={`absolute -bottom-2 ${isCurrentUser ? 'left-0' : 'right-0'} flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 rounded-full bg-background border border-border shadow-sm"
+                  onClick={() => onReply?.(messageId)}
+                >
+                  <ArrowBendUpLeft size={14} weight="bold" />
+                </Button>
+
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -376,6 +410,18 @@ export function MessageBubble({
               </TooltipProvider>
             ))}
           </div>
+        )}
+        
+        {!isEditing && replyCount > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 mt-1 gap-1 text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => onReply?.(messageId)}
+          >
+            <ChatTeardropText size={14} weight="fill" />
+            {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+          </Button>
         )}
       </div>
     </div>

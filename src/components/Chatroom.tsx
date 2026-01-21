@@ -27,7 +27,8 @@ import {
   Microphone,
   Stop,
   Waveform,
-  ImagesSquare
+  ImagesSquare,
+  ArrowBendUpLeft
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -56,6 +57,7 @@ interface Message {
   attachments?: Attachment[]
   reactions?: Reaction[]
   isEdited?: boolean
+  replyToId?: string
 }
 
 interface DirectMessage {
@@ -70,6 +72,7 @@ interface DirectMessage {
   attachments?: Attachment[]
   reactions?: Reaction[]
   isEdited?: boolean
+  replyToId?: string
 }
 
 interface Driver {
@@ -96,6 +99,7 @@ export function Chatroom() {
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null)
   const [galleryOpen, setGalleryOpen] = useState(false)
   const [selectedGalleryTab, setSelectedGalleryTab] = useState<'images' | 'files'>('images')
+  const [replyToMessage, setReplyToMessage] = useState<Message | DirectMessage | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -416,12 +420,14 @@ export function Chatroom() {
       text: messageInput.trim(),
       timestamp: Date.now(),
       attachments: attachments.length > 0 ? [...attachments] : undefined,
-      reactions: []
+      reactions: [],
+      replyToId: replyToMessage?.id
     }
 
     setMessages((current) => [...(current || []), newMessage])
     setMessageInput('')
     setAttachments([])
+    setReplyToMessage(null)
     toast.success('Message sent')
   }
 
@@ -476,12 +482,14 @@ export function Chatroom() {
       timestamp: Date.now(),
       read: false,
       attachments: attachments.length > 0 ? [...attachments] : undefined,
-      reactions: []
+      reactions: [],
+      replyToId: replyToMessage?.id
     }
 
     setDirectMessages((current) => [...(current || []), newDM])
     setMessageInput('')
     setAttachments([])
+    setReplyToMessage(null)
     toast.success('Message sent')
   }
 
@@ -539,6 +547,28 @@ export function Chatroom() {
     if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`
     if (diff < 86400000) return format(timestamp, 'h:mm a')
     return format(timestamp, 'MMM d, h:mm a')
+  }
+
+  const getReplies = (messageId: string, isDM: boolean = false): (Message | DirectMessage)[] => {
+    if (isDM) {
+      return (directMessages || []).filter(msg => msg.replyToId === messageId)
+    }
+    return (messages || []).filter(msg => msg.replyToId === messageId)
+  }
+
+  const getReplyCount = (messageId: string, isDM: boolean = false): number => {
+    return getReplies(messageId, isDM).length
+  }
+
+  const findMessageById = (messageId: string, isDM: boolean = false): Message | DirectMessage | null => {
+    if (isDM) {
+      return (directMessages || []).find(msg => msg.id === messageId) || null
+    }
+    return (messages || []).find(msg => msg.id === messageId) || null
+  }
+
+  const handleReply = (message: Message | DirectMessage) => {
+    setReplyToMessage(message)
   }
 
   const onlineCount = (fellowDrivers || []).filter(d => d.status === 'online').length
@@ -742,6 +772,7 @@ export function Chatroom() {
                 ) : (
                   (messages || []).map((message) => {
                     const isCurrentUser = currentUser && message.senderId === currentUser.id
+                    const replyTo = message.replyToId ? findMessageById(message.replyToId, false) : null
                     
                     return (
                       <MessageBubble
@@ -761,9 +792,17 @@ export function Chatroom() {
                         addReaction={addReaction}
                         onEdit={editMessage}
                         onDelete={deleteMessage}
+                        onReply={() => handleReply(message)}
                         isDM={false}
                         emojis={EMOJIS}
                         isEdited={message.isEdited}
+                        replyToId={message.replyToId}
+                        replyToMessage={replyTo ? {
+                          senderName: replyTo.senderName,
+                          text: replyTo.text,
+                          attachments: replyTo.attachments
+                        } : null}
+                        replyCount={getReplyCount(message.id, false)}
                       />
                     )
                   })
@@ -832,6 +871,29 @@ export function Chatroom() {
                       )}
                     </div>
                   ))}
+                </div>
+              )}
+              {replyToMessage && (
+                <div className="mb-3 p-3 rounded-lg border border-primary/30 bg-primary/5 flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <ArrowBendUpLeft size={14} weight="bold" className="text-primary" />
+                      <span className="text-xs font-medium text-primary">Replying to {replyToMessage.senderName}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {replyToMessage.text || (replyToMessage.attachments && replyToMessage.attachments.length > 0 
+                        ? `${replyToMessage.attachments[0].type === 'image' ? '📷 Photo' : replyToMessage.attachments[0].type === 'voice' ? '🎤 Voice message' : '📄 Document'}`
+                        : '')}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                    onClick={() => setReplyToMessage(null)}
+                  >
+                    <X size={14} weight="bold" />
+                  </Button>
                 </div>
               )}
               {isRecording && (
@@ -952,6 +1014,7 @@ export function Chatroom() {
                   ) : (
                     getConversationMessages(activeDM).map((dm) => {
                       const isCurrentUser = currentUser && dm.senderId === currentUser.id
+                      const replyTo = dm.replyToId ? findMessageById(dm.replyToId, true) : null
                       
                       return (
                         <MessageBubble
@@ -971,9 +1034,17 @@ export function Chatroom() {
                           addReaction={addReaction}
                           onEdit={editDirectMessage}
                           onDelete={deleteDirectMessage}
+                          onReply={() => handleReply(dm)}
                           isDM={true}
                           emojis={EMOJIS}
                           isEdited={dm.isEdited}
+                          replyToId={dm.replyToId}
+                          replyToMessage={replyTo ? {
+                            senderName: replyTo.senderName,
+                            text: replyTo.text,
+                            attachments: replyTo.attachments
+                          } : null}
+                          replyCount={getReplyCount(dm.id, true)}
                         />
                       )
                     })
@@ -1042,6 +1113,29 @@ export function Chatroom() {
                         )}
                       </div>
                     ))}
+                  </div>
+                )}
+                {replyToMessage && (
+                  <div className="mb-3 p-3 rounded-lg border border-primary/30 bg-primary/5 flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <ArrowBendUpLeft size={14} weight="bold" className="text-primary" />
+                        <span className="text-xs font-medium text-primary">Replying to {replyToMessage.senderName}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {replyToMessage.text || (replyToMessage.attachments && replyToMessage.attachments.length > 0 
+                          ? `${replyToMessage.attachments[0].type === 'image' ? '📷 Photo' : replyToMessage.attachments[0].type === 'voice' ? '🎤 Voice message' : '📄 Document'}`
+                          : '')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={() => setReplyToMessage(null)}
+                    >
+                      <X size={14} weight="bold" />
+                    </Button>
                   </div>
                 )}
                 {isRecording && (
