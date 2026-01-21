@@ -29,34 +29,34 @@ export function VeteranInsights() {
     try {
       const promptText = `You are an expert NYC TLC rideshare consultant with deep knowledge of NYC traffic patterns, events, and veteran driver strategies.
 
-Generate AI-powered insights for veteran NYC TLC drivers about optimal locations and times to maximize earnings.
+Generate AI-powered insights for veteran NYC TLC drivers about optimal locations and times to maximize earnings. The 2025 target is $300 per day with 7-10 quality rides (approx $35/trip).
 
 Provide insights in TWO categories:
 
 1. DAILY TIME-BASED INSIGHTS: Identify the 4 best time periods during a typical day with specific locations. For each time period, specify:
    - Exact time period (e.g., "6:00 AM - 9:00 AM")
    - Specific NYC neighborhood/location to be in
-   - Why this location is profitable at this time
-   - Expected hourly earnings range
+   - Why this location is profitable at this time (focus on rides that hit $35+ average)
+   - Expected hourly earnings range that supports the $300/day goal
 
 2. SEASONAL/YEARLY INSIGHTS: Identify 3 seasonal patterns or yearly events. For each, specify:
    - Time period or season (e.g., "December holidays", "Summer weekends")
    - 2-3 specific locations to prioritize
-   - Strategy explanation for why these locations work
+   - Strategy explanation for why these locations work for high-value rides
 
 Format your response as valid JSON with this structure:
 {
   "dailyInsights": [
-    {"location": "Penn Station", "timeOfDay": "6:00 AM - 9:00 AM", "reason": "Morning commuters heading to offices", "expectedEarnings": "$35-45/hr"},
+    {"location": "Penn Station", "timeOfDay": "6:00 AM - 9:00 AM", "reason": "Morning commuters heading to offices - premium rides to Midtown/FiDi", "expectedEarnings": "$35-45/hr"},
     ...3 more
   ],
   "seasonalInsights": [
-    {"period": "December Holidays", "locations": ["5th Avenue", "Times Square", "SoHo"], "strategy": "Heavy shopping traffic and tourists..."},
+    {"period": "December Holidays", "locations": ["5th Avenue", "Times Square", "SoHo"], "strategy": "Heavy shopping traffic and tourists. Focus on airport runs and hotel pickups for higher fares..."},
     ...2 more
   ]
 }
 
-Base insights on real NYC geography, commute patterns, events, and veteran driver knowledge. Be specific with neighborhood names and realistic earnings.`
+Base insights on real NYC geography, commute patterns, events, and veteran driver knowledge. Be specific with neighborhood names and realistic earnings that support the $300/day 2025 target.`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)

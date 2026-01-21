@@ -34,22 +34,23 @@ export function AIInsights() {
         expenses: s.expenses
       }))
 
-      const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight to help them earn more.
+      const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
 
 Shift data (${shiftsData.length} shifts):
 ${JSON.stringify(shiftsData, null, 2)}
 
-Based on this data, identify ONE specific pattern or opportunity. Focus on:
-- Best earning times or days
-- Most profitable platform
-- Multi-apping opportunities
-- Shift length optimization
+Based on this data, identify ONE specific pattern or opportunity to hit the 2025 target. Focus on:
+- Best earning times or days to maximize per-trip rates
+- Most profitable platform for hitting $35/trip
+- Multi-apping opportunities to cherry-pick high-value rides
+- Shift length optimization for quality over quantity
+- How current performance compares to the $300/day target
 
 Return your response as JSON in this exact format:
 {
   "type": "earnings" | "timing" | "platform" | "strategy",
   "title": "Brief insight title (6-8 words)",
-  "content": "One specific, actionable recommendation (2-3 sentences max)"
+  "content": "One specific, actionable recommendation referencing the 2025 target (2-3 sentences max)"
 }`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)

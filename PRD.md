@@ -20,18 +20,18 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives relevant, data-driven answers within 5 seconds that help them make better business decisions
 
 ### AI-Powered Earnings Insights
-- **Functionality**: Automatically generated insights on earnings patterns, best performing times, platforms, and optimization opportunities
-- **Purpose**: Surface actionable intelligence from shift data without requiring manual analysis
+- **Functionality**: Automatically generated insights on earnings patterns, best performing times, platforms, and optimization opportunities with 2025 target tracking ($300/day with 7-10 rides at ~$35/trip)
+- **Purpose**: Surface actionable intelligence from shift data without requiring manual analysis, helping drivers meet realistic 2025 NYC TLC earnings targets
 - **Trigger**: Automatically generated when driver has 3+ shifts logged, refreshable on demand
-- **Progression**: System analyzes shifts → Identifies patterns (best hours, days, platforms, strategies) → Generates one focused insight with title and recommendation → Displays in gradient card with AI icon → Updates when new data added or manually refreshed
-- **Success criteria**: Driver receives one specific, actionable recommendation backed by their actual shift data
+- **Progression**: System analyzes shifts against 2025 target → Identifies patterns (best hours, days, platforms, strategies) and compares performance to $35/trip benchmark → Generates focused insight with title and recommendation → Displays in gradient card with AI icon → Updates when new data added or manually refreshed
+- **Success criteria**: Driver receives one specific, actionable recommendation backed by their actual shift data and knows how they're tracking toward the $300/day 2025 target
 
 ### Veteran Location & Timing Insights
-- **Functionality**: AI-powered recommendations on optimal locations and time periods throughout the day and year for experienced NYC TLC drivers
-- **Purpose**: Leverage veteran driver knowledge and NYC traffic patterns to guide drivers to high-earning locations at the right times
+- **Functionality**: AI-powered recommendations on optimal locations and time periods throughout the day and year for experienced NYC TLC drivers, focused on hitting 2025 target of $300/day with quality rides
+- **Purpose**: Leverage veteran driver knowledge and NYC traffic patterns to guide drivers to high-earning locations at the right times where rides consistently hit $35+ averages
 - **Trigger**: Click "Generate" button in Veteran Driver Insights card on Earnings tab
-- **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, and seasons → Returns 4 daily time-based location insights with expected earnings → Returns 3 seasonal strategy insights with priority locations → Displays in organized cards with times, locations, reasons, and earnings estimates → Can refresh for updated recommendations
-- **Success criteria**: Driver receives specific neighborhood recommendations for 4 times of day plus 3 seasonal strategies, each with actionable location advice and earnings expectations
+- **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, and seasons with focus on high-value ride zones → Returns 4 daily time-based location insights with expected earnings supporting $300/day goal → Returns 3 seasonal strategy insights with priority locations for premium rides → Displays in organized cards with times, locations, reasons, and earnings estimates → Can refresh for updated recommendations
+- **Success criteria**: Driver receives specific neighborhood recommendations for 4 times of day plus 3 seasonal strategies, each with actionable location advice and earnings expectations aligned with 2025 targets
 
 ### Smart Ride Analyzer
 - **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance
@@ -83,11 +83,11 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can see at a glance which platforms generate the most income and highest hourly rates for their driving pattern
 
 ### Earnings Analytics Dashboard
-- **Functionality**: Display key metrics including net earnings, average hourly rate, total trips, and tips
-- **Purpose**: Provide clear overview of financial performance across all logged shifts
+- **Functionality**: Display key metrics including net earnings, average hourly rate, total trips, and tips with 2025 target progress tracking
+- **Purpose**: Provide clear overview of financial performance across all logged shifts and show progress toward $300/day with 7-10 rides target
 - **Trigger**: Automatically calculates from logged shifts on Earnings Optimizer tab
-- **Progression**: View opens → Cards display metrics → Updates in real-time as shifts are added
-- **Success criteria**: Driver can see total earnings, hourly rate, trip count, and tips at a glance
+- **Progression**: View opens → Cards display metrics → 2025 target card shows $35/trip goal, current average per trip, and projected daily earnings → Updates in real-time as shifts are added → Visual indicators show if on-target or gap to close
+- **Success criteria**: Driver can see total earnings, hourly rate, trip count, tips at a glance, and immediately understand how their performance compares to 2025 realistic targets
 
 ### Peak Performance Insights
 - **Functionality**: Analyze shift data to identify best earning hours, days, and platforms with personalized recommendations

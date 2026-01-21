@@ -95,6 +95,9 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{shift ? 'Edit Shift' : 'Add New Shift'}</DialogTitle>
+          <p className="text-[clamp(0.75rem,2.2vw,0.85rem)] text-muted-foreground mt-1.5">
+            2025 Target: $300 with 7-10 rides (~$35/trip)
+          </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

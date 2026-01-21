@@ -98,6 +98,46 @@ export function EarningsOptimizer() {
         </Card>
       </div>
 
+      {(shifts || []).length > 0 && (
+        <Card className="p-4 mb-4 bg-gradient-to-br from-success/10 to-success/5 border-success/30">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="rounded-full bg-success/20 p-2">
+              <TrendUp size={20} className="text-success" weight="fill" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">2025 Earnings Target</h2>
+              <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-1">$300 per day with 7-10 quality rides</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-3">
+            <div className="bg-card rounded-lg p-3 border">
+              <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1 uppercase tracking-wide">Target Per Trip</div>
+              <div className="font-bold text-[clamp(1.1rem,3.5vw,1.35rem)] text-success">{formatCurrency(300 / 8.5)}</div>
+              <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">Based on 8-9 avg rides</div>
+            </div>
+
+            <div className="bg-card rounded-lg p-3 border">
+              <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1 uppercase tracking-wide">Your Avg Per Trip</div>
+              <div className={`font-bold text-[clamp(1.1rem,3.5vw,1.35rem)] ${stats.averageTripEarnings >= (300 / 8.5) ? 'text-success' : 'text-warning'}`}>
+                {formatCurrency(stats.averageTripEarnings)}
+              </div>
+              <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">
+                {stats.averageTripEarnings >= (300 / 8.5) ? '✓ On target' : `${formatCurrency((300 / 8.5) - stats.averageTripEarnings)} to go`}
+              </div>
+            </div>
+
+            <div className="bg-card rounded-lg p-3 border">
+              <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1 uppercase tracking-wide">Projected Daily</div>
+              <div className="font-bold text-[clamp(1.1rem,3.5vw,1.35rem)]">
+                {formatCurrency(stats.averageTripEarnings * 8.5)}
+              </div>
+              <div className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground mt-0.5">At 8-9 trips/day pace</div>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <AIInsights />
 
       <VeteranInsights />

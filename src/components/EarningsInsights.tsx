@@ -22,6 +22,21 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
   const generateInsights = (): string[] => {
     const insights: string[] = []
 
+    const targetEarnings = 300
+    const targetTripsMin = 7
+    const targetTripsMax = 10
+    const targetPerTrip = targetEarnings / ((targetTripsMin + targetTripsMax) / 2)
+
+    if (stats.totalTrips > 0 && stats.averageTripEarnings > 0) {
+      const currentPerTrip = stats.averageTripEarnings
+      if (currentPerTrip >= targetPerTrip) {
+        insights.push(`Your ${formatCurrency(currentPerTrip)}/trip beats the 2025 target of ${formatCurrency(targetPerTrip)}/trip for $${targetEarnings} on ${targetTripsMin}-${targetTripsMax} rides.`)
+      } else {
+        const deficit = targetPerTrip - currentPerTrip
+        insights.push(`To hit $${targetEarnings} on ${targetTripsMin}-${targetTripsMax} rides in 2025, aim for ${formatCurrency(targetPerTrip)}/trip (${formatCurrency(deficit)} more per ride).`)
+      }
+    }
+
     if (topHours.length > 0 && topHours[0].averageRate > stats.averageHourlyRate * 1.2) {
       insights.push(`Your best earning hours are around ${topHours[0].hour}, averaging ${formatCurrency(topHours[0].averageRate)}/hr - 20% above your average.`)
     }
@@ -46,7 +61,7 @@ export function EarningsInsights({ shifts, stats }: EarningsInsightsProps) {
     }
 
     if (insights.length === 0) {
-      insights.push('Keep logging shifts to unlock personalized insights about your peak earning times.')
+      insights.push(`2025 Target: Earn $${targetEarnings} daily with ${targetTripsMin}-${targetTripsMax} quality rides at ${formatCurrency(targetPerTrip)}/trip. Log shifts to track progress.`)
     }
 
     return insights
