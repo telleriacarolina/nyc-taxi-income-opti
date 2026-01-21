@@ -5,7 +5,8 @@ import { LicenseManager } from '@/components/LicenseManager'
 import { EarningsOptimizer } from '@/components/EarningsOptimizer'
 import { RideShareApps } from '@/components/RideShareApps'
 import { RideComparison } from '@/components/RideComparison'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold } from '@phosphor-icons/react'
+import { TripCalculator } from '@/components/TripCalculator'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 max-w-3xl">
+            <TabsList className="grid w-full grid-cols-5 max-w-4xl">
               <TabsTrigger value="license" className="gap-2">
                 <IdentificationCard size={20} weight="fill" />
                 License
@@ -41,6 +42,10 @@ function App() {
               <TabsTrigger value="apps" className="gap-2">
                 <CarProfile size={20} weight="fill" />
                 Apps
+              </TabsTrigger>
+              <TabsTrigger value="calculator" className="gap-2">
+                <Calculator size={20} weight="fill" />
+                Calculator
               </TabsTrigger>
             </TabsList>
 
@@ -58,6 +63,10 @@ function App() {
 
             <TabsContent value="apps" className="space-y-6">
               <RideShareApps />
+            </TabsContent>
+
+            <TabsContent value="calculator" className="space-y-6">
+              <TripCalculator />
             </TabsContent>
           </Tabs>
         </div>

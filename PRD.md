@@ -13,11 +13,11 @@ This is a multi-view application with document tracking, deadline management, sh
 ## Essential Features
 
 ### Tabbed Navigation
-- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, and Ride Share Apps views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, and Trip Calculator views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, and platform information
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, platform information, and trip income calculator
 
 ### License Status Dashboard
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
@@ -130,6 +130,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Click export → System generates CSV with all filtered ride data → Downloads file with date-stamped filename → Shows success toast with ride count → File includes date, time, platform, locations, distance, duration, gross pay, fees, net pay, pay per mile, pay per minute, rating, and notes
 - **Success criteria**: Driver receives a properly formatted CSV file containing all visible rides with complete financial data suitable for tax filing and accounting software import
 
+### Trip Income Calculator
+- **Functionality**: Interactive calculator comparing potential earnings between rideshare platforms and medical transport services for identical trips
+- **Purpose**: Help drivers make informed decisions about which types of trips to prioritize based on actual earning potential
+- **Trigger**: Navigate to Calculator tab, enter trip distance and duration
+- **Progression**: Enter distance and duration → Select rideshare platform (Uber/Lyft/Via/Curb/Revel/Juno) and medical provider (MTM/LogistiCare/Access2Care/Ambulette/Access-A-Ride) → System calculates gross pay, platform fees, net pay, pay per mile, pay per minute, and hourly rate for both options → Displays side-by-side comparison with difference amount and percentage → Shows recommendation with detailed breakdown of pros/cons
+- **Success criteria**: Driver can instantly compare income potential between rideshare and medical transport for any trip and understand which option pays better and why
+
 ## Edge Case Handling
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
@@ -155,9 +162,15 @@ This is a multi-view application with document tracking, deadline management, sh
 - **No Rides to Export**: Show error toast when export is clicked with no rides logged or all rides filtered out
 - **Filtered Export**: CSV export respects active filters, exports only visible rides with descriptive filename indicating filters applied
 - **Empty CSV Fields**: Optional fields (rating, notes) export as empty cells when not provided
+- **Calculator Zero Values**: Show empty state message when distance or duration is zero
+- **Calculator with Valid Input**: Display full comparison results with side-by-side earnings breakdown
+- **Medical Transport Always Wins**: Handle cases where medical transport consistently pays more and explain platform fee impact
+- **Rideshare Competitive**: Handle cases where rideshare (especially low-fee Curb) competes well with medical transport
+- **Very Short Trips**: Medical flat rates may significantly exceed rideshare for short trips
+- **Very Long Trips**: Rideshare per-mile rates may accumulate to compete with medical bonuses
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept.
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence.
 
 ## Color Selection
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
@@ -205,17 +218,17 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, and Ride Share Apps views
-  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, and platform details
-  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, and Trip Calculator views
+  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
+  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
   - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides
   - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
-  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, and pay amounts
-  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other) and document types
+  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, pay amounts, and calculator inputs
+  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other), document types, rideshare platforms, and medical providers in calculator
   - **Textarea**: Notes fields for documents, shifts, and rides
   - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
   - **Progress**: Visual bars showing relative earnings performance between platforms and ride comparisons
-  - **Separator**: Dividers between document and shift groups
+  - **Separator**: Dividers between document groups, shift groups, and calculator sections
   - **Scroll Area**: For long lists of documents, shifts, and rides on mobile
 
 - **Customizations**:
@@ -237,6 +250,11 @@ Animations should provide clear feedback for status changes and guide attention 
   - Pay per mile and pay per minute metrics prominently displayed
   - Fee percentage displayed to highlight commission impact
   - Best/worst ride comparison cards with visual indicators
+  - Calculator comparison cards with side-by-side rideshare vs medical transport results
+  - Real-time calculation updates as trip parameters change
+  - Difference badge showing absolute dollar amount and percentage variance
+  - Contextual recommendations based on which option pays more
+  - Provider-specific rates and fee structures displayed in selectors
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -251,6 +269,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - ChartBar: Earnings analytics, Earnings Optimizer tab
   - CarProfile: Ride share vehicles, Apps tab
   - MapTrifold: Individual rides, Ride Comparison tab
+  - Calculator: Trip income calculator, Calculator tab
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays
   - Clock: Time and duration displays
@@ -259,19 +278,21 @@ Animations should provide clear feedback for status changes and guide attention 
   - TrendUp: Performance improvements and best rates, best rides
   - TrendDown: Lowest value rides
   - Lightbulb: Insights and recommendations
-  - Lightning: Quick features and fast pay
+  - Lightning: Quick features and fast pay, rideshare advantages
   - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips
   - Globe: Platform availability
   - MapPin: Location markers for pickup/dropoff
-  - Path: Distance metrics
+  - Path: Distance metrics, trip details
   - ArrowRight: Route direction indicator
-  - Warning/WarningCircle: Expiring/expired alerts
+  - Warning/WarningCircle: Expiring/expired alerts, important considerations
   - CheckCircle: Current/valid status
   - Plus: Add new document, shift, or ride
   - PencilSimple: Edit existing entries
   - Trash: Delete shifts or rides
   - DownloadSimple: CSV export for tax records
+  - FirstAidKit: Medical transport icon
+  - Percent: Platform fees and commission rates
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
@@ -283,10 +304,11 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets, 4-column grid on tablets and up
+  - Tabs span full width with clear touch targets, 5-column grid on larger screens wrapping as needed
   - Stat grid collapses to 2 columns on mobile
   - Platform cards stack in single column on mobile
   - Ride cards stack in single column on mobile, 2-column grid on desktop
+  - Calculator comparison cards stack vertically on mobile, side-by-side on desktop
   - Larger touch targets (min 44px) for all interactive elements
   - Bottom sheet dialog variant for forms on mobile
   - Sticky tab navigation at top
