@@ -109,9 +109,80 @@ uv tool list                   # List installed tools
 - `uv build` / `uv publish` - Build and publish packages
 
 #### 🛠️ Tools
-- `uvx <tool>` - Run tools in temporary environment
-- `uv tool install` / `uninstall` / `list` - Manage global tools
-- `uv tool update-shell` - Update shell for tool executables
+
+**Running Tools (Temporary):**
+
+Use `uvx` (alias for `uv tool run`) to run tools without installing:
+
+```bash
+uvx ruff                       # Run ruff in temporary environment
+uvx pycowsay hello             # Run with arguments
+uvx --from httpie http         # Run command from different package name
+uvx ruff@0.3.0 check           # Run specific version
+uvx ruff@latest check          # Run latest version
+uvx --from 'ruff>0.2.0,<0.3.0' ruff check  # Version constraints
+```
+
+**Advanced Tool Usage:**
+
+```bash
+# With extras
+uvx --from 'mypy[faster-cache,reports]' mypy --xml-report mypy_report
+
+# From git
+uvx --from git+https://github.com/httpie/cli httpie
+uvx --from git+https://github.com/httpie/cli@master httpie  # Branch
+uvx --from git+https://github.com/httpie/cli@3.2.4 httpie   # Tag
+uvx --from git+https://github.com/httpie/cli@2843b87 httpie # Commit
+
+# With Git LFS
+uvx --lfs --from git+https://github.com/astral-sh/lfs-cowsay lfs-cowsay
+
+# With additional dependencies
+uvx --with mkdocs-material mkdocs --help
+
+# Specify Python version
+uvx --python 3.10 ruff
+```
+
+**Installing Tools (Persistent):**
+
+For frequently used tools, install them globally:
+
+```bash
+uv tool install ruff           # Install ruff
+uv tool install httpie         # Installs http, https, httpie executables
+uv tool install 'httpie>0.1.0' # With version constraint
+uv tool install git+https://github.com/httpie/cli  # From git
+uv tool install --lfs git+https://github.com/astral-sh/lfs-cowsay  # Git LFS
+
+# With additional packages
+uv tool install mkdocs --with mkdocs-material
+
+# Install multiple related executables
+uv tool install --with-executables-from ansible-core,ansible-lint ansible
+
+# With specific Python version
+uv tool install --python 3.10 ruff
+```
+
+**Managing Installed Tools:**
+
+```bash
+uv tool list                   # List installed tools
+uv tool upgrade ruff           # Upgrade specific tool
+uv tool upgrade --all          # Upgrade all tools
+uv tool upgrade --python 3.10 ruff  # Upgrade with Python version
+uv tool uninstall ruff         # Uninstall tool
+uv tool update-shell           # Add tool bin directory to PATH
+```
+
+**Important Notes:**
+- Tools installed via `uvx` run in temporary, isolated environments
+- Tools installed via `uv tool install` are persistent and added to PATH
+- Use `uv run` (not `uvx`) for project tools that need access to your project (e.g., pytest, mypy)
+- Tool modules are not importable in Python (isolation prevents conflicts)
+- Multiple executables from a package are installed together
 
 #### 🔄 pip Interface
 - `uv venv` - Create virtual environments

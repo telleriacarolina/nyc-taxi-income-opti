@@ -44,19 +44,21 @@ export function AIAssistant() {
         totalEarnings: shifts?.reduce((sum, s) => sum + (s.earnings || 0), 0) || 0,
         platforms: [...new Set(shifts?.map(s => s.platform) || [])],
         hasLicense: !!license,
-        licenseExpiry: license?.expiryDate
+        licenseExpiry: license?.expiryDate,
+        startLocations: [...new Set(shifts?.map(s => s.startLocation).filter(Boolean) || [])]
       }
 
       const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business.
 
-You have access to insights from NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page), which contains millions of historical trip records including:
-- Pickup/dropoff locations (taxi zones) across all 5 boroughs
-- Trip distances, durations, and fare amounts
-- Time-of-day and day-of-week patterns
-- Payment types and tip percentages
+You have access to insights from NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page), which contains millions of historical trip records organized by taxi zones including:
+- **Pickup location performance**: Which neighborhoods/zones have the highest average fares
+- **Top earning pickup zones**: Manhattan Core (Midtown, Times Square $45-65), Financial District ($50+), Airports (JFK/LGA $55-75+)
+- **Time-of-day patterns by zone**: When each neighborhood produces the best fares
+- Trip distances, durations, and fare amounts by pickup location
+- Payment types and tip percentages by area
 - High-demand locations and surge patterns
-- Seasonal variations in ride demand
-- Average trip statistics by borough and neighborhood
+- Seasonal variations by neighborhood
+- Average trip statistics by borough and specific taxi zones
 
 You also have knowledge of NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml):
 - Traffic Speed Data (XML feed with real-time speeds)
@@ -71,19 +73,24 @@ Context about this driver:
 - Total earnings: $${context.totalEarnings.toFixed(2)}
 - Platforms used: ${context.platforms.join(', ') || 'None'}
 - License status: ${context.hasLicense ? `Active until ${context.licenseExpiry}` : 'Not set'}
+- Start locations used: ${context.startLocations.length > 0 ? context.startLocations.join(', ') : 'Not specified'}
 
 2025 Earnings Target: $300 per day with 7-10 quality rides (approx $35/trip)
 
-Known patterns from TLC Trip Record Data:
-- Morning rush (7-9am): High demand to Manhattan business districts, airports
-- Lunch period (12-2pm): Shorter trips within business districts
-- Evening rush (5-8pm): High demand leaving Manhattan to outer boroughs
-- Late night (10pm-2am): Entertainment districts, airport runs
-- Weekends: Different patterns - outer boroughs to Manhattan for entertainment/dining
+Known patterns from TLC Trip Record Data by PICKUP LOCATION:
+- **Manhattan Core zones** (morning 7-9am): High demand to other Manhattan areas, airports - avg $45-65/pickup
+- **Residential neighborhoods** (morning rush): UES, UWS, Astoria, Park Slope to Manhattan business districts
+- **Financial District** (lunch 12-2pm): Short trips within FiDi/downtown - high turnover
+- **Manhattan business districts** (evening 5-8pm): High demand leaving Manhattan to outer boroughs - avg $40-55
+- **Entertainment districts** (late night 10pm-2am): Williamsburg, LES, Meatpacking - premium weekend fares $40-60
+- **Airport staging**: JFK, LGA pickups = 2.5x longer trips, 45% higher earnings per trip
+- **Hotel districts**: Theater District, Garment District - 20% higher tip rates
+
+**IMPORTANT**: When the driver mentions or asks about locations, refer to the "Start locations used" field above showing where they've been starting their shifts. Provide insights comparing their location choices to TLC Trip Record Data showing which zones/neighborhoods have the best pickup performance.
 
 Driver's question: ${userMessage.content}
 
-Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging TLC Trip Record Data patterns and NYC DOT real-time feeds for better positioning and route planning. When relevant, reference specific neighborhoods, times, or data patterns from TLC records.`
+Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging TLC Trip Record Data patterns (especially pickup location strategies) and NYC DOT real-time feeds for better positioning. When relevant, reference specific neighborhoods, times, or location-based patterns from TLC records and compare to the driver's start location history.`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini')
 

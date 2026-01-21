@@ -10,6 +10,7 @@ export interface Shift {
   tips?: number
   expenses?: number
   notes?: string
+  startLocation?: string
 }
 
 export interface EarningsStats {

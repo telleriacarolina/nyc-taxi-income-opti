@@ -27,7 +27,8 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
     trips: 0,
     tips: 0,
     expenses: 0,
-    notes: ''
+    notes: '',
+    startLocation: ''
   })
 
   useEffect(() => {
@@ -44,7 +45,8 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
         trips: 0,
         tips: 0,
         expenses: 0,
-        notes: ''
+        notes: '',
+        startLocation: ''
       })
     }
   }, [shift, open])
@@ -82,7 +84,8 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
       trips: Number(formData.trips) || 0,
       tips: Number(formData.tips) || 0,
       expenses: Number(formData.expenses) || 0,
-      notes: formData.notes || ''
+      notes: formData.notes || '',
+      startLocation: formData.startLocation || ''
     }
 
     onSave(newShift)
@@ -133,6 +136,20 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="startLocation">Start Location</Label>
+            <Input
+              id="startLocation"
+              type="text"
+              placeholder="e.g., Midtown Manhattan, JFK, Williamsburg..."
+              value={formData.startLocation}
+              onChange={(e) => setFormData({ ...formData, startLocation: e.target.value })}
+            />
+            <p className="text-[clamp(0.65rem,1.8vw,0.7rem)] text-muted-foreground">
+              Where you began your shift (helps AI provide location-based insights)
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

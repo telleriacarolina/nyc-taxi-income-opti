@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatHours } from '@/lib/earnings-utils'
 import { formatDate } from '@/lib/date-utils'
-import { PencilSimple, Trash, Clock, CurrencyDollar, Car } from '@phosphor-icons/react'
+import { PencilSimple, Trash, Clock, CurrencyDollar, Car, MapPin } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 interface ShiftCardProps {
@@ -47,6 +47,12 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
                   {shift.startTime} - {shift.endTime}
                 </span>
               </div>
+              {shift.startLocation && (
+                <div className="flex items-center gap-1 mb-1">
+                  <MapPin size={14} className="text-primary shrink-0" weight="fill" />
+                  <p className="text-primary text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1 font-medium">{shift.startLocation}</p>
+                </div>
+              )}
               {shift.notes && (
                 <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1">{shift.notes}</p>
               )}
