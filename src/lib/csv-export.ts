@@ -13,7 +13,12 @@ export function generateRideCSV(rides: Ride[]): string {
     'Gross Pay',
     'Fees',
     'Net Pay',
+    'Vehicle Type',
+    'Fuel/Charging Cost',
+    'Profit',
     'Pay Per Mile',
+    'Fuel Cost Per Mile',
+    'Profit Per Mile',
     'Pay Per Minute',
     'Rating',
     'Notes'
@@ -22,6 +27,10 @@ export function generateRideCSV(rides: Ride[]): string {
   const rows = rides.map(ride => {
     const payPerMile = ride.distance > 0 ? (ride.netPay / ride.distance).toFixed(2) : '0.00'
     const payPerMinute = ride.duration > 0 ? (ride.netPay / ride.duration).toFixed(2) : '0.00'
+    const fuelCost = ride.fuelCost || 0
+    const profit = ride.netPay - fuelCost
+    const fuelCostPerMile = ride.distance > 0 ? (fuelCost / ride.distance).toFixed(2) : '0.00'
+    const profitPerMile = ride.distance > 0 ? (profit / ride.distance).toFixed(2) : '0.00'
 
     return [
       ride.date,
@@ -34,7 +43,12 @@ export function generateRideCSV(rides: Ride[]): string {
       ride.grossPay.toFixed(2),
       ride.fees.toFixed(2),
       ride.netPay.toFixed(2),
+      ride.vehicleType ? ride.vehicleType.charAt(0).toUpperCase() + ride.vehicleType.slice(1) : '',
+      fuelCost.toFixed(2),
+      profit.toFixed(2),
       payPerMile,
+      fuelCostPerMile,
+      profitPerMile,
       payPerMinute,
       ride.rating?.toString() || '',
       escapeCSVField(ride.notes || '')

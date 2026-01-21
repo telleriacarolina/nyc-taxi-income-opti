@@ -9,11 +9,17 @@ export function calculateRideStats(rides: Ride[]): RideStats {
       totalGrossPay: 0,
       totalFees: 0,
       totalNetPay: 0,
+      totalFuelCost: 0,
+      totalProfit: 0,
       averageDistance: 0,
       averageDuration: 0,
       averageNetPay: 0,
       averagePayPerMile: 0,
       averagePayPerMinute: 0,
+      averageFuelCost: 0,
+      averageFuelCostPerMile: 0,
+      averageProfit: 0,
+      averageProfitPerMile: 0,
       bestRide: null,
       worstRide: null
     }
@@ -24,19 +30,22 @@ export function calculateRideStats(rides: Ride[]): RideStats {
   const totalGrossPay = rides.reduce((sum, r) => sum + r.grossPay, 0)
   const totalFees = rides.reduce((sum, r) => sum + r.fees, 0)
   const totalNetPay = rides.reduce((sum, r) => sum + r.netPay, 0)
+  const totalFuelCost = rides.reduce((sum, r) => sum + (r.fuelCost || 0), 0)
+  const totalProfit = totalNetPay - totalFuelCost
 
   const ridesWithRates = rides.map(ride => ({
     ...ride,
     payPerMile: ride.distance > 0 ? ride.netPay / ride.distance : 0,
-    payPerMinute: ride.duration > 0 ? ride.netPay / ride.duration : 0
+    payPerMinute: ride.duration > 0 ? ride.netPay / ride.duration : 0,
+    profitPerMile: ride.distance > 0 ? (ride.netPay - (ride.fuelCost || 0)) / ride.distance : 0
   }))
 
   const bestRide = ridesWithRates.reduce((best, curr) => 
-    curr.payPerMile > best.payPerMile ? curr : best
+    curr.profitPerMile > best.profitPerMile ? curr : best
   )
 
   const worstRide = ridesWithRates.reduce((worst, curr) => 
-    curr.payPerMile < worst.payPerMile ? curr : worst
+    curr.profitPerMile < worst.profitPerMile ? curr : worst
   )
 
   return {
@@ -46,11 +55,17 @@ export function calculateRideStats(rides: Ride[]): RideStats {
     totalGrossPay,
     totalFees,
     totalNetPay,
+    totalFuelCost,
+    totalProfit,
     averageDistance: totalDistance / rides.length,
     averageDuration: totalDuration / rides.length,
     averageNetPay: totalNetPay / rides.length,
     averagePayPerMile: totalDistance > 0 ? totalNetPay / totalDistance : 0,
     averagePayPerMinute: totalDuration > 0 ? totalNetPay / totalDuration : 0,
+    averageFuelCost: totalFuelCost / rides.length,
+    averageFuelCostPerMile: totalDistance > 0 ? totalFuelCost / totalDistance : 0,
+    averageProfit: totalProfit / rides.length,
+    averageProfitPerMile: totalDistance > 0 ? totalProfit / totalDistance : 0,
     bestRide,
     worstRide
   }
@@ -64,6 +79,7 @@ export function getPlatformRideStats(rides: Ride[]): PlatformRideStats[] {
     totalNetPay: number
     totalGrossPay: number
     totalFees: number
+    totalFuelCost: number
   }> = {}
 
   rides.forEach(ride => {
@@ -74,7 +90,8 @@ export function getPlatformRideStats(rides: Ride[]): PlatformRideStats[] {
         totalDuration: 0,
         totalNetPay: 0,
         totalGrossPay: 0,
-        totalFees: 0
+        totalFees: 0,
+        totalFuelCost: 0
       }
     }
     platformData[ride.platform].rides += 1
@@ -83,20 +100,27 @@ export function getPlatformRideStats(rides: Ride[]): PlatformRideStats[] {
     platformData[ride.platform].totalNetPay += ride.netPay
     platformData[ride.platform].totalGrossPay += ride.grossPay
     platformData[ride.platform].totalFees += ride.fees
+    platformData[ride.platform].totalFuelCost += ride.fuelCost || 0
   })
 
   return Object.entries(platformData)
-    .map(([platform, data]) => ({
-      platform: platform.charAt(0).toUpperCase() + platform.slice(1),
-      rides: data.rides,
-      totalDistance: data.totalDistance,
-      totalNetPay: data.totalNetPay,
-      averagePayPerMile: data.totalDistance > 0 ? data.totalNetPay / data.totalDistance : 0,
-      averagePayPerMinute: data.totalDuration > 0 ? data.totalNetPay / data.totalDuration : 0,
-      totalFees: data.totalFees,
-      feePercentage: data.totalGrossPay > 0 ? (data.totalFees / data.totalGrossPay) * 100 : 0
-    }))
-    .sort((a, b) => b.averagePayPerMile - a.averagePayPerMile)
+    .map(([platform, data]) => {
+      const totalProfit = data.totalNetPay - data.totalFuelCost
+      return {
+        platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+        rides: data.rides,
+        totalDistance: data.totalDistance,
+        totalNetPay: data.totalNetPay,
+        averagePayPerMile: data.totalDistance > 0 ? data.totalNetPay / data.totalDistance : 0,
+        averagePayPerMinute: data.totalDuration > 0 ? data.totalNetPay / data.totalDuration : 0,
+        totalFees: data.totalFees,
+        feePercentage: data.totalGrossPay > 0 ? (data.totalFees / data.totalGrossPay) * 100 : 0,
+        totalFuelCost: data.totalFuelCost,
+        totalProfit,
+        averageProfitPerMile: data.totalDistance > 0 ? totalProfit / data.totalDistance : 0
+      }
+    })
+    .sort((a, b) => b.averageProfitPerMile - a.averageProfitPerMile)
 }
 
 export function formatDistance(miles: number): string {

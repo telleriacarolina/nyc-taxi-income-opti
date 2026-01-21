@@ -39,6 +39,8 @@ export function RideDialog({ open, onOpenChange, ride, onSave }: RideDialogProps
     grossPay: 0,
     fees: 0,
     netPay: 0,
+    vehicleType: undefined,
+    fuelCost: 0,
     rating: undefined,
     notes: ''
   })
@@ -58,6 +60,8 @@ export function RideDialog({ open, onOpenChange, ride, onSave }: RideDialogProps
         grossPay: 0,
         fees: 0,
         netPay: 0,
+        vehicleType: undefined,
+        fuelCost: 0,
         rating: undefined,
         notes: ''
       })
@@ -250,6 +254,41 @@ export function RideDialog({ open, onOpenChange, ride, onSave }: RideDialogProps
                 value={formData.netPay?.toFixed(2) || '0.00'}
                 disabled
                 className="bg-muted"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="vehicleType">Vehicle Type</Label>
+              <Select
+                value={formData.vehicleType || 'none'}
+                onValueChange={(value) => setFormData({ ...formData, vehicleType: value === 'none' ? undefined : value as Ride['vehicleType'] })}
+              >
+                <SelectTrigger id="vehicleType">
+                  <SelectValue placeholder="Select vehicle type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Not specified</SelectItem>
+                  <SelectItem value="gas">⛽ Gas Vehicle</SelectItem>
+                  <SelectItem value="hybrid">🔋 Hybrid Vehicle</SelectItem>
+                  <SelectItem value="electric">⚡ Electric Vehicle</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fuelCost">
+                {formData.vehicleType === 'electric' ? 'Charging Cost' : 'Fuel Cost'} (optional)
+              </Label>
+              <Input
+                id="fuelCost"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="2.50"
+                value={formData.fuelCost || ''}
+                onChange={(e) => setFormData({ ...formData, fuelCost: parseFloat(e.target.value) || 0 })}
               />
             </div>
           </div>

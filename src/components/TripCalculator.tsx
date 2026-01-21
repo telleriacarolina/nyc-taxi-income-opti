@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Calculator,
   CarProfile,
@@ -15,7 +17,9 @@ import {
   Path,
   Percent,
   Lightning,
-  Warning
+  Warning,
+  GasPump,
+  Leaf
 } from '@phosphor-icons/react'
 
 interface TripResult {
@@ -49,6 +53,12 @@ export function TripCalculator() {
   const [duration, setDuration] = useState('25')
   const [rideshareType, setRideshareType] = useState('uber')
   const [medicalType, setMedicalType] = useState('mtm')
+  
+  const [vehicleType, setVehicleType] = useState<'gas' | 'hybrid' | 'electric'>('gas')
+  const [gasMPG, setGasMPG] = useKV('vehicle-mpg', '25')
+  const [gasPrice, setGasPrice] = useKV('gas-price-per-gallon', '3.50')
+  const [electricKWH, setElectricKWH] = useKV('vehicle-kwh-per-mile', '0.3')
+  const [electricPrice, setElectricPrice] = useKV('electric-price-per-kwh', '0.25')
 
   const parseNumber = (value: string): number => {
     const num = parseFloat(value)
@@ -107,6 +117,31 @@ export function TripCalculator() {
   const dist = parseNumber(distance)
   const dur = parseNumber(duration)
 
+  const calculateFuelCost = (): number => {
+    if (dist === 0) return 0
+    
+    if (vehicleType === 'electric') {
+      const kwhPerMile = parseNumber(electricKWH || '0.3')
+      const pricePerKWH = parseNumber(electricPrice || '0.25')
+      return dist * kwhPerMile * pricePerKWH
+    } else if (vehicleType === 'gas') {
+      const mpg = parseNumber(gasMPG || '25')
+      const pricePerGallon = parseNumber(gasPrice || '3.50')
+      if (mpg === 0) return 0
+      return (dist / mpg) * pricePerGallon
+    } else {
+      const mpg = parseNumber(gasMPG || '25')
+      const pricePerGallon = parseNumber(gasPrice || '3.50')
+      if (mpg === 0) return 0
+      const hybridMPG = mpg * 1.4
+      return (dist / hybridMPG) * pricePerGallon
+    }
+  }
+
+  const fuelCost = calculateFuelCost()
+  const rideshareProfit = rideshareResult.netPay - fuelCost
+  const medicalProfit = medicalResult.netPay - fuelCost
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-primary/10 to-success/10 rounded-lg p-6 border">
@@ -117,12 +152,19 @@ export function TripCalculator() {
           <div className="flex-1">
             <h2 className="text-2xl font-semibold mb-2">Trip Income Calculator</h2>
             <p className="text-muted-foreground">
-              Compare potential earnings from rideshare apps vs medical transport services for the same trip. 
-              Enter trip details to see which option pays better.
+              Compare potential earnings from rideshare apps vs medical transport services. Calculate fuel costs for gas, hybrid, or electric vehicles.
             </p>
           </div>
         </div>
       </div>
+
+      <Tabs defaultValue="trip" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsTrigger value="trip">Trip Comparison</TabsTrigger>
+          <TabsTrigger value="fuel">Fuel Calculator</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="trip" className="space-y-6">
 
       <Card className="p-6 border-2 border-primary/20">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -219,6 +261,27 @@ export function TripCalculator() {
               </span>
             </div>
 
+            {fuelCost > 0 && (
+              <>
+                <div className="flex items-center justify-between py-2 text-warning">
+                  <span className="text-sm flex items-center gap-1">
+                    {vehicleType === 'electric' ? <Lightning size={14} /> : <GasPump size={14} />}
+                    Fuel Cost
+                  </span>
+                  <span className="text-lg font-semibold font-mono">
+                    -${fuelCost.toFixed(2)}
+                  </span>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between py-2 bg-primary/10 rounded-lg px-3">
+                  <span className="text-sm font-semibold">Profit</span>
+                  <span className="text-2xl font-bold text-primary font-mono">
+                    ${rideshareProfit.toFixed(2)}
+                  </span>
+                </div>
+              </>
+            )}
+
             <div className="grid grid-cols-3 gap-2 pt-3">
               <div className="bg-secondary rounded-lg p-3 text-center">
                 <div className="text-xs text-muted-foreground mb-1">$/mile</div>
@@ -293,6 +356,27 @@ export function TripCalculator() {
                 ${medicalResult.netPay.toFixed(2)}
               </span>
             </div>
+
+            {fuelCost > 0 && (
+              <>
+                <div className="flex items-center justify-between py-2 text-warning">
+                  <span className="text-sm flex items-center gap-1">
+                    {vehicleType === 'electric' ? <Lightning size={14} /> : <GasPump size={14} />}
+                    Fuel Cost
+                  </span>
+                  <span className="text-lg font-semibold font-mono">
+                    -${fuelCost.toFixed(2)}
+                  </span>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between py-2 bg-primary/10 rounded-lg px-3">
+                  <span className="text-sm font-semibold">Profit</span>
+                  <span className="text-2xl font-bold text-primary font-mono">
+                    ${medicalProfit.toFixed(2)}
+                  </span>
+                </div>
+              </>
+            )}
 
             <div className="grid grid-cols-3 gap-2 pt-3">
               <div className="bg-secondary rounded-lg p-3 text-center">
@@ -432,6 +516,200 @@ export function TripCalculator() {
           </div>
         </Card>
       ) : null}
+        </TabsContent>
+
+        <TabsContent value="fuel" className="space-y-6">
+          <Card className="p-6 border-2 border-primary/20">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <GasPump size={20} className="text-warning" weight="fill" />
+              Vehicle & Fuel Settings
+            </h3>
+            
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="vehicle-type" className="text-sm font-semibold">
+                  Vehicle Type
+                </Label>
+                <Select value={vehicleType} onValueChange={(v) => setVehicleType(v as any)}>
+                  <SelectTrigger id="vehicle-type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gas">⛽ Gas Vehicle</SelectItem>
+                    <SelectItem value="hybrid">🔋 Hybrid Vehicle</SelectItem>
+                    <SelectItem value="electric">⚡ Electric Vehicle</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(vehicleType === 'gas' || vehicleType === 'hybrid') && (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="mpg" className="text-sm font-semibold">
+                        Vehicle MPG
+                      </Label>
+                      <Input
+                        id="mpg"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={gasMPG}
+                        onChange={(e) => setGasMPG(e.target.value)}
+                        placeholder="25"
+                        className="text-lg"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {vehicleType === 'hybrid' ? 'Base MPG (40% boost applied)' : 'Miles per gallon in city driving'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gas-price" className="text-sm font-semibold">
+                        Gas Price ($/gallon)
+                      </Label>
+                      <Input
+                        id="gas-price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={gasPrice}
+                        onChange={(e) => setGasPrice(e.target.value)}
+                        placeholder="3.50"
+                        className="text-lg"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Current NYC average: $3.50-$4.00
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {vehicleType === 'electric' && (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="kwh" className="text-sm font-semibold">
+                        kWh per Mile
+                      </Label>
+                      <Input
+                        id="kwh"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={electricKWH}
+                        onChange={(e) => setElectricKWH(e.target.value)}
+                        placeholder="0.3"
+                        className="text-lg"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Typical EV: 0.25-0.35 kWh/mi
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="electric-price" className="text-sm font-semibold">
+                        Electricity Price ($/kWh)
+                      </Label>
+                      <Input
+                        id="electric-price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={electricPrice}
+                        onChange={(e) => setElectricPrice(e.target.value)}
+                        placeholder="0.25"
+                        className="text-lg"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        NYC residential: $0.20-$0.30/kWh
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
+
+          {dist > 0 && (
+            <Card className="p-6 bg-gradient-to-br from-warning/10 to-warning/5 border-warning/30">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                {vehicleType === 'electric' ? (
+                  <Lightning size={20} className="text-accent" weight="fill" />
+                ) : (
+                  <GasPump size={20} className="text-warning" weight="fill" />
+                )}
+                Fuel Cost for {dist.toFixed(1)} Miles
+              </h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-background rounded-lg border-2">
+                  <div>
+                    <div className="text-sm text-muted-foreground mb-1">
+                      {vehicleType === 'electric' ? 'Charging Cost' : 'Fuel Cost'}
+                    </div>
+                    <div className="text-3xl font-bold font-mono text-warning">
+                      ${fuelCost.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-muted-foreground mb-1">Per Mile</div>
+                    <div className="text-xl font-bold font-mono">
+                      ${(dist > 0 ? fuelCost / dist : 0).toFixed(3)}
+                    </div>
+                  </div>
+                </div>
+
+                {vehicleType === 'gas' && (
+                  <div className="p-4 bg-background rounded-lg border">
+                    <div className="text-sm text-muted-foreground mb-2">Calculation</div>
+                    <div className="text-sm font-mono">
+                      {dist.toFixed(1)} miles ÷ {parseNumber(gasMPG || '25').toFixed(1)} MPG = {(dist / parseNumber(gasMPG || '25')).toFixed(2)} gallons<br/>
+                      {(dist / parseNumber(gasMPG || '25')).toFixed(2)} gallons × ${parseNumber(gasPrice || '3.50').toFixed(2)}/gal = ${fuelCost.toFixed(2)}
+                    </div>
+                  </div>
+                )}
+
+                {vehicleType === 'hybrid' && (
+                  <div className="p-4 bg-background rounded-lg border">
+                    <div className="text-sm text-muted-foreground mb-2">Calculation</div>
+                    <div className="text-sm font-mono">
+                      {dist.toFixed(1)} miles ÷ {(parseNumber(gasMPG || '25') * 1.4).toFixed(1)} MPG (hybrid) = {(dist / (parseNumber(gasMPG || '25') * 1.4)).toFixed(2)} gallons<br/>
+                      {(dist / (parseNumber(gasMPG || '25') * 1.4)).toFixed(2)} gallons × ${parseNumber(gasPrice || '3.50').toFixed(2)}/gal = ${fuelCost.toFixed(2)}
+                    </div>
+                  </div>
+                )}
+
+                {vehicleType === 'electric' && (
+                  <div className="p-4 bg-background rounded-lg border">
+                    <div className="text-sm text-muted-foreground mb-2">Calculation</div>
+                    <div className="text-sm font-mono">
+                      {dist.toFixed(1)} miles × {parseNumber(electricKWH || '0.3').toFixed(2)} kWh/mi = {(dist * parseNumber(electricKWH || '0.3')).toFixed(2)} kWh<br/>
+                      {(dist * parseNumber(electricKWH || '0.3')).toFixed(2)} kWh × ${parseNumber(electricPrice || '0.25').toFixed(2)}/kWh = ${fuelCost.toFixed(2)}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-start gap-3 p-4 bg-accent/10 rounded-lg border border-accent/30">
+                  <Leaf size={20} className="text-accent flex-shrink-0 mt-0.5" weight="fill" />
+                  <div className="text-sm">
+                    <p className="font-semibold mb-1">Fuel Cost Savings</p>
+                    <p className="text-muted-foreground">
+                      {vehicleType === 'electric' 
+                        ? `Electric vehicles typically cost 60-70% less to "fuel" than gas vehicles. For ${dist.toFixed(1)} miles, a gas car would cost approximately $${((dist / 25) * parseNumber((gasPrice || '3.50'))).toFixed(2)}.`
+                        : vehicleType === 'hybrid'
+                        ? `Hybrid vehicles save about 40% on fuel compared to gas-only vehicles. You're saving approximately $${(((dist / parseNumber((gasMPG || '25'))) * parseNumber((gasPrice || '3.50'))) - fuelCost).toFixed(2)} on this trip.`
+                        : `Consider switching to a hybrid or electric vehicle to reduce fuel costs by 40-70%.`
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -166,7 +166,7 @@ export function RideComparison() {
             <Card className="p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Avg Net Pay</span>
-                <CurrencyDollar size={24} className="text-accent" weight="fill" />
+                <CurrencyDollar size={24} className="text-success" weight="fill" />
               </div>
               <div className="text-3xl font-bold">{formatCurrency(stats.averageNetPay)}</div>
               <div className="text-xs text-muted-foreground mt-1">
@@ -176,23 +176,23 @@ export function RideComparison() {
 
             <Card className="p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Per Mile</span>
-                <Path size={24} className="text-success" weight="bold" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Fuel Costs</span>
+                <Path size={24} className="text-warning" weight="bold" />
               </div>
-              <div className="text-3xl font-bold">{formatCurrency(stats.averagePayPerMile)}</div>
+              <div className="text-3xl font-bold">{formatCurrency(stats.totalFuelCost)}</div>
               <div className="text-xs text-muted-foreground mt-1">
-                {formatDistance(stats.averageDistance)} avg
+                {formatCurrency(stats.averageFuelCostPerMile)}/mi avg
               </div>
             </Card>
 
             <Card className="p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Per Minute</span>
-                <Clock size={24} className="text-warning" weight="fill" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Profit</span>
+                <TrendUp size={24} className="text-accent" weight="bold" />
               </div>
-              <div className="text-3xl font-bold">{formatCurrency(stats.averagePayPerMinute)}</div>
+              <div className="text-3xl font-bold">{formatCurrency(stats.totalProfit)}</div>
               <div className="text-xs text-muted-foreground mt-1">
-                {formatDuration(stats.averageDuration)} avg
+                {formatCurrency(stats.averageProfitPerMile)}/mi
               </div>
             </Card>
           </div>
@@ -206,15 +206,15 @@ export function RideComparison() {
 
               <div className="space-y-4">
                 {platformStats.map((platform, index) => {
-                  const maxPayPerMile = platformStats[0].averagePayPerMile
-                  const progressPerMile = (platform.averagePayPerMile / maxPayPerMile) * 100
+                  const maxProfitPerMile = platformStats[0].averageProfitPerMile
+                  const progressProfit = maxProfitPerMile > 0 ? (platform.averageProfitPerMile / maxProfitPerMile) * 100 : 0
                   
                   return (
                     <div key={platform.platform} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           {index === 0 && (
-                            <Badge className="bg-accent text-accent-foreground">Best $/mi</Badge>
+                            <Badge className="bg-accent text-accent-foreground">Best Profit/mi</Badge>
                           )}
                           <span className="font-semibold capitalize">{platform.platform}</span>
                           <Badge variant="outline" className="font-mono text-xs">
@@ -222,17 +222,17 @@ export function RideComparison() {
                           </Badge>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold font-mono">{formatCurrency(platform.averagePayPerMile)}/mi</div>
+                          <div className="font-bold font-mono">{formatCurrency(platform.averageProfitPerMile)}/mi</div>
                           <div className="text-xs text-muted-foreground">
-                            {formatCurrency(platform.averagePayPerMinute)}/min
+                            {formatCurrency(platform.totalFuelCost)} fuel cost
                           </div>
                         </div>
                       </div>
                       
-                      <Progress value={progressPerMile} className="h-2" />
+                      <Progress value={progressProfit} className="h-2" />
                       
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{formatDistance(platform.totalDistance)} total distance</span>
+                        <span>{formatDistance(platform.totalDistance)} total • {formatCurrency(platform.totalProfit)} profit</span>
                         <span className="text-destructive">{platform.feePercentage.toFixed(1)}% avg fees</span>
                       </div>
                     </div>
@@ -255,16 +255,16 @@ export function RideComparison() {
                     <div className="flex items-start gap-3 p-3 bg-success/10 rounded-lg border border-success/20">
                       <TrendUp size={24} className="text-success flex-shrink-0 mt-0.5" weight="bold" />
                       <div>
-                        <div className="font-semibold text-success mb-1">Best Ride</div>
+                        <div className="font-semibold text-success mb-1">Most Profitable</div>
                         <div className="text-sm">
                           <span className="capitalize font-medium">{stats.bestRide.platform}</span>
                           {' • '}
                           {formatDistance(stats.bestRide.distance)} for {formatCurrency(stats.bestRide.netPay)}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {formatCurrency(stats.bestRide.distance > 0 ? stats.bestRide.netPay / stats.bestRide.distance : 0)}/mi
-                          {' • '}
-                          {stats.bestRide.pickupLocation} → {stats.bestRide.dropoffLocation}
+                          {formatCurrency(stats.bestRide.distance > 0 ? 
+                            (stats.bestRide.netPay - (stats.bestRide.fuelCost || 0)) / stats.bestRide.distance : 0)}/mi profit
+                          {stats.bestRide.fuelCost && ` • ${formatCurrency(stats.bestRide.fuelCost)} fuel`}
                         </div>
                       </div>
                     </div>
@@ -272,24 +272,27 @@ export function RideComparison() {
                     <div className="flex items-start gap-3 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
                       <TrendDown size={24} className="text-destructive flex-shrink-0 mt-0.5" weight="bold" />
                       <div>
-                        <div className="font-semibold text-destructive mb-1">Lowest Value</div>
+                        <div className="font-semibold text-destructive mb-1">Least Profitable</div>
                         <div className="text-sm">
                           <span className="capitalize font-medium">{stats.worstRide.platform}</span>
                           {' • '}
                           {formatDistance(stats.worstRide.distance)} for {formatCurrency(stats.worstRide.netPay)}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {formatCurrency(stats.worstRide.distance > 0 ? stats.worstRide.netPay / stats.worstRide.distance : 0)}/mi
+                          {formatCurrency(stats.worstRide.distance > 0 ? 
+                            (stats.worstRide.netPay - (stats.worstRide.fuelCost || 0)) / stats.worstRide.distance : 0)}/mi profit
                           {' • '}
-                          Avoid similar short routes
+                          Avoid similar routes
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="text-sm text-foreground/80">
-                    💡 <strong>Tip:</strong> Focus on rides similar to your best performer. Look for 
-                    longer distances with good pay rates on {platformStats[0]?.platform || 'your top platform'} to maximize earnings per mile.
+                    💡 <strong>Tip:</strong> {stats.totalFuelCost > 0 
+                      ? `Track fuel costs to maximize profit. Your current fuel cost is ${formatCurrency(stats.averageFuelCostPerMile)}/mi.`
+                      : `Add fuel costs to your rides to track actual profit after expenses.`
+                    } Focus on rides with the best profit-per-mile ratio on {platformStats[0]?.platform || 'your top platform'}.
                   </div>
                 </div>
               </div>

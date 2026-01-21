@@ -12,7 +12,10 @@ import {
   CurrencyDollar,
   Star,
   PencilSimple,
-  Trash
+  Trash,
+  GasPump,
+  Lightning,
+  Leaf
 } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 
@@ -37,6 +40,35 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
   const payPerMinute = ride.duration > 0 ? ride.netPay / ride.duration : 0
   const feePercentage = ride.grossPay > 0 ? (ride.fees / ride.grossPay) * 100 : 0
   const efficiencyScore = getRideEfficiencyScore(ride)
+  const fuelCost = ride.fuelCost || 0
+  const profit = ride.netPay - fuelCost
+  const profitPerMile = ride.distance > 0 ? profit / ride.distance : 0
+
+  const getVehicleIcon = () => {
+    switch (ride.vehicleType) {
+      case 'electric':
+        return <Lightning size={16} weight="fill" className="text-accent" />
+      case 'hybrid':
+        return <Leaf size={16} weight="fill" className="text-success" />
+      case 'gas':
+        return <GasPump size={16} weight="fill" className="text-warning" />
+      default:
+        return null
+    }
+  }
+
+  const getVehicleLabel = () => {
+    switch (ride.vehicleType) {
+      case 'electric':
+        return 'Electric'
+      case 'hybrid':
+        return 'Hybrid'
+      case 'gas':
+        return 'Gas'
+      default:
+        return null
+    }
+  }
 
   return (
     <Card className="p-5 hover:shadow-md transition-all group">
@@ -54,6 +86,12 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
               <Badge variant="outline" className="font-mono text-xs">
                 {format(new Date(ride.date + 'T' + ride.time), 'MMM d, h:mm a')}
               </Badge>
+              {ride.vehicleType && (
+                <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                  {getVehicleIcon()}
+                  {getVehicleLabel()}
+                </Badge>
+              )}
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
               {Array.from({ length: efficiencyScore }).map((_, i) => (
@@ -144,12 +182,41 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
           </div>
         </div>
 
+        {fuelCost > 0 && (
+          <div className="mt-3 pt-3 border-t">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">
+                  {ride.vehicleType === 'electric' ? 'Charging' : 'Fuel'} Cost
+                </div>
+                <div className="font-semibold font-mono text-warning">-{formatCurrency(fuelCost)}</div>
+              </div>
+              
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">Cost/Mile</div>
+                <div className="font-semibold font-mono text-xs">
+                  {formatCurrency(ride.distance > 0 ? fuelCost / ride.distance : 0)}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">Profit</div>
+                <div className="font-bold text-lg font-mono text-accent">{formatCurrency(profit)}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t">
           <div className="flex items-center gap-2">
             <CurrencyDollar size={16} className="text-accent" weight="bold" />
             <div className="flex-1">
-              <div className="text-xs text-muted-foreground">Per Mile</div>
-              <div className="font-semibold font-mono text-sm">{formatCurrency(payPerMile)}</div>
+              <div className="text-xs text-muted-foreground">
+                {fuelCost > 0 ? 'Profit/Mile' : 'Pay/Mile'}
+              </div>
+              <div className="font-semibold font-mono text-sm">
+                {formatCurrency(fuelCost > 0 ? profitPerMile : payPerMile)}
+              </div>
             </div>
           </div>
 

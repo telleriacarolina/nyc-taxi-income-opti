@@ -10,6 +10,8 @@ export interface Ride {
   grossPay: number
   fees: number
   netPay: number
+  vehicleType?: 'gas' | 'electric' | 'hybrid'
+  fuelCost?: number
   rating?: number
   notes?: string
 }
@@ -21,11 +23,17 @@ export interface RideStats {
   totalGrossPay: number
   totalFees: number
   totalNetPay: number
+  totalFuelCost: number
+  totalProfit: number
   averageDistance: number
   averageDuration: number
   averageNetPay: number
   averagePayPerMile: number
   averagePayPerMinute: number
+  averageFuelCost: number
+  averageFuelCostPerMile: number
+  averageProfit: number
+  averageProfitPerMile: number
   bestRide: Ride | null
   worstRide: Ride | null
 }
@@ -39,4 +47,7 @@ export interface PlatformRideStats {
   averagePayPerMinute: number
   totalFees: number
   feePercentage: number
+  totalFuelCost: number
+  totalProfit: number
+  averageProfitPerMile: number
 }
