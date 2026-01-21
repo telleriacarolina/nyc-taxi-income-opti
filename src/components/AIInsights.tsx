@@ -36,6 +36,14 @@ export function AIInsights() {
 
       const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
 
+NYC DOT Data Context:
+This driver has access to real-time NYC DOT data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) including:
+- Traffic speed data across NYC
+- Real-time traffic advisories and construction alerts
+- Planned events data
+- Parking regulations
+- @NYC_DOT Twitter feed for live updates
+
 Shift data (${shiftsData.length} shifts):
 ${JSON.stringify(shiftsData, null, 2)}
 
@@ -45,12 +53,13 @@ Based on this data, identify ONE specific pattern or opportunity to hit the 2025
 - Multi-apping opportunities to cherry-pick high-value rides
 - Shift length optimization for quality over quantity
 - How current performance compares to the $300/day target
+- How to use NYC DOT data feeds to optimize routes and avoid congestion
 
 Return your response as JSON in this exact format:
 {
   "type": "earnings" | "timing" | "platform" | "strategy",
   "title": "Brief insight title (6-8 words)",
-  "content": "One specific, actionable recommendation referencing the 2025 target (2-3 sentences max)"
+  "content": "One specific, actionable recommendation referencing the 2025 target and mentioning how NYC DOT data can help (2-3 sentences max)"
 }`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)

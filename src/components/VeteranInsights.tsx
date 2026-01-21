@@ -27,36 +27,63 @@ export function VeteranInsights() {
     setIsGenerating(true)
 
     try {
+      const currentHour = new Date().getHours()
+      const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' })
+      const currentMonth = new Date().getMonth() + 1
+
       const promptText = `You are an expert NYC TLC rideshare consultant with deep knowledge of NYC traffic patterns, events, and veteran driver strategies.
 
+You have access to real-time NYC DOT data feeds from https://www.nyc.gov/html/dot/html/about/datafeeds.shtml which include:
+- Real-time traffic speeds and incidents across NYC (Traffic Speed Data XML feed)
+- Construction zones and road closures (Real-Time Traffic Advisories)
+- Parking regulations and availability (NYCDOT Parking Data)
+- NYCDOT Twitter alerts for live updates (@NYC_DOT)
+- Planned Events Data affecting traffic
+
+Current context:
+- Current time: ${currentHour}:00 on ${currentDay}
+- Current month: ${currentMonth}
+- Real-time traffic data available from NYC DOT feeds
+
 Generate AI-powered insights for veteran NYC TLC drivers about optimal locations and times to maximize earnings. The 2025 target is $300 per day with 7-10 quality rides (approx $35/trip).
+
+When providing recommendations, reference how drivers can use NYC DOT real-time data feeds to:
+- Monitor traffic speeds to avoid congested routes
+- Check construction alerts before shifts
+- Identify high-demand areas based on traffic patterns
+- Optimize routes using real-time incident data
 
 Provide insights in TWO categories:
 
 1. DAILY TIME-BASED INSIGHTS: Identify the 4 best time periods during a typical day with specific locations. For each time period, specify:
    - Exact time period (e.g., "6:00 AM - 9:00 AM")
    - Specific NYC neighborhood/location to be in
-   - Why this location is profitable at this time (focus on rides that hit $35+ average)
+   - Why this location is profitable at this time (focus on rides that hit $35+ average, consider real-time traffic patterns from NYC DOT data)
    - Expected hourly earnings range that supports the $300/day goal
+   - Include a traffic optimization tip referencing NYC DOT feeds
 
 2. SEASONAL/YEARLY INSIGHTS: Identify 3 seasonal patterns or yearly events. For each, specify:
    - Time period or season (e.g., "December holidays", "Summer weekends")
    - 2-3 specific locations to prioritize
    - Strategy explanation for why these locations work for high-value rides
+   - Traffic management tips using NYC DOT data feeds for route optimization
 
 Format your response as valid JSON with this structure:
 {
   "dailyInsights": [
-    {"location": "Penn Station", "timeOfDay": "6:00 AM - 9:00 AM", "reason": "Morning commuters heading to offices - premium rides to Midtown/FiDi", "expectedEarnings": "$35-45/hr"},
-    ...3 more
+    {"location": "Penn Station", "timeOfDay": "6:00 AM - 9:00 AM", "reason": "Morning commuters to Midtown/FiDi offices. Check NYC DOT traffic speeds on West Side Highway via their XML feed for fastest airport connections", "expectedEarnings": "$35-45/hr"},
+    {"location": "Financial District", "timeOfDay": "9:00 AM - 12:00 PM", "reason": "Business meetings and courthouse runs. Monitor NYC DOT Twitter for FDR/Brooklyn Bridge closures", "expectedEarnings": "$30-40/hr"},
+    {"location": "Midtown East", "timeOfDay": "5:00 PM - 8:00 PM", "reason": "Evening rush to Upper East Side and outer boroughs. Use NYC DOT real-time advisories to avoid construction", "expectedEarnings": "$40-50/hr"},
+    {"location": "LGA/JFK Staging", "timeOfDay": "8:00 PM - 11:00 PM", "reason": "Premium airport rides to Manhattan hotels. Check NYCDOT planned events data for alternate routes", "expectedEarnings": "$45-55/hr"}
   ],
   "seasonalInsights": [
-    {"period": "December Holidays", "locations": ["5th Avenue", "Times Square", "SoHo"], "strategy": "Heavy shopping traffic and tourists. Focus on airport runs and hotel pickups for higher fares..."},
-    ...2 more
+    {"period": "December Holidays", "locations": ["5th Avenue", "Times Square", "SoHo"], "strategy": "Heavy shopping traffic and tourists. Use NYC DOT parking data to find legal standing zones near stores. Focus on airport runs ($50+ rides) and hotel pickups. Monitor NYCDOT Twitter for holiday parade closures and plan routes accordingly"},
+    {"period": "Summer Weekends", "locations": ["Brooklyn Bridge Park", "West Village", "Williamsburg"], "strategy": "Leisure travelers and nightlife crowds. Check NYC DOT real-time traffic speeds to avoid beach-bound congestion. Target restaurant districts for consistent short rides that add up to target"},
+    {"period": "March-April Tax Season", "locations": ["Financial District", "Midtown offices", "Accountant hubs"], "strategy": "Business professionals working late hours. Use NYC DOT construction alerts to provide faster service than competitors. Premium rates after 8 PM help hit $35/trip target"}
   ]
 }
 
-Base insights on real NYC geography, commute patterns, events, and veteran driver knowledge. Be specific with neighborhood names and realistic earnings that support the $300/day 2025 target.`
+Base insights on real NYC geography, commute patterns, events, veteran driver knowledge, and practical use of NYC DOT real-time data feeds. Be specific with actionable traffic optimization tips using the data feeds mentioned. Ensure earnings support the $300/day 2025 target.`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini', true)
       const data = JSON.parse(response)

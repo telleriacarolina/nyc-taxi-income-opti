@@ -49,6 +49,13 @@ export function AIAssistant() {
 
       const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business.
 
+You have knowledge of NYC DOT real-time data feeds available at https://www.nyc.gov/html/dot/html/about/datafeeds.shtml including:
+- Traffic Speed Data (XML feed with real-time speeds across NYC)
+- Real-Time Traffic Advisories (construction, incidents, closures)
+- Planned Events Data (events affecting traffic)
+- Parking Regulations
+- NYCDOT Twitter (@NYC_DOT) for live updates
+
 Context about this driver:
 - Total shifts logged: ${context.shiftsCount}
 - Total rides logged: ${context.ridesCount}
@@ -56,9 +63,11 @@ Context about this driver:
 - Platforms used: ${context.platforms.join(', ') || 'None'}
 - License status: ${context.hasLicense ? `Active until ${context.licenseExpiry}` : 'Not set'}
 
+2025 Earnings Target: $300 per day with 7-10 quality rides (approx $35/trip)
+
 Driver's question: ${userMessage.content}
 
-Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, or shift planning based on their question and data.`
+Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or how to leverage NYC DOT data feeds for better route planning and traffic avoidance. Reference NYC DOT data sources when relevant to traffic, routing, or location strategies.`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini')
 
@@ -93,8 +102,8 @@ Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 
   const suggestedQuestions = [
     "How can I optimize my earnings strategy?",
     "What are the best times to drive?",
-    "Should I use multiple apps?",
-    "How do I handle slow days?"
+    "How do I use NYC DOT traffic data?",
+    "Should I use multiple apps?"
   ]
 
   return (
