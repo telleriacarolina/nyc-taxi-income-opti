@@ -9,7 +9,9 @@
         "build": "tsc -b --noCheck && vite build",
         "lint": "eslint .",
         "optimize": "vite optimize",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "verify:openfreemap": "chmod +x verify-openfreemap.sh && ./verify-openfreemap.sh",
+        "fetch:openfreemap": "git fetch openfreemap && echo '✅ OpenFreeMap updates fetched'"
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",

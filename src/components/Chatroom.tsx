@@ -14,7 +14,9 @@ import {
   UserMinus,
   Users,
   ChatCircleDots,
-  Clock
+  Clock,
+  ArrowLeft,
+  Chats
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -27,6 +29,17 @@ interface Message {
   timestamp: number
 }
 
+interface DirectMessage {
+  id: string
+  senderId: string
+  senderName: string
+  recipientId: string
+  recipientName: string
+  text: string
+  timestamp: number
+  read: boolean
+}
+
 interface Driver {
   id: string
   name: string
@@ -37,10 +50,12 @@ interface Driver {
 
 export function Chatroom() {
   const [messages, setMessages, deleteMessages] = useKV<Message[]>('chatroom-messages', [])
+  const [directMessages, setDirectMessages] = useKV<DirectMessage[]>('direct-messages', [])
   const [fellowDrivers, setFellowDrivers, deleteFellowDrivers] = useKV<Driver[]>('fellow-drivers', [])
   const [messageInput, setMessageInput] = useState('')
   const [driverNameInput, setDriverNameInput] = useState('')
   const [currentUser] = useKV<Driver | null>('current-user', null)
+  const [activeDM, setActiveDM] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const [, setCurrentUser] = useKV<Driver | null>('current-user', null)
@@ -66,7 +81,7 @@ export function Chatroom() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, activeDM, directMessages])
 
   const sendMessage = () => {
     if (!messageInput.trim() || !currentUser) return
@@ -118,6 +133,74 @@ export function Chatroom() {
     toast.success(`${driver?.name} removed from fellow drivers`)
   }
 
+  const sendDirectMessage = (recipientId: string) => {
+    if (!messageInput.trim() || !currentUser) return
+
+    const recipient = (fellowDrivers || []).find(d => d.id === recipientId)
+    if (!recipient) return
+
+    const newDM: DirectMessage = {
+      id: 'dm-' + Date.now(),
+      senderId: currentUser.id,
+      senderName: currentUser.name,
+      recipientId: recipient.id,
+      recipientName: recipient.name,
+      text: messageInput.trim(),
+      timestamp: Date.now(),
+      read: false
+    }
+
+    setDirectMessages((current) => [...(current || []), newDM])
+    setMessageInput('')
+    toast.success('Message sent')
+  }
+
+  const openDirectMessage = (driverId: string) => {
+    setActiveDM(driverId)
+    
+    setDirectMessages((current) => 
+      (current || []).map(dm => 
+        dm.recipientId === currentUser?.id && dm.senderId === driverId
+          ? { ...dm, read: true }
+          : dm
+      )
+    )
+    
+    const tabs = document.querySelector('[role="tablist"]')
+    const directTab = tabs?.querySelector('[value="direct"]') as HTMLElement
+    directTab?.click()
+  }
+
+  const getConversationMessages = (driverId: string) => {
+    if (!currentUser) return []
+    
+    return (directMessages || [])
+      .filter(dm => 
+        (dm.senderId === currentUser.id && dm.recipientId === driverId) ||
+        (dm.senderId === driverId && dm.recipientId === currentUser.id)
+      )
+      .sort((a, b) => a.timestamp - b.timestamp)
+  }
+
+  const getUnreadCount = (driverId: string) => {
+    if (!currentUser) return 0
+    
+    return (directMessages || []).filter(dm => 
+      dm.senderId === driverId && 
+      dm.recipientId === currentUser.id && 
+      !dm.read
+    ).length
+  }
+
+  const getTotalUnreadCount = () => {
+    if (!currentUser) return 0
+    
+    return (directMessages || []).filter(dm => 
+      dm.recipientId === currentUser.id && 
+      !dm.read
+    ).length
+  }
+
   const formatMessageTime = (timestamp: number) => {
     const now = Date.now()
     const diff = now - timestamp
@@ -149,10 +232,22 @@ export function Chatroom() {
       </Card>
 
       <Tabs defaultValue="chat" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
+        <TabsList className="grid w-full grid-cols-3 max-w-2xl">
           <TabsTrigger value="chat" className="gap-2">
             <ChatCircleDots size={18} weight="fill" />
             Chat
+          </TabsTrigger>
+          <TabsTrigger value="direct" className="gap-2 relative">
+            <Chats size={18} weight="fill" />
+            Direct Messages
+            {getTotalUnreadCount() > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
+              >
+                {getTotalUnreadCount()}
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="drivers" className="gap-2">
             <Users size={18} weight="fill" />
@@ -250,6 +345,200 @@ export function Chatroom() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="direct" className="space-y-4">
+          {activeDM ? (
+            <Card className="p-0 overflow-hidden">
+              <div className="bg-muted/50 px-4 py-3 border-b">
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setActiveDM(null)}
+                    className="gap-2"
+                  >
+                    <ArrowLeft size={16} weight="bold" />
+                    Back
+                  </Button>
+                  <Separator orientation="vertical" className="h-6" />
+                  <Avatar className="h-7 w-7">
+                    <div className="h-full w-full flex items-center justify-center bg-primary text-primary-foreground text-xs font-medium">
+                      {(fellowDrivers || []).find(d => d.id === activeDM)?.name.charAt(0).toUpperCase()}
+                    </div>
+                  </Avatar>
+                  <div>
+                    <span className="text-sm font-medium">
+                      {(fellowDrivers || []).find(d => d.id === activeDM)?.name}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <div className={`h-1.5 w-1.5 rounded-full ${
+                        (fellowDrivers || []).find(d => d.id === activeDM)?.status === 'online' 
+                          ? 'bg-success animate-pulse' 
+                          : 'bg-muted-foreground'
+                      }`} />
+                      <span className="text-xs text-muted-foreground">
+                        {(fellowDrivers || []).find(d => d.id === activeDM)?.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
+                <div className="space-y-4">
+                  {getConversationMessages(activeDM).length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[360px] text-center">
+                      <div className="p-4 bg-muted/50 rounded-full mb-3">
+                        <Chats size={32} weight="duotone" className="text-muted-foreground" />
+                      </div>
+                      <h3 className="font-medium mb-1">No messages yet</h3>
+                      <p className="text-sm text-muted-foreground max-w-xs">
+                        Start a conversation with {(fellowDrivers || []).find(d => d.id === activeDM)?.name}
+                      </p>
+                    </div>
+                  ) : (
+                    getConversationMessages(activeDM).map((dm) => {
+                      const isCurrentUser = currentUser && dm.senderId === currentUser.id
+                      
+                      return (
+                        <div
+                          key={dm.id}
+                          className={`flex gap-3 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}
+                        >
+                          <Avatar className="h-8 w-8 flex-shrink-0">
+                            <div className={`h-full w-full flex items-center justify-center text-xs font-medium ${
+                              isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
+                            }`}>
+                              {dm.senderName.charAt(0).toUpperCase()}
+                            </div>
+                          </Avatar>
+                          <div className={`flex-1 max-w-[75%] ${isCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-xs font-medium ${isCurrentUser ? 'order-2' : 'order-1'}`}>
+                                {isCurrentUser ? 'You' : dm.senderName}
+                              </span>
+                              <span className={`text-xs text-muted-foreground flex items-center gap-1 ${isCurrentUser ? 'order-1' : 'order-2'}`}>
+                                <Clock size={12} />
+                                {formatMessageTime(dm.timestamp)}
+                              </span>
+                            </div>
+                            <div className={`px-4 py-2.5 rounded-2xl ${
+                              isCurrentUser 
+                                ? 'bg-primary text-primary-foreground rounded-tr-sm' 
+                                : 'bg-muted text-foreground rounded-tl-sm'
+                            }`}>
+                              <p className="text-sm leading-relaxed">{dm.text}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </ScrollArea>
+
+              <Separator />
+
+              <div className="p-4">
+                <div className="flex gap-2">
+                  <Input
+                    id="dm-input"
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && sendDirectMessage(activeDM)}
+                    placeholder="Type your message..."
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={() => sendDirectMessage(activeDM)} 
+                    disabled={!messageInput.trim()}
+                    className="gap-2"
+                  >
+                    <PaperPlaneRight size={18} weight="fill" />
+                    Send
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ) : (
+            <Card className="p-4">
+              {(fellowDrivers || []).length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-4 bg-muted/50 rounded-full mb-3">
+                    <Chats size={32} weight="duotone" className="text-muted-foreground" />
+                  </div>
+                  <h3 className="font-medium mb-1">No conversations yet</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs mb-4">
+                    Add fellow drivers to start private conversations
+                  </p>
+                  <Button variant="outline" onClick={() => {
+                    const tabs = document.querySelector('[role="tablist"]')
+                    const driversTab = tabs?.querySelector('[value="drivers"]') as HTMLElement
+                    driversTab?.click()
+                  }}>
+                    <UserPlus size={16} weight="fill" className="mr-2" />
+                    Add Fellow Drivers
+                  </Button>
+                </div>
+              ) : (
+                <ScrollArea className="h-[450px]">
+                  <div className="space-y-2">
+                    {(fellowDrivers || []).map((driver) => {
+                      const lastMessage = getConversationMessages(driver.id).slice(-1)[0]
+                      const unreadCount = getUnreadCount(driver.id)
+                      
+                      return (
+                        <Card 
+                          key={driver.id} 
+                          className="p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+                          onClick={() => openDirectMessage(driver.id)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <Avatar className="h-12 w-12">
+                                <div className="h-full w-full flex items-center justify-center bg-primary text-primary-foreground font-medium">
+                                  {driver.name.charAt(0).toUpperCase()}
+                                </div>
+                              </Avatar>
+                              {driver.status === 'online' && (
+                                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-card" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <h3 className="font-medium truncate">{driver.name}</h3>
+                                {lastMessage && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatMessageTime(lastMessage.timestamp)}
+                                  </span>
+                                )}
+                              </div>
+                              {lastMessage ? (
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {lastMessage.senderId === currentUser?.id ? 'You: ' : ''}
+                                  {lastMessage.text}
+                                </p>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">
+                                  No messages yet
+                                </p>
+                              )}
+                            </div>
+                            {unreadCount > 0 && (
+                              <Badge variant="destructive" className="h-6 min-w-6 px-2 flex items-center justify-center">
+                                {unreadCount}
+                              </Badge>
+                            )}
+                          </div>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                </ScrollArea>
+              )}
+            </Card>
+          )}
+        </TabsContent>
+
         <TabsContent value="drivers" className="space-y-4">
           <Card className="p-4">
             <div className="flex gap-2 mb-4">
@@ -313,15 +602,26 @@ export function Chatroom() {
                             Added {format(driver.addedAt, 'MMM d, yyyy')}
                           </p>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFellowDriver(driver.id)}
-                          className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <UserMinus size={16} weight="fill" />
-                          Remove
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openDirectMessage(driver.id)}
+                            className="gap-1.5"
+                          >
+                            <Chats size={16} weight="fill" />
+                            Message
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFellowDriver(driver.id)}
+                            className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <UserMinus size={16} weight="fill" />
+                            Remove
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   ))}
