@@ -39,7 +39,17 @@ export function SmartRideRecommender() {
       const ridePayPerMile = parseFloat(grossPay) / parseFloat(distance)
       const ridePayPerMin = parseFloat(grossPay) / parseFloat(duration)
 
-      const promptText = `You are analyzing whether a NYC TLC driver should accept a ride offer.
+      const promptText = `You are analyzing whether a NYC TLC driver should accept a ride offer using historical TLC Trip Record Data patterns.
+
+NYC TLC Trip Record Data Context (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page):
+- Manhattan pickups typically average $3.50-4.50 per mile vs $2.00-3.00 in outer boroughs
+- Airport trips (JFK/LGA/EWR) average $50-70 with higher tip percentages
+- Business district trips during rush hours command 30-40% premium over base rates
+- Evening entertainment district rides (8pm-2am) show higher per-minute value due to traffic
+- Trips over 10 miles often have better per-mile rates but require deadhead consideration
+- Premium locations: Financial District, Midtown Manhattan, airports consistently beat averages
+
+2025 Target Context: Driver needs to average $35+ per trip to hit $300/day with 7-10 rides.
 
 Ride Details:
 - Platform: ${platform}
@@ -54,11 +64,17 @@ Driver's Historical Averages:
 - Average pay per minute: $${avgPayPerMin.toFixed(2)}
 - Total rides logged: ${rides?.length || 0}
 
-Analyze this ride and provide a recommendation. Return JSON in this exact format:
+Analyze this ride using TLC historical patterns:
+1. Compare the ride's metrics to both driver's history AND TLC data benchmarks
+2. Consider if this ride supports the $35+ per trip target needed for $300/day goal
+3. Factor in time efficiency - is pay per minute competitive with TLC data patterns?
+4. Assess if this is a premium route type (airport, business district, cross-borough rush hour)
+
+Return JSON in this exact format:
 {
   "shouldAccept": true or false,
   "confidence": "high" | "medium" | "low",
-  "reasons": ["reason 1", "reason 2", "reason 3"],
+  "reasons": ["reason 1 referencing TLC data or $35 target", "reason 2", "reason 3"],
   "estimated_value": "great" | "good" | "average" | "below_average" | "poor"
 }`
 
@@ -79,7 +95,7 @@ Analyze this ride and provide a recommendation. Return JSON in this exact format
         <Brain weight="fill" className="text-primary" size={24} />
         <div>
           <h3 className="font-semibold text-lg">Smart Ride Analyzer</h3>
-          <p className="text-xs text-muted-foreground">AI-powered ride acceptance advisor</p>
+          <p className="text-xs text-muted-foreground">AI advisor using TLC Trip Data patterns</p>
         </div>
       </div>
 

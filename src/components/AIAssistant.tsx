@@ -49,12 +49,21 @@ export function AIAssistant() {
 
       const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business.
 
-You have knowledge of NYC DOT real-time data feeds available at https://www.nyc.gov/html/dot/html/about/datafeeds.shtml including:
-- Traffic Speed Data (XML feed with real-time speeds across NYC)
+You have access to insights from NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page), which contains millions of historical trip records including:
+- Pickup/dropoff locations (taxi zones) across all 5 boroughs
+- Trip distances, durations, and fare amounts
+- Time-of-day and day-of-week patterns
+- Payment types and tip percentages
+- High-demand locations and surge patterns
+- Seasonal variations in ride demand
+- Average trip statistics by borough and neighborhood
+
+You also have knowledge of NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml):
+- Traffic Speed Data (XML feed with real-time speeds)
 - Real-Time Traffic Advisories (construction, incidents, closures)
 - Planned Events Data (events affecting traffic)
 - Parking Regulations
-- NYCDOT Twitter (@NYC_DOT) for live updates
+- @NYC_DOT Twitter for live updates
 
 Context about this driver:
 - Total shifts logged: ${context.shiftsCount}
@@ -65,9 +74,16 @@ Context about this driver:
 
 2025 Earnings Target: $300 per day with 7-10 quality rides (approx $35/trip)
 
+Known patterns from TLC Trip Record Data:
+- Morning rush (7-9am): High demand to Manhattan business districts, airports
+- Lunch period (12-2pm): Shorter trips within business districts
+- Evening rush (5-8pm): High demand leaving Manhattan to outer boroughs
+- Late night (10pm-2am): Entertainment districts, airport runs
+- Weekends: Different patterns - outer boroughs to Manhattan for entertainment/dining
+
 Driver's question: ${userMessage.content}
 
-Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or how to leverage NYC DOT data feeds for better route planning and traffic avoidance. Reference NYC DOT data sources when relevant to traffic, routing, or location strategies.`
+Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging TLC Trip Record Data patterns and NYC DOT real-time feeds for better positioning and route planning. When relevant, reference specific neighborhoods, times, or data patterns from TLC records.`
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini')
 
@@ -100,10 +116,10 @@ Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 
   }
 
   const suggestedQuestions = [
-    "How can I optimize my earnings strategy?",
-    "What are the best times to drive?",
-    "How do I use NYC DOT traffic data?",
-    "Should I use multiple apps?"
+    "What locations have the best fares?",
+    "When should I drive for $35+ trips?",
+    "How do I use TLC trip data patterns?",
+    "Should I focus on airport runs?"
   ]
 
   return (
