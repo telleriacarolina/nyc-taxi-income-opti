@@ -1,3 +1,21 @@
+/**
+ * OpenFreeMap Component
+ * 
+ * Interactive map component using Leaflet and OpenFreeMap tiles.
+ * 
+ * @see https://openfreemap.org/ - OpenFreeMap website and documentation
+ * @see https://github.com/telleriacarolina/openfreemap - Git remote repository (fetch with: git fetch openfreemap)
+ * 
+ * This component integrates free, open-source map tiles from OpenFreeMap
+ * to display NYC taxi ride locations without API keys or rate limits.
+ * 
+ * Features:
+ * - Liberty style tiles from OpenFreeMap CDN
+ * - Custom markers for earnings visualization
+ * - Interactive popups with ride details
+ * - Centered on NYC by default
+ */
+
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'

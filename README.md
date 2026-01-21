@@ -1320,6 +1320,30 @@ curl "https://data.cityofnewyork.us/resource/2v9c-2k7f.json?\$order=month%20DESC
 
 This template can display ride locations on interactive maps using free, open-source map tiles from [OpenFreeMap](https://openfreemap.org/).
 
+### Development & Git Integration
+
+This project includes the OpenFreeMap repository as a git remote for development and customization purposes.
+
+**Git Remote Setup:**
+```bash
+# Remote is already configured as 'openfreemap'
+git remote -v
+
+# Fetch latest OpenFreeMap updates
+git fetch openfreemap
+
+# View OpenFreeMap branches
+git branch -r | grep openfreemap
+
+# Cherry-pick specific features or compare implementations
+git log openfreemap/main --oneline
+```
+
+**OpenFreeMap Repository:**
+- **URL**: https://github.com/telleriacarolina/openfreemap.git
+- **Purpose**: MapLibre-based open-source mapping solution
+- **Usage**: Reference implementation for tile serving and map styles
+
 ### Why OpenFreeMap?
 
 - **Free & Open Source** - No API keys, rate limits, or costs
@@ -1327,6 +1351,7 @@ This template can display ride locations on interactive maps using free, open-so
 - **Privacy-Focused** - No tracking or data collection
 - **Multiple Styles** - Liberty (colorful), Bright (clean), Positron (minimal)
 - **Self-Hosting Option** - Full planet Btrfs images available
+- **MapLibre Native** - Built on MapLibre GL for modern, performant mapping
 
 ### Using MapLibre GL JS (Recommended)
 
@@ -1604,10 +1629,23 @@ For production with high traffic, consider self-hosting:
 
 ### Resources
 
-- **OpenFreeMap**: [https://openfreemap.org/](https://openfreemap.org/)
-- **MapLibre GL JS**: [https://maplibre.org/maplibre-gl-js/docs/](https://maplibre.org/maplibre-gl-js/docs/)
-- **Maputnik Editor**: [https://maputnik.github.io/editor/](https://maputnik.github.io/editor/)
+- **OpenFreeMap Website**: [https://openfreemap.org/](https://openfreemap.org/)
+- **OpenFreeMap Repository**: [https://github.com/telleriacarolina/openfreemap](https://github.com/telleriacarolina/openfreemap) (configured as git remote)
+- **MapLibre GL JS Documentation**: [https://maplibre.org/maplibre-gl-js/docs/](https://maplibre.org/maplibre-gl-js/docs/)
+- **Maputnik Style Editor**: [https://maputnik.github.io/editor/](https://maputnik.github.io/editor/)
 - **NYC Taxi Zones Shapefile**: [https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip](https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip)
+
+**Working with the OpenFreeMap Remote:**
+```bash
+# Compare local map implementation with OpenFreeMap upstream
+git diff main openfreemap/main -- path/to/map/files
+
+# View OpenFreeMap commit history for tile server updates
+git log openfreemap/main --since="1 month ago" --pretty=format:"%h %s"
+
+# Merge specific OpenFreeMap features (use with caution)
+git cherry-pick <commit-hash>
+```
 
 **Sponsor OpenFreeMap:**
 If this helps save on map hosting costs, consider [sponsoring on GitHub](https://github.com/sponsors/hyperknot).
