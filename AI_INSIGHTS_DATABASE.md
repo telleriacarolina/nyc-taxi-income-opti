@@ -1070,12 +1070,95 @@ print(yoy)
 - **Accuracy**: Clearly label predictions vs. guaranteed outcomes
 - **User Control**: Allow manual override of AI suggestions
 
+## �️ NYC Taxi Zone Shapefile
+
+**Location**: `/data/taxi_zones/`
+
+The NYC Taxi Zones shapefile provides geographic boundary data for the 263 taxi zones used throughout NYC TLC datasets. This GIS data enables spatial analysis and map visualization.
+
+**File Components:**
+
+| File | Type | Purpose |
+|------|------|---------|
+| `taxi_zones.shp` | Shapefile | Main geometry file containing zone polygons |
+| `taxi_zones.shx` | Shape Index | Index for quick spatial queries |
+| `taxi_zones.dbf` | dBase Database | Attribute table with zone metadata |
+| `taxi_zones.prj` | Projection | Coordinate reference system (WGS84) |
+| `taxi_zones.shp.xml` | Metadata | ISO 19139 metadata document |
+| `taxi_zones.sbn` / `.sbx` | Spatial Index | Binary spatial index for performance |
+
+**Zone Attributes:**
+
+- `LocationID` (Integer): Zone identifier (1-263) matching TLC trip records
+- `zone` (String): Zone name (e.g., "JFK Airport", "Times Square")
+- `borough` (String): NYC borough (Manhattan, Brooklyn, Queens, Bronx, Staten Island, EWR)
+- `Shape_Area` (Float): Zone area in square meters
+- `Shape_Leng` (Float): Zone perimeter length in meters
+
+**Python Usage Example:**
+
+```python
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Load taxi zones shapefile
+zones = gpd.read_file('data/taxi_zones/taxi_zones.shp')
+
+# Display zone information
+print(f"Total zones: {len(zones)}")
+print(zones[['LocationID', 'zone', 'borough']].head())
+
+# Plot zones by borough
+zones.plot(column='borough', legend=True, figsize=(12, 10))
+plt.title('NYC TLC Taxi Zones')
+plt.show()
+
+# Find high-earning zones (example with trip data)
+# Merge trip data with zone geometries
+import pandas as pd
+trips = pd.read_parquet('fhvhv_tripdata_2024-01.parquet')
+pickup_counts = trips.groupby('PULocationID').size().reset_index(name='trip_count')
+zones_with_trips = zones.merge(pickup_counts, left_on='LocationID', right_on='PULocationID')
+
+# Visualize hotspots
+zones_with_trips.plot(column='trip_count', cmap='YlOrRd', legend=True, figsize=(12, 10))
+plt.title('Pickup Hotspots by Zone')
+plt.show()
+```
+
+**Integration with Leaflet/OpenFreeMap:**
+
+The shapefile can be converted to GeoJSON for web mapping:
+
+```bash
+# Convert to GeoJSON using ogr2ogr (GDAL tools)
+ogr2ogr -f GeoJSON -t_srs EPSG:4326 taxi_zones.geojson taxi_zones.shp
+
+# Or using Python
+import geopandas as gpd
+zones = gpd.read_file('data/taxi_zones/taxi_zones.shp')
+zones.to_file('public/taxi_zones.geojson', driver='GeoJSON')
+```
+
+**Strategic Applications:**
+
+1. **Zone-Based Recommendations**: Match driver location to high-demand zones in real-time
+2. **Heatmap Overlays**: Visualize earnings density on OpenFreeMap component
+3. **Geofencing**: Alert drivers when entering/exiting profitable zones
+4. **Spatial Analytics**: Calculate drive times between zones using road networks
+5. **Borough Comparison**: Analyze earnings differences across geographic regions
+
+**Data Source**: [NYC Taxi & Limousine Commission](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
+
+---
+
 ## 📚 Additional Resources
 
 - **NYC Open Data Portal**: [https://opendata.cityofnewyork.us/](https://opendata.cityofnewyork.us/)
 - **TLC Data Dictionary**: [Official PDF Documentation](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 - **Socrata API Documentation**: [https://dev.socrata.com/](https://dev.socrata.com/)
 - **Machine Learning for Time Series**: [Forecasting Best Practices](https://github.com/microsoft/forecasting)
+- **GeoPandas Documentation**: [https://geopandas.org/](https://geopandas.org/)
 
 ## 🤝 Contributing
 

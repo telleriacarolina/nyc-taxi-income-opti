@@ -9,8 +9,7 @@ import { ShiftDialog } from './ShiftDialog'
 import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
-import { AIInsights } from './AIInsights'
-import { VeteranInsights } from './VeteranInsights'
+import { Insights } from './Insights'
 import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { LocationHeatmap } from './LocationHeatmap'
@@ -240,9 +239,7 @@ export function EarningsOptimizer() {
         </Card>
       )}
 
-      <AIInsights />
-
-      <VeteranInsights />
+      <Insights />
 
       <TrafficPatternComparison />
 
