@@ -3,12 +3,14 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
-import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X } from '@phosphor-icons/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
 import { toast } from 'sonner'
 import * as d3 from 'd3'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { OpenFreeMap } from '@/components/OpenFreeMap'
 
 interface LocationData {
   location: string
@@ -23,6 +25,47 @@ interface LocationHeatmapProps {
   shifts: Shift[]
 }
 
+const NYC_NEIGHBORHOODS: Record<string, [number, number]> = {
+  'manhattan': [40.7831, -73.9712],
+  'midtown': [40.7549, -73.9840],
+  'times square': [40.7580, -73.9855],
+  'upper west side': [40.7870, -73.9754],
+  'upper east side': [40.7736, -73.9566],
+  'harlem': [40.8116, -73.9465],
+  'east harlem': [40.7957, -73.9389],
+  'financial district': [40.7074, -73.0089],
+  'tribeca': [40.7163, -74.0086],
+  'soho': [40.7233, -74.0030],
+  'greenwich village': [40.7336, -74.0027],
+  'east village': [40.7264, -73.9815],
+  'lower east side': [40.7153, -73.9874],
+  'chelsea': [40.7465, -74.0014],
+  'gramercy': [40.7368, -73.9841],
+  'murray hill': [40.7478, -73.9764],
+  'kips bay': [40.7429, -73.9772],
+  'union square': [40.7359, -73.9911],
+  'brooklyn': [40.6782, -73.9442],
+  'williamsburg': [40.7081, -73.9571],
+  'bushwick': [40.6942, -73.9194],
+  'bedstuy': [40.6872, -73.9418],
+  'park slope': [40.6710, -73.9778],
+  'downtown brooklyn': [40.6942, -73.9878],
+  'dumbo': [40.7033, -73.9888],
+  'queens': [40.7282, -73.7949],
+  'astoria': [40.7644, -73.9235],
+  'long island city': [40.7447, -73.9485],
+  'jackson heights': [40.7557, -73.8831],
+  'flushing': [40.7673, -73.8330],
+  'forest hills': [40.7186, -73.8448],
+  'bronx': [40.8448, -73.8648],
+  'fordham': [40.8613, -73.8977],
+  'concourse': [40.8272, -73.9218],
+  'staten island': [40.5795, -74.1502],
+  'lga': [40.7769, -73.8740],
+  'jfk': [40.6413, -73.7781],
+  'newark': [40.6895, -74.1745]
+}
+
 export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [locationData, setLocationData] = useState<LocationData[]>([])
@@ -31,6 +74,7 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     from: undefined,
     to: undefined
   })
+  const [viewMode, setViewMode] = useState<'chart' | 'map'>('chart')
 
   const handleClearDateRange = () => {
     setDateRange({ from: undefined, to: undefined })
@@ -377,6 +421,16 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
 
   const avgHourlyAcrossAll = locationData.reduce((sum, d) => sum + d.avgHourly, 0) / locationData.length
 
+  const mapMarkers = locationData.map(loc => {
+    const normalizedName = loc.location.toLowerCase()
+    const coords = NYC_NEIGHBORHOODS[normalizedName] || [40.7128, -74.0060]
+    return {
+      position: coords as [number, number],
+      label: loc.location,
+      earnings: loc.earnings
+    }
+  })
+
   return (
     <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/5 border-primary/30 shadow-lg">
       <div className="flex items-start gap-3 mb-4">
@@ -532,9 +586,41 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
         </div>
       </div>
 
-      <div className="bg-card rounded-lg p-4 border shadow-sm mb-4">
-        <svg ref={svgRef} className="w-full" />
-      </div>
+      <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'chart' | 'map')} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2 max-w-xs">
+          <TabsTrigger value="chart" className="gap-1.5">
+            <ChartBar size={16} weight="fill" />
+            <span>Chart</span>
+          </TabsTrigger>
+          <TabsTrigger value="map" className="gap-1.5">
+            <Globe size={16} weight="fill" />
+            <span>Map</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="chart" className="space-y-4">
+          <div className="bg-card rounded-lg p-4 border shadow-sm">
+            <svg ref={svgRef} className="w-full" />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="map" className="space-y-4">
+          <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+            <OpenFreeMap
+              center={[40.7128, -74.0060]}
+              zoom={11}
+              markers={mapMarkers}
+              className="rounded-lg"
+              onMarkerClick={(label) => {
+                const location = locationData.find(loc => loc.location === label)
+                if (location) {
+                  setSelectedLocation(location)
+                }
+              }}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {selectedLocation && (
         <div className="bg-gradient-to-br from-accent/15 to-accent/5 border-2 border-accent/40 rounded-lg p-4 shadow-md">
