@@ -5,6 +5,7 @@
  * 
  * @see https://openfreemap.org/ - OpenFreeMap website and documentation
  * @see https://github.com/telleriacarolina/openfreemap - Git remote repository (fetch with: git fetch openfreemap)
+ * @see .github/openfreemap-reviews/terrain-commit-b06f5f2.diff - Terrain implementation reference from upstream
  * 
  * This component integrates free, open-source map tiles from OpenFreeMap
  * to display NYC taxi ride locations without API keys or rate limits.
@@ -17,6 +18,13 @@
  * - Color-coded cluster sizes (small: 1-20, medium: 21-100, large: 100+)
  * - Centered on NYC by default
  * - Dynamic style switching without remounting the map
+ * - Optional hillshade terrain overlay for topography visualization
+ * 
+ * Terrain Feature:
+ * - Hillshade overlay shows elevation changes in NYC (bridges, hills, terrain)
+ * - Useful for understanding route difficulty and fuel efficiency factors
+ * - Based on OpenFreeMap upstream commit b06f5f2 (MapLibre GL terrain example)
+ * - Adapted to Leaflet using raster-dem tiles
  */
 
 import { useEffect, useRef } from 'react'
@@ -41,6 +49,8 @@ interface OpenFreeMapProps {
   enableClustering?: boolean
   clusterRadius?: number
   style?: MapStyle
+  enableTerrain?: boolean
+  terrainOpacity?: number
 }
 
 export function OpenFreeMap({
@@ -51,12 +61,15 @@ export function OpenFreeMap({
   onMarkerClick,
   enableClustering = true,
   clusterRadius = 80,
-  style = 'liberty'
+  style = 'liberty',
+  enableTerrain = false,
+  terrainOpacity = 0.5
 }: OpenFreeMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersLayerRef = useRef<L.LayerGroup | L.MarkerClusterGroup | null>(null)
   const tileLayerRef = useRef<L.TileLayer | null>(null)
+  const terrainLayerRef = useRef<L.TileLayer | null>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -71,6 +84,17 @@ export function OpenFreeMap({
       maxZoom: 19,
       attribution: '© OpenFreeMap contributors'
     }).addTo(map)
+
+    // Add terrain/hillshade layer if enabled (inspired by commit b06f5f2)
+    // Note: Using hillshade tiles from USGS or similar service for NYC area
+    // Can be replaced with custom DEM tiles for better NYC coverage
+    if (enableTerrain) {
+      terrainLayerRef.current = L.tileLayer('https://tiles.openfreemap.org/terrain/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        opacity: terrainOpacity,
+        attribution: '© OpenFreeMap terrain'
+      }).addTo(map)
+    }
 
     mapInstanceRef.current = map
     
@@ -120,6 +144,24 @@ export function OpenFreeMap({
 
     tileLayerRef.current.setUrl(`https://tiles.openfreemap.org/styles/${style}/{z}/{x}/{y}.png`)
   }, [style])
+
+  // Handle terrain layer toggle
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+
+    if (enableTerrain && !terrainLayerRef.current) {
+      terrainLayerRef.current = L.tileLayer('https://tiles.openfreemap.org/terrain/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        opacity: terrainOpacity,
+        attribution: '© OpenFreeMap terrain'
+      }).addTo(mapInstanceRef.current)
+    } else if (!enableTerrain && terrainLayerRef.current) {
+      mapInstanceRef.current.removeLayer(terrainLayerRef.current)
+      terrainLayerRef.current = null
+    } else if (terrainLayerRef.current) {
+      terrainLayerRef.current.setOpacity(terrainOpacity)
+    }
+  }, [enableTerrain, terrainOpacity])
 
   useEffect(() => {
     if (!markersLayerRef.current || !mapInstanceRef.current) return
