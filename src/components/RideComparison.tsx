@@ -3,6 +3,7 @@ import { useKV } from '@github/spark/hooks'
 import { Ride } from '@/lib/ride-types'
 import { calculateRideStats, getPlatformRideStats, formatDistance, formatDuration } from '@/lib/ride-utils'
 import { formatCurrency } from '@/lib/earnings-utils'
+import { exportRidesToCSV } from '@/lib/csv-export'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,6 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import { RideDialog } from './RideDialog'
 import { RideCard } from './RideCard'
 import { RideFilters, RideFilterOptions } from './RideFilters'
+import { toast } from 'sonner'
 import { 
   Plus, 
   MapTrifold, 
@@ -19,7 +21,8 @@ import {
   TrendUp,
   TrendDown,
   ChartBar,
-  Lightbulb
+  Lightbulb,
+  DownloadSimple
 } from '@phosphor-icons/react'
 
 export function RideComparison() {
@@ -90,6 +93,28 @@ export function RideComparison() {
   const handleAddRide = () => {
     setEditingRide(null)
     setIsRideDialogOpen(true)
+  }
+
+  const handleExportCSV = () => {
+    if (filteredRides.length === 0) {
+      toast.error('No rides to export')
+      return
+    }
+
+    let filterDescription = ''
+    if (activeFiltersCount > 0) {
+      const parts: string[] = []
+      if (filters.platforms.length > 0) {
+        parts.push(filters.platforms.join('_'))
+      }
+      if (filters.datePreset !== 'all') {
+        parts.push(filters.datePreset)
+      }
+      filterDescription = parts.join('_')
+    }
+
+    exportRidesToCSV(filteredRides, filterDescription)
+    toast.success(`Exported ${filteredRides.length} ride${filteredRides.length !== 1 ? 's' : ''} to CSV`)
   }
 
   const sortedRides = [...filteredRides].sort((a, b) => {
@@ -282,19 +307,30 @@ export function RideComparison() {
                     Showing filtered results
                   </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setFilters({
-                    platforms: [],
-                    dateFrom: '',
-                    dateTo: '',
-                    datePreset: 'all'
-                  })}
-                  className="text-accent hover:text-accent/90"
-                >
-                  View All Rides
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExportCSV}
+                    className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <DownloadSimple size={16} weight="bold" className="mr-1" />
+                    Export Filtered
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFilters({
+                      platforms: [],
+                      dateFrom: '',
+                      dateTo: '',
+                      datePreset: 'all'
+                    })}
+                    className="text-accent hover:text-accent/90"
+                  >
+                    View All Rides
+                  </Button>
+                </div>
               </div>
             </Card>
           )}
@@ -303,13 +339,25 @@ export function RideComparison() {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold">Your Rides</h2>
-        <Button 
-          onClick={handleAddRide}
-          className="bg-accent text-accent-foreground hover:bg-accent/90"
-        >
-          <Plus size={20} weight="bold" className="mr-2" />
-          Add Ride
-        </Button>
+        <div className="flex items-center gap-3">
+          {(rides || []).length > 0 && (
+            <Button 
+              onClick={handleExportCSV}
+              variant="outline"
+              className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+            >
+              <DownloadSimple size={20} weight="bold" className="mr-2" />
+              Export CSV
+            </Button>
+          )}
+          <Button 
+            onClick={handleAddRide}
+            className="bg-accent text-accent-foreground hover:bg-accent/90"
+          >
+            <Plus size={20} weight="bold" className="mr-2" />
+            Add Ride
+          </Button>
+        </div>
       </div>
 
       {(rides || []).length === 0 ? (

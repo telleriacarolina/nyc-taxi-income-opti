@@ -123,6 +123,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: 3+ rides logged → System identifies best and worst by pay per mile → Displays in insight card with route details → Provides actionable tips
 - **Success criteria**: Driver receives specific guidance on ride types to prioritize based on their actual logged data
 
+### Ride Data CSV Export
+- **Functionality**: Export ride data to CSV format for tax records, accounting, or external analysis
+- **Purpose**: Enable drivers to maintain official records for tax purposes and integrate ride data with external accounting systems
+- **Trigger**: Click "Export CSV" button on Rides tab
+- **Progression**: Click export → System generates CSV with all filtered ride data → Downloads file with date-stamped filename → Shows success toast with ride count → File includes date, time, platform, locations, distance, duration, gross pay, fees, net pay, pay per mile, pay per minute, rating, and notes
+- **Success criteria**: Driver receives a properly formatted CSV file containing all visible rides with complete financial data suitable for tax filing and accounting software import
+
 ## Edge Case Handling
 - **No License Entered**: Display empty state with prominent call-to-action to add license information
 - **All Documents Current**: Show success state with encouraging message and next expiration date
@@ -145,6 +152,9 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Invalid Ride Values**: Validate distance > 0, duration > 0, gross pay > 0 before allowing save
 - **Zero Distance/Duration**: Prevent save and show validation error
 - **High Fee Percentage**: Display fee percentage on each ride to highlight commission differences
+- **No Rides to Export**: Show error toast when export is clicked with no rides logged or all rides filtered out
+- **Filtered Export**: CSV export respects active filters, exports only visible rides with descriptive filename indicating filters applied
+- **Empty CSV Fields**: Optional fields (rating, notes) export as empty cells when not provided
 
 ## Design Direction
 The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, and platform expert. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept.
@@ -261,6 +271,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - Plus: Add new document, shift, or ride
   - PencilSimple: Edit existing entries
   - Trash: Delete shifts or rides
+  - DownloadSimple: CSV export for tax records
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
