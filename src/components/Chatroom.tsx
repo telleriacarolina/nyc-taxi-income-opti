@@ -772,7 +772,6 @@ export function Chatroom() {
                 ) : (
                   (messages || []).map((message) => {
                     const replyTo = message.replyToId ? findMessageById(message.replyToId, false) : null
-                    const replyTo = message.replyToId ? findMessageById(message.replyToId, false) : null
                     
                     return (
                       <MessageBubble
@@ -781,7 +780,7 @@ export function Chatroom() {
                         senderName={message.senderName}
                         text={message.text}
                         timestamp={message.timestamp}
-                        isCurrentUser={!!isCurrentUser}
+                        isCurrentUser={message.senderId === currentUser?.id}
                         attachments={message.attachments}
                         reactions={message.reactions}
                         formatMessageTime={formatMessageTime}
@@ -791,7 +790,6 @@ export function Chatroom() {
                         playVoiceMessage={playVoiceMessage}
                         addReaction={addReaction}
                         onEdit={editMessage}
-                        onReply={handleReply}
                         onReply={() => handleReply(message)}
                         isDM={false}
                         emojis={EMOJIS}
@@ -801,7 +799,6 @@ export function Chatroom() {
                           text: replyTo.text,
                           attachments: replyTo.attachments
                         } : null}
-                        replyCount={getReplyCount(message.id, false)}
                         replyCount={getReplyCount(message.id, false)}
                       />
                     )
