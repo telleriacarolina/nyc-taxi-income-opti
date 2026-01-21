@@ -8,7 +8,8 @@ import { LicenseDialog } from '@/components/LicenseDialog'
 import { DocumentDialog } from '@/components/DocumentDialog'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Plus, WarningCircle, CheckCircle } from '@phosphor-icons/react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Plus, WarningCircle, CheckCircle, ArrowSquareOut, Link as LinkIcon } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 export function LicenseManager() {
@@ -93,6 +94,76 @@ export function LicenseManager() {
           </AlertDescription>
         </Alert>
       )}
+
+      <Card className="mb-6 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/10">
+        <CardHeader>
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-primary text-primary-foreground">
+              <LinkIcon size={24} weight="bold" />
+            </div>
+            <div className="flex-1">
+              <CardTitle className="text-xl mb-1">TLC Resources</CardTitle>
+              <CardDescription className="text-base">
+                Quick access to essential NYC TLC services and information
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-1">
+            <a
+              href="https://apps.nyc.gov/lars/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+            >
+              <div className="flex-1">
+                <div className="font-semibold text-foreground mb-1">
+                  License Appointment Reservation System (LARS)
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Schedule appointments for TLC license renewals and applications
+                </div>
+              </div>
+              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+            </a>
+
+            <a
+              href="https://a156-nauf.nyc.gov/tlcup/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+            >
+              <div className="flex-1">
+                <div className="font-semibold text-foreground mb-1">
+                  TLC License Status & Online Portal
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Check license status, pay violations, and access your TLC account
+                </div>
+              </div>
+              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+            </a>
+
+            <a
+              href="https://www.nyc.gov/site/tlc/tlc-online/licensing-standards-appointment-scheduling.page"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-accent/20 border border-border hover:border-accent transition-colors group"
+            >
+              <div className="flex-1">
+                <div className="font-semibold text-foreground mb-1">
+                  Licensing Standards & Requirements
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Official TLC licensing standards, requirements, and appointment info
+                </div>
+              </div>
+              <ArrowSquareOut size={20} className="text-muted-foreground group-hover:text-accent ml-4 flex-shrink-0" weight="bold" />
+            </a>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="space-y-6">
         <section>
