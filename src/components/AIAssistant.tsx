@@ -91,7 +91,7 @@ Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 
   }
 
   const suggestedQuestions = [
-    "How can I maximize my earnings?",
+    "How can I optimize my earnings strategy?",
     "What are the best times to drive?",
     "Should I use multiple apps?",
     "How do I handle slow days?"
