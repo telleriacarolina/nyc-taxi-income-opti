@@ -26,6 +26,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: System analyzes shifts with START LOCATION data → Cross-references against TLC Trip Record Data organized by taxi zones showing pickup location performance (Manhattan Core $45-65, Financial District $50+, Airports $55-75+, Entertainment zones $40-60) → Identifies correlation between driver's start locations and their earnings → Compares to TLC historical data showing which zones consistently produce $35+ average pickups → Generates focused location-based insight recommending specific neighborhoods/zones to START from based on time of day and TLC pickup zone performance data → Displays in gradient card with location pin icon → Updates when new shift data with locations added or manually refreshed
 - **Success criteria**: Driver receives one specific, actionable recommendation about which neighborhoods or zones to BEGIN their shifts from based on their start location history patterns compared to TLC Trip Record Data showing those zones' historical pickup performance, understands which areas correlate with hitting the $35+ per trip target needed for $300/day goal, and learns how to strategically position themselves using TLC taxi zone data and NYC DOT traffic feeds to reach high-earning pickup locations
 
+### Location Earnings Heatmap
+- **Functionality**: Interactive visual heatmap displaying earnings by start location with bars colored by earnings intensity, showing which pickup areas generate the most income
+- **Purpose**: Provide immediate visual insight into geographic earnings patterns, helping drivers identify their most profitable starting locations at a glance
+- **Trigger**: Automatically displayed on Earnings Optimizer tab when 1+ shifts have start location data
+- **Progression**: System aggregates all shifts by start location → Calculates total earnings, trips, hours, and hourly rate per location → Renders horizontal bar chart with color gradient from light to dark blue based on earnings intensity → Displays location names on left, earnings bars in center, dollar amounts on right → On hover, shows detailed stats for selected location including earnings, hourly rate, trips, shifts, and percentage of total earnings → Top stats cards show best performing location, highest hourly rate, and number of tracked locations
+- **Success criteria**: Driver can instantly see which start locations generate the most earnings through color-coded visualization, hover over any location for detailed breakdown, and identify patterns in their most profitable pickup areas for strategic positioning decisions
+
 ### Veteran Location & Timing Insights
 - **Functionality**: AI-powered recommendations on optimal locations and time periods throughout the day and year for experienced NYC TLC drivers, focused on hitting 2025 target of $300/day with quality rides, enhanced with NYC TLC Trip Record Data (millions of historical trip records showing high-fare zones, peak demand times, and average fares by neighborhood) combined with NYC DOT real-time data feeds integration
 - **Purpose**: Leverage veteran driver knowledge, NYC traffic patterns, historical TLC trip data patterns (pickup/dropoff zones, fare amounts, trip distances, time-of-day patterns), and real-time NYC DOT data (traffic speeds, construction alerts, planned events, parking data) to guide drivers to high-earning locations at the right times where rides consistently hit $35+ averages based on historical TLC records while avoiding congestion using DOT feeds
@@ -178,6 +185,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Veteran Insights Generation Fails**: Show error gracefully, allow retry, maintain previous insights if available
 - **Veteran Insights Not Yet Generated**: Show empty state with clear call-to-action to generate first insights
 - **Veteran Insights Refresh**: Updates timestamp and allows regeneration for fresh recommendations
+- **No Location Data for Heatmap**: Heatmap hidden until at least one shift has start location data
+- **Single Location Tracked**: Heatmap displays single location with stats, encourages tracking from multiple start points
+- **Duplicate Location Names**: Case-insensitive matching normalizes location names (e.g., "Manhattan" and "manhattan" treated as same)
+- **Location Names with Different Spellings**: Each unique spelling treated as separate location, shows importance of consistent naming
+- **Very Long Location Names**: Location labels truncated with ellipsis if needed for clean display
+- **Heatmap Hover State**: Selected location details update in real-time as user hovers over bars
+- **Zero Hours for Location**: Displays location but shows N/A for hourly rate when hours cannot be calculated
 - **Incomplete Ride Data for Analysis**: Smart Ride Analyzer requires all fields (distance, duration, platform, pay) before enabling analysis
 - **First Time AI User**: Suggested questions help guide initial interactions with AI Assistant
 - **AI Response Too Long**: Responses constrained to 2-3 paragraphs for readability in chat interface
@@ -334,7 +348,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips
   - Globe: Platform availability
-  - MapPin: Location markers for pickup/dropoff, veteran location insights
+  - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap
   - Path: Distance metrics, trip details
   - ArrowRight: Route direction indicator
   - Warning/WarningCircle: Expiring/expired alerts, important considerations

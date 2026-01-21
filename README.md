@@ -102,11 +102,111 @@ uv tool list                   # List installed tools
 - `uv remove --script` - Remove script dependencies
 
 #### 📦 Projects
-- `uv init` - Create new Python project
-- `uv add` / `uv remove` - Manage dependencies
-- `uv sync` / `uv lock` - Handle dependencies
-- `uv tree` - View dependency tree
-- `uv build` / `uv publish` - Build and publish packages
+
+**Creating a New Project:**
+
+```bash
+uv init hello-world            # Create new project in new directory
+cd hello-world
+
+# Or initialize in current directory
+mkdir hello-world && cd hello-world
+uv init
+```
+
+**Project Structure:**
+
+uv creates and manages the following structure:
+
+```
+.
+├── .venv/                    # Virtual environment (created on first run)
+│   ├── bin/
+│   ├── lib/
+│   └── pyvenv.cfg
+├── .python-version           # Default Python version for project
+├── .gitignore               # Git ignore patterns
+├── README.md                # Project documentation
+├── main.py                  # Entry point (Hello World example)
+├── pyproject.toml           # Project metadata and dependencies
+└── uv.lock                  # Cross-platform lockfile (auto-generated)
+```
+
+**Key Files:**
+- **`pyproject.toml`** - Project metadata, dependencies, and configuration
+- **`.python-version`** - Python version to use for the project
+- **`uv.lock`** - Exact dependency versions (version controlled, auto-managed)
+- **`.venv/`** - Isolated virtual environment for project dependencies
+
+**Managing Dependencies:**
+
+```bash
+# Add dependencies
+uv add requests               # Add latest version
+uv add 'requests==2.31.0'     # Add specific version
+uv add 'requests>=2.30.0'     # Add with constraint
+uv add git+https://github.com/psf/requests  # Add from git
+uv add -r requirements.txt    # Add from requirements.txt
+uv add -r requirements.txt -c constraints.txt  # With constraints
+
+# Remove dependencies
+uv remove requests
+
+# Upgrade packages
+uv lock --upgrade-package requests      # Upgrade specific package
+uv lock --upgrade                       # Upgrade all packages
+
+# View dependency tree
+uv tree
+```
+
+**Viewing Project Version:**
+
+```bash
+uv version                    # Show package name and version
+uv version --short            # Version number only
+uv version --output-format json  # JSON format
+```
+
+**Running Commands:**
+
+uv automatically syncs dependencies before running commands:
+
+```bash
+# Run Python scripts
+uv run main.py                # Run project script
+uv run example.py             # Auto-syncs dependencies first
+
+# Run commands
+uv run -- flask run -p 3000   # Run with arguments
+uv run pytest                 # Run test suite
+uv run python -c "import requests; print(requests.__version__)"
+
+# Manual sync and activate (alternative)
+uv sync                       # Sync environment manually
+source .venv/bin/activate     # Activate environment (macOS/Linux)
+# .venv\Scripts\activate      # Activate environment (Windows)
+flask run -p 3000             # Run without uv run
+```
+
+**Building Distributions:**
+
+```bash
+uv build                      # Build wheel and source distribution
+# Creates:
+# - dist/hello-world-0.1.0-py3-none-any.whl
+# - dist/hello-world-0.1.0.tar.gz
+
+uv build --wheel              # Build wheel only
+uv build --sdist              # Build source distribution only
+```
+
+**Important Notes:**
+- `uv run` automatically keeps lockfile and environment in sync
+- Lockfile (`uv.lock`) should be committed to version control
+- Virtual environment (`.venv/`) is project-specific and isolated
+- Edit `pyproject.toml` manually or use `uv add`/`uv remove`
+- Use `uv run` for project commands; `uvx` for isolated tools
 
 #### 🛠️ Tools
 

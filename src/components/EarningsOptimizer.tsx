@@ -11,6 +11,7 @@ import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { AIInsights } from './AIInsights'
 import { VeteranInsights } from './VeteranInsights'
+import { LocationHeatmap } from './LocationHeatmap'
 import { Progress } from '@/components/ui/progress'
 
 export function EarningsOptimizer() {
@@ -240,6 +241,10 @@ export function EarningsOptimizer() {
       <AIInsights />
 
       <VeteranInsights />
+
+      {(shifts || []).filter(s => s.startLocation && s.startLocation.trim() !== '').length > 0 && (
+        <LocationHeatmap shifts={shifts || []} />
+      )}
 
       {(shifts || []).length >= 3 && (
         <EarningsInsights shifts={shifts || []} stats={stats} />
