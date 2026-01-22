@@ -77,7 +77,6 @@ function App() {
               <TripCalculator />
             </TabsContent>
             <TabsContent value="chatroom" className="space-y-4">
-            <TabsContent value="chatroom" className="space-y-4">
               <Chatroom />
             </TabsContent>
           </Tabs>
