@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe, Palette } from '@phosphor-icons/react'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe, Palette, Fire } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
 import { toast } from 'sonner'
 import * as d3 from 'd3'
@@ -77,6 +79,7 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   })
   const [viewMode, setViewMode] = useState<'chart' | 'map'>('chart')
   const [mapStyle, setMapStyle] = useKV<MapStyle>('map-style', 'liberty')
+  const [showHeatmap, setShowHeatmap] = useKV<boolean>('location-heatmap-enabled', true)
 
   const handleClearDateRange = () => {
     setDateRange({ from: undefined, to: undefined })
@@ -433,6 +436,18 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     }
   })
 
+  const maxEarnings = locationData.length > 0 ? Math.max(...locationData.map(d => d.earnings)) : 1
+  
+  const heatmapPoints = locationData.map(loc => {
+    const normalizedName = loc.location.toLowerCase()
+    const coords = NYC_NEIGHBORHOODS[normalizedName] || [40.7128, -74.0060]
+    const normalizedIntensity = loc.earnings / maxEarnings
+    return {
+      position: coords as [number, number],
+      intensity: normalizedIntensity
+    }
+  })
+
   return (
     <Card className="p-4 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/5 border-primary/30 shadow-lg">
       <div className="flex items-start gap-3 mb-4">
@@ -607,6 +622,52 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
         </TabsContent>
 
         <TabsContent value="map" className="space-y-4">
+          <div className="bg-card rounded-lg border shadow-sm p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <Fire size={20} weight="fill" className={cn(
+                  "transition-colors",
+                  showHeatmap ? "text-warning" : "text-muted-foreground"
+                )} />
+                <div>
+                  <Label htmlFor="heatmap-toggle" className="text-[clamp(0.8rem,2.4vw,0.9rem)] font-semibold cursor-pointer">
+                    Earnings Heatmap Overlay
+                  </Label>
+                  <p className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mt-0.5">
+                    Visualize earning intensity by zone
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="heatmap-toggle"
+                checked={showHeatmap}
+                onCheckedChange={setShowHeatmap}
+                className="data-[state=checked]:bg-warning"
+              />
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-500/20 via-green-500/20 via-yellow-500/20 to-red-500/20 rounded-lg p-3 mb-4">
+              <div className="flex items-center justify-between text-[clamp(0.7rem,2.2vw,0.8rem)]">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span className="text-muted-foreground">Low</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="text-muted-foreground">Medium</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <span className="text-muted-foreground">High</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className="font-semibold text-warning">Peak</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="mb-4">
             <div className="text-[clamp(0.8rem,2.2vw,0.9rem)] font-semibold mb-3 flex items-center gap-2">
               <Palette size={18} weight="fill" className="text-primary" />
@@ -756,7 +817,23 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
             <OpenFreeMap
               center={[40.7128, -74.0060]}
               zoom={11}
-              markers={mapMarkers}
+              markers={showHeatmap ? [] : mapMarkers}
+              heatmapPoints={heatmapPoints}
+              enableHeatmap={showHeatmap}
+              heatmapOptions={{
+                radius: 40,
+                blur: 30,
+                maxZoom: 13,
+                max: 1.0,
+                minOpacity: 0.5,
+                gradient: {
+                  0.0: 'rgba(59, 130, 246, 0)',
+                  0.25: 'rgba(59, 130, 246, 0.6)',
+                  0.5: 'rgba(34, 197, 94, 0.7)',
+                  0.75: 'rgba(234, 179, 8, 0.8)',
+                  1.0: 'rgba(239, 68, 68, 0.9)'
+                }
+              }}
               className="rounded-lg"
               style={mapStyle}
               onMarkerClick={(label) => {

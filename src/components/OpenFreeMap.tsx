@@ -33,6 +33,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.heat'
 
 export type MapStyle = 'liberty' | 'bright' | 'positron'
 
@@ -44,6 +45,10 @@ interface OpenFreeMapProps {
     label: string
     earnings?: number
   }>
+  heatmapPoints?: Array<{
+    position: [number, number]
+    intensity: number
+  }>
   className?: string
   onMarkerClick?: (label: string) => void
   enableClustering?: boolean
@@ -51,25 +56,38 @@ interface OpenFreeMapProps {
   style?: MapStyle
   enableTerrain?: boolean
   terrainOpacity?: number
+  enableHeatmap?: boolean
+  heatmapOptions?: {
+    radius?: number
+    blur?: number
+    maxZoom?: number
+    max?: number
+    minOpacity?: number
+    gradient?: { [key: number]: string }
+  }
 }
 
 export function OpenFreeMap({
   center = [40.7128, -74.0060],
   zoom = 12,
   markers = [],
+  heatmapPoints = [],
   className = '',
   onMarkerClick,
   enableClustering = true,
   clusterRadius = 80,
   style = 'liberty',
   enableTerrain = false,
-  terrainOpacity = 0.5
+  terrainOpacity = 0.5,
+  enableHeatmap = false,
+  heatmapOptions = {}
 }: OpenFreeMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersLayerRef = useRef<L.LayerGroup | L.MarkerClusterGroup | null>(null)
   const tileLayerRef = useRef<L.TileLayer | null>(null)
   const terrainLayerRef = useRef<L.TileLayer | null>(null)
+  const heatmapLayerRef = useRef<any>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -162,6 +180,43 @@ export function OpenFreeMap({
       terrainLayerRef.current.setOpacity(terrainOpacity)
     }
   }, [enableTerrain, terrainOpacity])
+
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+
+    if (enableHeatmap && heatmapPoints.length > 0) {
+      if (heatmapLayerRef.current) {
+        mapInstanceRef.current.removeLayer(heatmapLayerRef.current)
+      }
+
+      const defaultGradient = {
+        0.0: 'rgba(0, 0, 255, 0)',
+        0.2: 'rgba(0, 0, 255, 0.5)',
+        0.4: 'rgba(0, 255, 255, 0.6)',
+        0.6: 'rgba(0, 255, 0, 0.7)',
+        0.8: 'rgba(255, 255, 0, 0.8)',
+        1.0: 'rgba(255, 0, 0, 0.9)'
+      }
+
+      const heatData = heatmapPoints.map(point => [
+        point.position[0],
+        point.position[1],
+        point.intensity
+      ] as [number, number, number])
+
+      heatmapLayerRef.current = (L as any).heatLayer(heatData, {
+        radius: heatmapOptions.radius || 35,
+        blur: heatmapOptions.blur || 25,
+        maxZoom: heatmapOptions.maxZoom || 13,
+        max: heatmapOptions.max || 1.0,
+        minOpacity: heatmapOptions.minOpacity || 0.4,
+        gradient: heatmapOptions.gradient || defaultGradient
+      }).addTo(mapInstanceRef.current)
+    } else if (!enableHeatmap && heatmapLayerRef.current) {
+      mapInstanceRef.current.removeLayer(heatmapLayerRef.current)
+      heatmapLayerRef.current = null
+    }
+  }, [enableHeatmap, heatmapPoints, heatmapOptions])
 
   useEffect(() => {
     if (!markersLayerRef.current || !mapInstanceRef.current) return
