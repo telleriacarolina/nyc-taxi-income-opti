@@ -3,6 +3,7 @@
 A comprehensive driver management hub for NYC TLC (Taxi and Limousine Commission) drivers to track their license renewals, required documents, compliance deadlines, and optimize their earnings through data-driven insights.
 
 **Experience Qualities**:
+
 1. **Professional** - Clean, organized interface that inspires confidence and trust for managing critical licensing and earnings information
 2. **Empowering** - Data-driven insights that help drivers maximize earnings and stay compliant with their licensing requirements
 3. **Actionable** - Clear visual indicators and recommendations that guide drivers to make better decisions about when and where to drive
@@ -13,6 +14,7 @@ This is a multi-view application with document tracking, deadline management, sh
 ## Essential Features
 
 ### AI Driver Assistant
+
 - **Functionality**: Floating AI chat assistant that provides personalized advice on earnings optimization, compliance, multi-apping strategies, shift planning, and how to leverage NYC TLC Trip Record Data patterns combined with NYC DOT real-time data feeds for location and traffic optimization
 - **Purpose**: Give drivers instant access to intelligent insights based on their actual data, NYC TLC context, millions of historical trip records from TLC Trip Record Data, and real-time traffic information from NYC DOT data feeds
 - **Trigger**: Click floating AI button in bottom-right corner
@@ -20,6 +22,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives relevant, data-driven answers within 5 seconds that help them make better business decisions, understand which locations historically produce high fares based on TLC data, and learn how to use NYC DOT traffic data to reach those locations efficiently
 
 ### AI-Powered Earnings Insights
+
 - **Functionality**: Automatically generated location-based insights analyzing START LOCATION patterns from logged shifts, comparing against NYC TLC Trip Record Data patterns (millions of historical trips organized by taxi zones) to identify which neighborhoods produce the highest earnings, with 2025 target tracking ($300/day with 7-10 rides at ~$35/trip) and NYC DOT data feeds for route optimization
 - **Purpose**: Surface actionable intelligence about which START LOCATIONS correlate with higher earnings by comparing driver's actual shift start locations against TLC Trip Record Data showing historical pickup zone performance (average fares by neighborhood, high-tip areas, premium zones), helping drivers strategically position themselves at the beginning of shifts to maximize earnings and meet 2025 targets
 - **Trigger**: Automatically generated when driver has 3+ shifts logged (with or without start locations specified), refreshable on demand
@@ -27,6 +30,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives one specific, actionable recommendation about which neighborhoods or zones to BEGIN their shifts from based on their start location history patterns compared to TLC Trip Record Data showing those zones' historical pickup performance, understands which areas correlate with hitting the $35+ per trip target needed for $300/day goal, and learns how to strategically position themselves using TLC taxi zone data and NYC DOT traffic feeds to reach high-earning pickup locations
 
 ### Location Earnings Heatmap
+
 - **Functionality**: Interactive visual heatmap displaying earnings by start location with dual view modes - a bar chart view with color-coded bars showing earnings intensity, and an interactive map view using OpenFreeMap tiles showing pickup locations on a real NYC map with earnings markers
 - **Purpose**: Provide immediate visual insight into geographic earnings patterns through both statistical (chart) and spatial (map) visualizations, helping drivers identify their most profitable starting locations at a glance with real geographic context
 - **Trigger**: Automatically displayed on Earnings Optimizer tab when 1+ shifts have start location data
@@ -34,13 +38,15 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly see which start locations generate the most earnings through both color-coded bar chart and geographic map visualization, interact with locations in either view for detailed breakdown, understand the spatial distribution of their high-earning zones across NYC, and identify patterns in their most profitable pickup areas for strategic positioning decisions
 
 ### Veteran Location & Timing Insights
+
 - **Functionality**: AI-powered recommendations on optimal locations and time periods throughout the day and year for experienced NYC TLC drivers, focused on hitting 2025 target of $300/day with quality rides, enhanced with NYC TLC Trip Record Data (millions of historical trip records showing high-fare zones, peak demand times, and average fares by neighborhood) combined with NYC DOT real-time data feeds integration
 - **Purpose**: Leverage veteran driver knowledge, NYC traffic patterns, historical TLC trip data patterns (pickup/dropoff zones, fare amounts, trip distances, time-of-day patterns), and real-time NYC DOT data (traffic speeds, construction alerts, planned events, parking data) to guide drivers to high-earning locations at the right times where rides consistently hit $35+ averages based on historical TLC records while avoiding congestion using DOT feeds
 - **Trigger**: Click "Generate" button in Veteran Driver Insights card on Earnings tab
-- **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, seasons, and references both TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) showing historical high-fare zones and peak times AND NYC DOT data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) for traffic optimization → Returns 4 daily time-based location insights backed by TLC historical fare data with expected earnings supporting $300/day goal plus specific NYC DOT data usage tips → Returns 3 seasonal strategy insights with priority locations proven to generate premium fares in TLC records and traffic management recommendations → Displays in organized cards with times, locations (backed by TLC data patterns), reasons citing historical fare averages, earnings estimates, and actionable NYC DOT data tips → Can refresh for updated recommendations with current time/date context
+- **Progression**: Click generate → AI analyzes NYC geography, commute patterns, events, seasons, and references both TLC Trip Record Data (<https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page>) showing historical high-fare zones and peak times AND NYC DOT data feeds (<https://www.nyc.gov/html/dot/html/about/datafeeds.shtml>) for traffic optimization → Returns 4 daily time-based location insights backed by TLC historical fare data with expected earnings supporting $300/day goal plus specific NYC DOT data usage tips → Returns 3 seasonal strategy insights with priority locations proven to generate premium fares in TLC records and traffic management recommendations → Displays in organized cards with times, locations (backed by TLC data patterns), reasons citing historical fare averages, earnings estimates, and actionable NYC DOT data tips → Can refresh for updated recommendations with current time/date context
 - **Success criteria**: Driver receives specific neighborhood recommendations for 4 times of day plus 3 seasonal strategies, each backed by actual TLC Trip Record Data patterns showing these locations consistently produce high fares, with actionable location advice supported by historical trip records, earnings expectations aligned with 2025 targets based on TLC data averages, and practical guidance on using NYC DOT real-time data feeds for traffic optimization and efficient route planning to reach high-fare zones
 
 ### Traffic Pattern Comparison by Time of Day
+
 - **Functionality**: AI-powered analysis comparing traffic conditions, earnings potential, and demand patterns across five distinct time slots throughout the day (Early Morning 5AM-9AM, Midday 9AM-4PM, Evening Rush 4PM-8PM, Night 8PM-2AM, Late Night 2AM-5AM) with separate weekday and weekend patterns
 - **Purpose**: Help drivers strategically choose when to work by understanding how traffic congestion, trip volume, earnings potential, and hot zones vary throughout the day, enabling them to maximize earnings while minimizing time wasted in traffic
 - **Trigger**: Automatically displayed on Earnings Optimizer tab, refreshable on demand, toggle between weekday and weekend patterns
@@ -48,6 +54,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly compare all time periods side-by-side, identify the most profitable hours with least congestion, learn which neighborhoods are hotspots during each period, understand weekday vs weekend differences, and receive specific actionable advice for timing their shifts to maximize earnings while minimizing traffic delays
 
 ### Real-Time Traffic Overlay
+
 - **Functionality**: Live NYC DOT traffic intelligence displaying real-time traffic speeds and incident data across all five boroughs with interactive map visualization and borough filtering
 - **Purpose**: Help drivers avoid congestion, plan optimal routes to high-earning zones, and stay informed about construction, accidents, events, and road closures that impact driving efficiency
 - **Trigger**: Automatically displayed on Earnings Optimizer tab, refreshable on demand
@@ -55,6 +62,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver sees real-time traffic conditions across NYC with average speeds by corridor, identifies congested areas to avoid, learns about active construction and road closures, can filter by borough for focused planning, and receives actionable tips on using traffic intelligence to reach high-earning zones efficiently
 
 ### Optimal Positioning Map
+
 - **Functionality**: Real-time interactive map showing optimal driver positioning zones based on NYC TLC Trip Record Data with AI-powered analysis of high-earning neighborhoods by time of day
 - **Purpose**: Guide drivers to position themselves in locations that historically produce the highest fares and trip volume based on millions of TLC trip records, with dynamic recommendations adjusting for time of day and current conditions
 - **Trigger**: Automatically displayed on Earnings Optimizer tab, refreshable on demand, time period selection via tabs
@@ -62,6 +70,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives specific neighborhood recommendations for optimal positioning with data-backed earnings estimates, understands which zones offer best combination of high fares and ride volume for current time period, can visualize zones geographically on map with clear markers, and gets actionable advice on where to stage between rides to maximize earnings based on TLC Trip Record Data showing historical pickup location performance
 
 ### Route Planner
+
 - **Functionality**: AI-powered route planner that generates optimal paths connecting 3-5 high-earning zones in strategic sequences, with detailed stop-by-stop guidance showing expected earnings, timing, and demand patterns
 - **Purpose**: Help drivers maximize efficiency by following pre-planned routes between hot zones rather than randomly moving around the city, reducing downtime and ensuring consistent ride flow throughout their shift
 - **Trigger**: Automatically displayed on Earnings Optimizer tab below Optimal Positioning Map, time period selection updates routes
@@ -69,6 +78,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives 3 distinct route options connecting high-earning neighborhoods in logical geographic sequences, can visualize the complete path on an interactive map, understands timing and earnings potential for each stop, sees total estimated earnings and ride count for the complete route, and gets strategic guidance on why stops are sequenced in that specific order based on TLC historical data and traffic patterns
 
 ### Daily Schedule Planner
+
 - **Functionality**: Comprehensive schedule planner with custom routes optimized for different times of day, featuring 5 distinct time blocks (Early Morning 5-9AM, Midday 9AM-4PM, Evening Rush 4-8PM, Night 8PM-2AM, Late Night 2AM-5AM), 5 pre-built full-day route strategies, ability to create, save, and customize favorite daily schedules with personal notes, and recurring schedule templates that can be assigned to specific days of the week (Monday-Sunday) for consistent weekly planning
 - **Purpose**: Enable drivers to plan their entire day strategically by understanding earnings potential, demand patterns, traffic conditions, and optimal positioning zones for each time period, with ready-to-follow route templates that maximize earnings while minimizing downtime, plus the flexibility to create and save their own custom schedules based on personal preferences and work patterns, and assign specific schedules to specific days of the week for a complete weekly work routine
 - **Trigger**: Automatically displayed on Earnings Optimizer tab below Route Planner, toggles between Time Blocks view, Templates (Full Day Routes) view, My Schedules (favorites) view, and Weekly Plan view
@@ -76,6 +86,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can browse 5 distinct time periods with specific neighborhood recommendations and earnings targets for each, view 5 complete daily route templates showing how to combine time blocks for maximum earnings, mark any template as a favorite for quick access, create unlimited custom schedules by selecting their preferred time blocks with personalized names and notes, edit existing custom schedules to adjust time blocks or update notes, delete custom schedules they no longer need, view all their favorite schedules (both custom and templates) in one dedicated tab, assign any schedule to specific days of the week in the Weekly Plan view, see a complete 7-day weekly schedule at a glance with projected weekly totals, quickly apply schedules to multiple days with pattern shortcuts, mark days as off days, clear and reassign schedules as needed, and have all custom schedules, favorites, and weekly assignments persist across sessions for long-term planning and consistency
 
 ### Smart Ride Analyzer
+
 - **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance and NYC TLC Trip Record Data patterns
 - **Purpose**: Help drivers make split-second decisions on which rides to accept for maximum profitability using both personal history and TLC historical data benchmarks
 - **Trigger**: Driver enters ride details (distance, duration, platform, gross pay) and clicks "Analyze Ride"
@@ -83,6 +94,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver gets clear accept/skip guidance with confidence level and reasoning referencing both personal history and TLC Trip Record Data patterns within 3 seconds
 
 ### Tabbed Navigation
+
 - **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
@@ -90,6 +102,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, platform information, trip income calculator, and driver communication
 
 ### The Chatroom
+
 - **Functionality**: Real-time communication hub where drivers can send messages to connect with the TLC driver community and maintain a list of fellow drivers with online/offline status indicators
 - **Purpose**: Build community, share real-time traffic updates, coordinate with fellow drivers, and maintain professional network connections
 - **Trigger**: Navigate to Chatroom tab
@@ -97,6 +110,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Drivers can send and receive messages in the general chat with clear sender identification and timestamps, maintain a personal list of fellow drivers with visible status indicators, and quickly see who's online in their network
 
 ### License Status Dashboard
+
 - **Functionality**: Display current TLC license status with expiration date, license number, and visual status indicator
 - **Purpose**: Provide at-a-glance awareness of license validity to prevent driving with expired credentials
 - **Trigger**: Automatically loads on License Manager tab
@@ -104,6 +118,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can immediately see if their license is current and when action is needed
 
 ### Document Tracker
+
 - **Functionality**: Track multiple required documents (DMV license, defensive driving certificate, drug test, vehicle inspection, insurance)
 - **Purpose**: Ensure all required documentation stays current to maintain TLC compliance
 - **Trigger**: View on License Manager tab, add/edit via modal dialog
@@ -111,6 +126,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: All required documents are tracked with expiration dates and status indicators
 
 ### Renewal Reminders
+
 - **Functionality**: Visual alerts for items expiring within 30 days or already expired
 - **Purpose**: Prevent lapses in compliance that could result in fines or inability to work
 - **Trigger**: Automatic based on current date vs. expiration dates
@@ -118,6 +134,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives clear visual warnings before documents expire
 
 ### Shift Logger
+
 - **Functionality**: Log individual driving shifts with date, time, platform, earnings, trips, tips, expenses, and START LOCATION (neighborhood/area where shift began)
 - **Purpose**: Build a comprehensive earnings history including location data to enable pattern analysis, identify which start locations correlate with higher earnings, and generate location-based optimization recommendations powered by TLC Trip Record Data
 - **Trigger**: Click "Add Shift" button on Earnings Optimizer tab
@@ -125,6 +142,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can log a complete shift including start location in under 60 seconds, location appears prominently on shift card, and location data powers AI insights comparing their pickup patterns to TLC Trip Record Data zone performance
 
 ### Platform-Specific Earnings Tracking
+
 - **Functionality**: Track and compare earnings performance across all rideshare platforms (Uber, Lyft, Via, Curb, Revel, Juno, Other)
 - **Purpose**: Identify which platforms are most profitable for individual driver patterns and optimize multi-apping strategy
 - **Trigger**: Automatically generated after logging shifts on different platforms
@@ -132,6 +150,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can see at a glance which platforms generate the most income and highest hourly rates for their driving pattern
 
 ### Earnings Analytics Dashboard
+
 - **Functionality**: Display key metrics including net earnings, average hourly rate, total trips, and tips with 2025 target progress tracking
 - **Purpose**: Provide clear overview of financial performance across all logged shifts and show progress toward $300/day with 7-10 rides target
 - **Trigger**: Automatically calculates from logged shifts on Earnings Optimizer tab
@@ -139,6 +158,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can see total earnings, hourly rate, trip count, tips at a glance, and immediately understand how their performance compares to 2025 realistic targets
 
 ### Daily Goal Tracker
+
 - **Functionality**: Track individual daily earnings progress toward customizable goal range ($500-$1000 default) with visual progress bars and achievement statistics
 - **Purpose**: Help drivers monitor their daily performance against personal income targets and identify which days are meeting goals
 - **Trigger**: Automatically displayed when shifts are logged on Earnings Optimizer tab
@@ -146,6 +166,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly see which days met their $500-$1000 target range, track overall progress, and understand their daily earning patterns at a glance
 
 ### Peak Performance Insights
+
 - **Functionality**: Analyze shift data to identify best earning hours, days, and platforms with personalized recommendations
 - **Purpose**: Guide drivers to work during their most profitable times and on their best-performing platforms
 - **Trigger**: Automatically generated after 3+ shifts are logged
@@ -153,12 +174,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives specific, data-backed recommendations on when and where to drive for maximum earnings
 
 ### Quick Actions
+
 - **Functionality**: Fast access buttons to update license info, add documents, and log shifts
 - **Trigger**: Click action buttons on cards or in tab views
 - **Progression**: Click action button → Modal opens with form → Enter/update information → Confirm → Data persists and UI updates
 - **Success criteria**: Driver can update any information or log a shift in under 30 seconds
 
 ### Ride Share Platform Directory
+
 - **Functionality**: Comprehensive directory of NYC ride-sharing apps including Uber, Lyft, Curb, Revel, Via, and Juno with key details
 - **Purpose**: Help drivers understand commission rates, features, and best use cases for each platform to optimize multi-apping strategy
 - **Trigger**: Navigate to Ride Share Apps tab
@@ -166,6 +189,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can compare all major platforms at a glance and mark preferred apps
 
 ### Platform Comparison
+
 - **Functionality**: Side-by-side comparison of commission rates, features, and best use cases for each ride-share platform
 - **Purpose**: Enable informed decisions about which apps to prioritize based on commission structure and earning potential
 - **Trigger**: View Ride Share Apps tab
@@ -173,6 +197,9 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver understands commission differences and can choose optimal platforms for their strategy
 
 ### Multi-Apping Tips
+
+Here's some content about multi-apping tips...
+
 - **Functionality**: Curated advice on running multiple apps simultaneously to maximize earnings and minimize downtime
 - **Purpose**: Educate drivers on best practices for using multiple platforms effectively
 - **Trigger**: Displayed at bottom of Ride Share Apps tab
@@ -180,6 +207,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver learns actionable strategies to improve earnings through platform diversification
 
 ### Individual Ride Tracking
+
 - **Functionality**: Log individual rides with pickup/dropoff locations, distance, duration, gross pay, fees, and net pay
 - **Purpose**: Enable granular comparison of ride quality and profitability beyond aggregate shift data
 - **Trigger**: Click "Add Ride" button on Rides tab
@@ -187,6 +215,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can log a complete ride in under 45 seconds with automatic net pay calculation
 
 ### Ride Efficiency Rating
+
 - **Functionality**: Automatically calculate and display a 1-5 star efficiency rating for each ride based on pay per mile and pay per minute
 - **Purpose**: Provide quick visual feedback on ride quality to help identify patterns in profitable rides
 - **Trigger**: Automatically calculated when ride is saved
@@ -194,6 +223,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Each ride has a clear visual efficiency indicator that correlates with actual profitability
 
 ### Platform Ride Performance Comparison
+
 - **Functionality**: Compare rides across platforms showing average pay per mile, pay per minute, and fee percentages
 - **Purpose**: Identify which platforms consistently offer the best value rides, not just overall earnings
 - **Trigger**: Automatically displayed when rides from multiple platforms are logged
@@ -201,6 +231,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can see which platform gives best value per mile and lowest fees for individual rides
 
 ### Best and Worst Ride Insights
+
 - **Functionality**: Automatically identify and highlight the best value ride (highest $/mile) and worst ride to show earning patterns
 - **Purpose**: Help drivers recognize what types of rides to accept and which to avoid
 - **Trigger**: Displayed after 3+ rides are logged on Rides tab
@@ -208,6 +239,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives specific guidance on ride types to prioritize based on their actual logged data
 
 ### Ride Data CSV Export
+
 - **Functionality**: Export ride data to CSV format for tax records, accounting, or external analysis
 - **Purpose**: Enable drivers to maintain official records for tax purposes and integrate ride data with external accounting systems
 - **Trigger**: Click "Export CSV" button on Rides tab
@@ -215,6 +247,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver receives a properly formatted CSV file containing all visible rides with complete financial data suitable for tax filing and accounting software import
 
 ### Trip Income Calculator
+
 - **Functionality**: Interactive calculator comparing potential earnings between rideshare platforms and medical transport services for identical trips
 - **Purpose**: Help drivers make informed decisions about which types of trips to prioritize based on actual earning potential
 - **Trigger**: Navigate to Calculator tab, enter trip distance and duration
@@ -222,6 +255,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Success criteria**: Driver can instantly compare income potential between rideshare and medical transport for any trip and understand which option pays better and why
 
 ## Edge Case Handling
+
 - **No Messages in Chatroom**: Display empty state encouraging users to start first conversation
 - **Message Without Current User**: Prevent sending messages until user identity is initialized
 - **Empty Message Input**: Disable send button when message field is empty or whitespace-only
@@ -299,7 +333,7 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Map View with Unknown Locations**: Locations not in NYC neighborhoods database default to Manhattan center coordinates, still show earnings data
 - **Map View Toggle**: Chart and Map views preserve selected location state when switching between views
 - **Map Marker Interactions**: Click map markers to view detailed location statistics, hover for location name and earnings preview
-- **OpenFreeMap Integration**: Uses free, open-source OpenFreeMap tiles (Liberty style) from https://tiles.openfreemap.org/ via Cloudflare CDN. Repository configured as git remote `openfreemap` tracking https://github.com/telleriacarolina/openfreemap. Fetch updates with `git fetch openfreemap`. See OPENFREEMAP.md integration guide for details on tile styles, self-hosting options, and development workflows.
+- **OpenFreeMap Integration**: Uses free, open-source OpenFreeMap tiles (Liberty style) from <https://tiles.openfreemap.org/> via Cloudflare CDN. Repository configured as git remote `openfreemap` tracking <https://github.com/telleriacarolina/openfreemap>. Fetch updates with `git fetch openfreemap`. See OPENFREEMAP.md integration guide for details on tile styles, self-hosting options, and development workflows.
 - **Marker Clustering**: OpenFreeMap automatically clusters nearby markers when displaying large datasets (100+ locations) to improve map performance and readability. Cluster size indicated by number badge, click to zoom and expand. Clustering enabled by default, automatically adjusts radius based on zoom level.
 - **Duplicate Location Names**: Case-insensitive matching normalizes location names (e.g., "Manhattan" and "manhattan" treated as same)
 - **Location Names with Different Spellings**: Each unique spelling treated as separate location, shows importance of consistent naming
@@ -353,13 +387,15 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Weekly Plan with Deleted Schedule**: If assigned schedule is deleted, show "Schedule Not Found" state on that day with option to reassign
 
 ## Design Direction
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records, and a supportive driver community network. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Chatroom should feel welcoming and community-focused, like having a driver's lounge where colleagues share real-time traffic tips, coordinate meetups, and build professional relationships - with clean message bubbles, clear sender identification, and intuitive online/offline status indicators that make connecting with fellow drivers effortless. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml) and NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
+
+The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records, and a supportive driver community network. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Chatroom should feel welcoming and community-focused, like having a driver's lounge where colleagues share real-time traffic tips, coordinate meetups, and build professional relationships - with clean message bubbles, clear sender identification, and intuitive online/offline status indicators that make connecting with fellow drivers effortless. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (<https://www.nyc.gov/html/dot/html/about/datafeeds.shtml>) and NYC TLC Trip Record Data (<https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page>). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
 
 ## Color Selection
+
 A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
 
 - **Primary Color**: Deep Blue (oklch(0.35 0.08 250)) - Conveys authority, professionalism, and trustworthiness like official NYC TLC branding
-- **Secondary Colors**: 
+- **Secondary Colors**:
   - Slate Gray (oklch(0.45 0.02 250)) for supporting elements and subtle backgrounds
   - Light Blue (oklch(0.92 0.03 250)) for card backgrounds and secondary surfaces
 - **Accent Color**: Vibrant Yellow (oklch(0.85 0.15 90)) - Attention-grabbing for call-to-action buttons and important updates, inspired by NYC taxi yellow
@@ -376,6 +412,7 @@ A professional palette with strong status indicators inspired by official transp
   - Alert: White text oklch(0.98 0 0) - Ratio 5.2:1 ✓
 
 ## Font Selection
+
 Typography should convey clarity and officialdom while remaining highly readable for quick scanning of dates and status information.
 
 - **Primary Font**: Space Grotesk - A technical, geometric sans-serif that balances professionalism with approachability
@@ -390,6 +427,7 @@ Typography should convey clarity and officialdom while remaining highly readable
   - Labels: Space Grotesk Medium/14px/uppercase with wide letter spacing (0.05em)
 
 ## Animations
+
 Animations should provide clear feedback for status changes and guide attention to urgent items without being distracting during critical compliance reviews.
 
 - **Status transitions**: Smooth color fade when document status changes from current to expiring (300ms ease)
@@ -402,7 +440,7 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Components**:
   - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views; Secondary navigation for Chart vs Map view in Location Heatmap and Chat vs Fellow Drivers in Chatroom
-  - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png) and Leaflet.markercluster for geographic visualization of earnings locations and traffic patterns. Automatically clusters markers when displaying large datasets (100+ locations) with color-coded cluster size indicators (small: 1-20, medium: 21-100, large: 100+). Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking https://github.com/telleriacarolina/openfreemap - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
+  - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, <https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png>) and Leaflet.markercluster for geographic visualization of earnings locations and traffic patterns. Automatically clusters markers when displaying large datasets (100+ locations) with color-coded cluster size indicators (small: 1-20, medium: 21-100, large: 100+). Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking <https://github.com/telleriacarolina/openfreemap> - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
   - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
   - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides
