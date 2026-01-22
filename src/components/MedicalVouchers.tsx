@@ -41,21 +41,25 @@ const MEDICAL_PROVIDERS: VoucherProvider[] = [
     color: '#0066CC',
     bgColor: '#E6F0FF',
     icon: '🏥',
-    description: 'Leading non-emergency medical transportation provider for Medicaid patients',
+    description: 'Leading non-emergency medical transportation provider with Accessible Dispatch technology for seamless trip coordination',
     paymentStructure: '$25-$45 per trip',
     features: [
-      'Guaranteed payment within 14 days',
+      'Accessible Dispatch: Real-time trip matching',
       'GPS tracking and route optimization',
-      ' 24/7 dispatch support',
+      'Mobile app with instant trip notifications',
+      '24/7 dispatch support',
+      'Guaranteed payment within 14 days',
+      'Specialized training for accessible transport',
       'Scheduled and on-demand rides'
     ],
     requirements: [
       'TLC license and base affiliation',
       'Clean driving record',
       'CPR certification recommended',
-      'Background check'
+      'Background check',
+      'Smartphone for MTM dispatch app'
     ],
-    bestFor: 'Reliable scheduled income, medical transport focus',
+    bestFor: 'Reliable scheduled income, accessible transport focus, tech-enabled dispatch',
     contactInfo: '1-866-527-9933',
     coverage: 'All 5 boroughs + suburbs'
   },
@@ -342,6 +346,61 @@ export function MedicalVouchers() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Card className="p-4 bg-gradient-to-br from-blue-500/10 to-blue-600/10 border-blue-500/30">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/20">
+            <Wheelchair size={22} className="text-blue-600" weight="fill" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-sm font-semibold">MTM Accessible Dispatch</h3>
+              <Badge variant="secondary" className="text-[10px] h-5 bg-blue-500/20 text-blue-700">
+                Featured Technology
+              </Badge>
+            </div>
+            <p className="text-xs text-foreground/80 mb-3">
+              MTM's Accessible Dispatch platform revolutionizes medical transportation with real-time coordination, ensuring efficient service for passengers with mobility needs.
+            </p>
+            <div className="grid gap-2 md:grid-cols-2">
+              <div className="bg-white/50 rounded p-2">
+                <div className="text-[10px] font-semibold text-blue-700 uppercase mb-1">Driver Benefits</div>
+                <ul className="space-y-1 text-xs">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Instant trip notifications</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Smart route optimization</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Reduced no-shows</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-white/50 rounded p-2">
+                <div className="text-[10px] font-semibold text-blue-700 uppercase mb-1">Technology Features</div>
+                <ul className="space-y-1 text-xs">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Mobile app dispatch</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Live GPS tracking</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-blue-600">✓</span>
+                    <span>Automated scheduling</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <Card className="p-4 bg-gradient-to-br from-primary/5 to-success/5 border-primary/30">
         <div className="flex items-start gap-3">
