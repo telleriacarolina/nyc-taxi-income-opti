@@ -387,8 +387,6 @@ export function EarningsOptimizer() {
 
       <AIInsights />
 
-      <LocationInsightComparison />
-
       <TrafficAlerts />
 
       <TrafficOverlay />
