@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Sparkle, TrendUp, Clock, MapPin } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 
@@ -11,17 +13,20 @@ interface AIInsight {
   title: string
   content: string
   generated: number
+  startLocation?: string
 }
 
 export function AIInsights() {
   const [shifts] = useKV<any[]>('driver-shifts', [])
   const [insight, setInsight] = useState<AIInsight | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [startLocation, setStartLocation] = useState('')
 
-  const generateInsight = async () => {
+  const generateInsight = async (customLocation?: string) => {
     if (!shifts || shifts.length < 3) return
 
     setIsGenerating(true)
+    const locationToUse = customLocation || startLocation
 
     try {
       const shiftsData = shifts.map(s => ({
@@ -132,6 +137,10 @@ export function AIInsights() {
 
       const shiftsJson = JSON.stringify(shiftsData, null, 2)
 
+      const locationContext = locationToUse 
+        ? `\n\nSPECIFIC START LOCATION REQUEST: "${locationToUse}"\nFocus this insight SPECIFICALLY on starting a shift in ${locationToUse}. Provide detailed recommendations for this exact starting location including:\n- Best times to start from this location\n- Optimal directions/zones to head toward from here\n- Typical fare expectations from this area\n- Platform advantages specific to this neighborhood\n- Nearby high-demand zones to target\n`
+        : ''
+
       const prompt = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight using REAL NYC TLC DATABASE DATA to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
 
 ${marketIntel}
@@ -150,9 +159,11 @@ Top Earning Pickup Locations by Taxi Zone (from TLC data):
 - Airport Zones: JFK (Zone 132), LGA (Zone 138), Newark (Zone 1)
 - Hotel Districts: Theater District (Zone 161), Garment District (Zone 113)
 - Entertainment Hubs: Williamsburg (Zone 265), LES (Zone 79), Meatpacking (Zone 90)
+- Brooklyn Zones: Williamsburg (Zone 265), Greenpoint (Zone 130), Bushwick (Zone 37), Park Slope (Zone 189)
+- Queens Zones: Astoria (Zone 7), LIC (Zone 145), Flushing (Zone 100), Jackson Heights (Zone 132)
 
 Shift data with START LOCATIONS (${shiftsData.length} shifts):
-${shiftsJson}
+${shiftsJson}${locationContext}
 
 CRITICAL: Use the REAL DATABASE INTEL above combined with the driver's shift patterns. Analyze:
 1. Compare their earnings to TLC database averages (driver_pay per trip)
@@ -160,12 +171,13 @@ CRITICAL: Use the REAL DATABASE INTEL above combined with the driver's shift pat
 3. Match their start locations to high-earning pickup zones from TLC data
 4. Reference specific data points from the market intelligence section
 5. Provide actionable recommendations based on real TLC database patterns
+${locationToUse ? '6. MUST focus specifically on the requested start location and provide location-specific strategies' : ''}
 
 Return your response as JSON in this exact format:
 {
   "type": "location",
-  "title": "Brief data-driven insight title (6-8 words)",
-  "content": "One specific recommendation using REAL database statistics. MUST reference actual numbers from the market intel. (2-3 sentences max)"
+  "title": "Brief data-driven insight title (6-8 words)${locationToUse ? ' - MUST mention ' + locationToUse : ''}",
+  "content": "One specific recommendation using REAL database statistics. MUST reference actual numbers from the market intel.${locationToUse ? ' MUST be specific to starting in ' + locationToUse + ' with actionable directions and timing.' : ''} (2-3 sentences max)"
 }`
 
       const response = await spark.llm(prompt, 'gpt-4o-mini', true)
@@ -176,7 +188,8 @@ Return your response as JSON in this exact format:
         type: data.type,
         title: data.title,
         content: data.content,
-        generated: Date.now()
+        generated: Date.now(),
+        startLocation: locationToUse || undefined
       })
     } catch (error) {
       console.error('Failed to generate insight:', error)
@@ -220,51 +233,126 @@ Return your response as JSON in this exact format:
 
   return (
     <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-      <div className="flex items-start gap-4">
-        <motion.div 
-          className="p-3 rounded-full bg-primary/10"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          {isGenerating ? (
-            <Sparkle size={24} weight="fill" className="text-primary animate-pulse" />
-          ) : (
-            <div className="text-primary">{getIcon()}</div>
-          )}
-        </motion.div>
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Sparkle size={16} weight="fill" className="text-primary" />
-              <h3 className="font-semibold text-lg">Database-Powered Insight</h3>
+      <div className="space-y-4">
+        <div className="flex items-start gap-4">
+          <motion.div 
+            className="p-3 rounded-full bg-primary/10"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            {isGenerating ? (
+              <Sparkle size={24} weight="fill" className="text-primary animate-pulse" />
+            ) : (
+              <div className="text-primary">{getIcon()}</div>
+            )}
+          </motion.div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Sparkle size={16} weight="fill" className="text-primary" />
+                <h3 className="font-semibold text-lg">Database-Powered Insight</h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => generateInsight()}
+                disabled={isGenerating}
+              >
+                {isGenerating ? 'Analyzing...' : 'Refresh'}
+              </Button>
             </div>
+            
+            {isGenerating ? (
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded animate-pulse w-3/4" />
+                <div className="h-4 bg-muted rounded animate-pulse w-full" />
+                <div className="h-4 bg-muted rounded animate-pulse w-5/6" />
+              </div>
+            ) : insight ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <h4 className="font-medium text-base mb-2">{insight.title}</h4>
+                {insight.startLocation && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin size={14} weight="fill" className="text-primary" />
+                    <span className="text-xs font-medium text-primary">Start: {insight.startLocation}</span>
+                  </div>
+                )}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {insight.content}
+                </p>
+              </motion.div>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="border-t pt-4">
+          <Label htmlFor="start-location" className="text-sm font-medium mb-2 block">
+            Request Insight for Specific Start Location
+          </Label>
+          <div className="flex gap-2 mb-3">
+            <Input
+              id="start-location"
+              placeholder="e.g., Williamsburg Brooklyn, Times Square, JFK Airport..."
+              value={startLocation}
+              onChange={(e) => setStartLocation(e.target.value)}
+              className="flex-1"
+            />
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={generateInsight}
-              disabled={isGenerating}
+              onClick={() => generateInsight(startLocation)}
+              disabled={isGenerating || !startLocation.trim()}
+              className="gap-2"
             >
-              {isGenerating ? 'Analyzing...' : 'Refresh'}
+              <Sparkle size={16} weight="fill" />
+              Generate
             </Button>
           </div>
-          
-          {isGenerating ? (
-            <div className="space-y-2">
-              <div className="h-4 bg-muted rounded animate-pulse w-3/4" />
-              <div className="h-4 bg-muted rounded animate-pulse w-full" />
-              <div className="h-4 bg-muted rounded animate-pulse w-5/6" />
-            </div>
-          ) : insight ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setStartLocation('Williamsburg Brooklyn')
+                generateInsight('Williamsburg Brooklyn')
+              }}
+              disabled={isGenerating}
+              className="text-xs gap-1"
             >
-              <h4 className="font-medium text-base mb-2">{insight.title}</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {insight.content}
-              </p>
-            </motion.div>
-          ) : null}
+              <MapPin size={12} weight="fill" />
+              Williamsburg
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setStartLocation('Times Square Manhattan')
+                generateInsight('Times Square Manhattan')
+              }}
+              disabled={isGenerating}
+              className="text-xs gap-1"
+            >
+              <MapPin size={12} weight="fill" />
+              Times Square
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setStartLocation('JFK Airport')
+                generateInsight('JFK Airport')
+              }}
+              disabled={isGenerating}
+              className="text-xs gap-1"
+            >
+              <MapPin size={12} weight="fill" />
+              JFK Airport
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Get AI-powered recommendations for starting your shift from a specific location using TLC database insights.
+          </p>
         </div>
       </div>
     </Card>
