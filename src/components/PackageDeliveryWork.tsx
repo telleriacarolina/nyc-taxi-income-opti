@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts'
 import {
   Truck,
   ClipboardText,
@@ -28,8 +29,11 @@ import {
   Info,
   Percent,
   Calendar,
-  Star
+  Star,
+  ChartBar,
+  CalendarBlank
 } from '@phosphor-icons/react'
+import { startOfWeek, startOfMonth, endOfWeek, endOfMonth, format, isWithinInterval, subDays, subWeeks, subMonths } from 'date-fns'
 
 interface PackagePlatform {
   id: string
@@ -199,6 +203,8 @@ export function PackageDeliveryWork() {
   const [enrolledPlatforms, setEnrolledPlatforms] = useKV<string[]>('enrolled-package-platforms', [])
   const [shiftLogs, setShiftLogs] = useKV<ShiftLog[]>('package-shift-logs', [])
   const [activeView, setActiveView] = useState<string>('overview')
+  const [dateRange, setDateRange] = useState<string>('all')
+  const [comparisonView, setComparisonView] = useState<string>('weekly')
   
   const [newShift, setNewShift] = useState({
     platform: '',
@@ -216,8 +222,54 @@ export function PackageDeliveryWork() {
     return Math.round((done / total) * 100)
   }, [doneItems])
 
-  const weeklyStats = useMemo(() => {
+  const filteredLogs = useMemo(() => {
     const logs = shiftLogs || []
+    const now = new Date()
+    
+    if (dateRange === 'all') return logs
+    
+    let startDate: Date
+    
+    switch (dateRange) {
+      case '7days':
+        startDate = subDays(now, 7)
+        break
+      case '30days':
+        startDate = subDays(now, 30)
+        break
+      case 'thisWeek':
+        startDate = startOfWeek(now, { weekStartsOn: 1 })
+        break
+      case 'lastWeek':
+        startDate = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 })
+        return logs.filter(log => {
+          const logDate = new Date(log.date)
+          return isWithinInterval(logDate, {
+            start: startDate,
+            end: endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 })
+          })
+        })
+      case 'thisMonth':
+        startDate = startOfMonth(now)
+        break
+      case 'lastMonth':
+        startDate = startOfMonth(subMonths(now, 1))
+        return logs.filter(log => {
+          const logDate = new Date(log.date)
+          return isWithinInterval(logDate, {
+            start: startDate,
+            end: endOfMonth(subMonths(now, 1))
+          })
+        })
+      default:
+        return logs
+    }
+    
+    return logs.filter(log => new Date(log.date) >= startDate)
+  }, [shiftLogs, dateRange])
+
+  const weeklyStats = useMemo(() => {
+    const logs = filteredLogs
     const totalEarnings = logs.reduce((sum, log) => sum + log.earnings, 0)
     const totalHours = logs.reduce((sum, log) => sum + log.hours, 0)
     const totalGas = logs.reduce((sum, log) => sum + log.gasExpense, 0)
@@ -235,7 +287,105 @@ export function PackageDeliveryWork() {
       totalDeliveries: logs.reduce((sum, log) => sum + log.deliveries, 0),
       shiftsCount: logs.length
     }
+  }, [filteredLogs])
+
+  const weeklyComparisonData = useMemo(() => {
+    const logs = shiftLogs || []
+    const now = new Date()
+    const weeks: { [key: string]: { earnings: number; hours: number; gasExpense: number; deliveries: number } } = {}
+    
+    const weeksToShow = 8
+    for (let i = weeksToShow - 1; i >= 0; i--) {
+      const weekStart = startOfWeek(subWeeks(now, i), { weekStartsOn: 1 })
+      const weekEnd = endOfWeek(subWeeks(now, i), { weekStartsOn: 1 })
+      const weekKey = format(weekStart, 'MMM d')
+      
+      weeks[weekKey] = { earnings: 0, hours: 0, gasExpense: 0, deliveries: 0 }
+      
+      logs.forEach(log => {
+        const logDate = new Date(log.date)
+        if (isWithinInterval(logDate, { start: weekStart, end: weekEnd })) {
+          weeks[weekKey].earnings += log.earnings
+          weeks[weekKey].hours += log.hours
+          weeks[weekKey].gasExpense += log.gasExpense
+          weeks[weekKey].deliveries += log.deliveries
+        }
+      })
+    }
+    
+    return Object.entries(weeks).map(([week, data]) => ({
+      week,
+      earnings: parseFloat(data.earnings.toFixed(2)),
+      netEarnings: parseFloat((data.earnings - data.gasExpense).toFixed(2)),
+      hours: parseFloat(data.hours.toFixed(1)),
+      gasExpense: parseFloat(data.gasExpense.toFixed(2)),
+      deliveries: data.deliveries,
+      hourlyRate: data.hours > 0 ? parseFloat((data.earnings / data.hours).toFixed(2)) : 0
+    }))
   }, [shiftLogs])
+
+  const monthlyComparisonData = useMemo(() => {
+    const logs = shiftLogs || []
+    const now = new Date()
+    const months: { [key: string]: { earnings: number; hours: number; gasExpense: number; deliveries: number } } = {}
+    
+    const monthsToShow = 6
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+      const monthStart = startOfMonth(subMonths(now, i))
+      const monthEnd = endOfMonth(subMonths(now, i))
+      const monthKey = format(monthStart, 'MMM yyyy')
+      
+      months[monthKey] = { earnings: 0, hours: 0, gasExpense: 0, deliveries: 0 }
+      
+      logs.forEach(log => {
+        const logDate = new Date(log.date)
+        if (isWithinInterval(logDate, { start: monthStart, end: monthEnd })) {
+          months[monthKey].earnings += log.earnings
+          months[monthKey].hours += log.hours
+          months[monthKey].gasExpense += log.gasExpense
+          months[monthKey].deliveries += log.deliveries
+        }
+      })
+    }
+    
+    return Object.entries(months).map(([month, data]) => ({
+      month,
+      earnings: parseFloat(data.earnings.toFixed(2)),
+      netEarnings: parseFloat((data.earnings - data.gasExpense).toFixed(2)),
+      hours: parseFloat(data.hours.toFixed(1)),
+      gasExpense: parseFloat(data.gasExpense.toFixed(2)),
+      deliveries: data.deliveries,
+      hourlyRate: data.hours > 0 ? parseFloat((data.earnings / data.hours).toFixed(2)) : 0
+    }))
+  }, [shiftLogs])
+
+  const platformComparisonData = useMemo(() => {
+    const logs = filteredLogs
+    const platforms: { [key: string]: { earnings: number; hours: number; gasExpense: number; deliveries: number; shifts: number } } = {}
+    
+    logs.forEach(log => {
+      if (!platforms[log.platform]) {
+        platforms[log.platform] = { earnings: 0, hours: 0, gasExpense: 0, deliveries: 0, shifts: 0 }
+      }
+      platforms[log.platform].earnings += log.earnings
+      platforms[log.platform].hours += log.hours
+      platforms[log.platform].gasExpense += log.gasExpense
+      platforms[log.platform].deliveries += log.deliveries
+      platforms[log.platform].shifts += 1
+    })
+    
+    return Object.entries(platforms).map(([platform, data]) => ({
+      platform,
+      earnings: parseFloat(data.earnings.toFixed(2)),
+      netEarnings: parseFloat((data.earnings - data.gasExpense).toFixed(2)),
+      hours: parseFloat(data.hours.toFixed(1)),
+      gasExpense: parseFloat(data.gasExpense.toFixed(2)),
+      deliveries: data.deliveries,
+      shifts: data.shifts,
+      hourlyRate: data.hours > 0 ? parseFloat((data.earnings / data.hours).toFixed(2)) : 0,
+      netHourlyRate: data.hours > 0 ? parseFloat(((data.earnings - data.gasExpense) / data.hours).toFixed(2)) : 0
+    })).sort((a, b) => b.netEarnings - a.netEarnings)
+  }, [filteredLogs])
 
   const toggleItem = (id: string) => {
     setDoneItems((current) => {
@@ -597,6 +747,316 @@ export function PackageDeliveryWork() {
         </TabsContent>
 
         <TabsContent value="tracking" className="space-y-4">
+          <Card className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <CalendarBlank size={18} weight="fill" className="text-primary" />
+                <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1rem)]">Date range</h3>
+              </div>
+              <Select value={dateRange} onValueChange={setDateRange}>
+                <SelectTrigger className="w-[140px] h-8 text-[clamp(0.7rem,2vw,0.75rem)]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="7days">Last 7 days</SelectItem>
+                  <SelectItem value="30days">Last 30 days</SelectItem>
+                  <SelectItem value="thisWeek">This week</SelectItem>
+                  <SelectItem value="lastWeek">Last week</SelectItem>
+                  <SelectItem value="thisMonth">This month</SelectItem>
+                  <SelectItem value="lastMonth">Last month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </Card>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            <Card className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <ChartBar size={18} weight="fill" className="text-success" />
+                <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1rem)]">Earnings comparison</h3>
+              </div>
+              <div className="mb-3">
+                <Select value={comparisonView} onValueChange={setComparisonView}>
+                  <SelectTrigger className="w-full h-8 text-[clamp(0.7rem,2vw,0.75rem)]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weekly">Weekly trends (8 weeks)</SelectItem>
+                    <SelectItem value="monthly">Monthly trends (6 months)</SelectItem>
+                    <SelectItem value="platform">By platform</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {comparisonView === 'weekly' && weeklyComparisonData.length > 0 && (
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={weeklyComparisonData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                      <XAxis 
+                        dataKey="week" 
+                        tick={{ fontSize: 11 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip 
+                        contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                        formatter={(value: number) => `$${value.toFixed(2)}`}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      <Bar dataKey="earnings" name="Gross" fill="oklch(0.45 0.15 260)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="netEarnings" name="Net" fill="oklch(0.65 0.15 145)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {comparisonView === 'monthly' && monthlyComparisonData.length > 0 && (
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={monthlyComparisonData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="oklch(0.45 0.15 260)" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="oklch(0.45 0.15 260)" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="netGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="oklch(0.65 0.15 145)" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="oklch(0.65 0.15 145)" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                      <XAxis 
+                        dataKey="month" 
+                        tick={{ fontSize: 11 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip 
+                        contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                        formatter={(value: number) => `$${value.toFixed(2)}`}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      <Area 
+                        type="monotone" 
+                        dataKey="earnings" 
+                        name="Gross" 
+                        stroke="oklch(0.45 0.15 260)" 
+                        fill="url(#earningsGradient)" 
+                        strokeWidth={2}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="netEarnings" 
+                        name="Net" 
+                        stroke="oklch(0.65 0.15 145)" 
+                        fill="url(#netGradient)" 
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {comparisonView === 'platform' && platformComparisonData.length > 0 && (
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart 
+                      data={platformComparisonData} 
+                      layout="vertical"
+                      margin={{ top: 5, right: 20, left: 5, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                      <XAxis type="number" tick={{ fontSize: 11 }} />
+                      <YAxis 
+                        type="category" 
+                        dataKey="platform" 
+                        tick={{ fontSize: 10 }}
+                        width={80}
+                      />
+                      <Tooltip 
+                        contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                        formatter={(value: number) => `$${value.toFixed(2)}`}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      <Bar dataKey="netHourlyRate" name="Net $/hr" fill="oklch(0.65 0.15 145)" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {((comparisonView === 'weekly' && weeklyComparisonData.length === 0) ||
+                (comparisonView === 'monthly' && monthlyComparisonData.length === 0) ||
+                (comparisonView === 'platform' && platformComparisonData.length === 0)) && (
+                <div className="h-[280px] flex items-center justify-center text-muted-foreground text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                  No data available for comparison
+                </div>
+              )}
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <ChartLineUp size={18} weight="fill" className="text-primary" />
+                <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1rem)]">Performance metrics</h3>
+              </div>
+
+              {comparisonView === 'platform' && platformComparisonData.length > 0 && (
+                <div className="space-y-3">
+                  {platformComparisonData.map((platform) => (
+                    <div key={platform.platform} className="border rounded-lg p-3 bg-muted/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)]">
+                          {platform.platform}
+                        </div>
+                        <Badge variant="outline" className="text-[10px]">
+                          {platform.shifts} shift{platform.shifts !== 1 ? 's' : ''}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Total Earnings</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)] text-success">
+                            ${platform.earnings.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Net Earnings</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)] text-success">
+                            ${platform.netEarnings.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Hourly Rate</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                            ${platform.hourlyRate.toFixed(2)}/hr
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Net Rate</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)] text-success">
+                            ${platform.netHourlyRate.toFixed(2)}/hr
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Total Hours</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                            {platform.hours.toFixed(1)}h
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Deliveries</div>
+                          <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                            {platform.deliveries}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {(comparisonView === 'weekly' || comparisonView === 'monthly') && (
+                <div className="space-y-3">
+                  <div className="border rounded-lg p-3 bg-gradient-to-br from-success/10 to-success/5">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                      Best {comparisonView === 'weekly' ? 'Week' : 'Month'}
+                    </div>
+                    {(() => {
+                      const data = comparisonView === 'weekly' ? weeklyComparisonData : monthlyComparisonData
+                      if (data.length === 0) return <div className="text-muted-foreground">No data</div>
+                      const best = data.reduce((max, curr) => 
+                        curr.netEarnings > max.netEarnings ? curr : max, 
+                        data[0]
+                      )
+                      const label = comparisonView === 'weekly' 
+                        ? ('week' in best ? best.week : 'N/A')
+                        : ('month' in best ? best.month : 'N/A')
+                      return (
+                        <div>
+                          <div className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)]">
+                            {label}
+                          </div>
+                          <div className="font-mono font-bold text-[clamp(1rem,3vw,1.25rem)] text-success">
+                            ${best.netEarnings.toFixed(2)}
+                          </div>
+                        </div>
+                      )
+                    })()}
+                  </div>
+
+                  <div className="border rounded-lg p-3 bg-muted/30">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                      Average per {comparisonView === 'weekly' ? 'week' : 'month'}
+                    </div>
+                    {(() => {
+                      const data = comparisonView === 'weekly' ? weeklyComparisonData : monthlyComparisonData
+                      const nonZeroData = data.filter(d => d.netEarnings > 0)
+                      const avgEarnings = nonZeroData.length > 0 
+                        ? nonZeroData.reduce((sum, curr) => sum + curr.netEarnings, 0) / nonZeroData.length 
+                        : 0
+                      const avgHours = nonZeroData.length > 0
+                        ? nonZeroData.reduce((sum, curr) => sum + curr.hours, 0) / nonZeroData.length
+                        : 0
+                      return (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <div className="text-[10px] text-muted-foreground">Earnings</div>
+                            <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)] text-success">
+                              ${avgEarnings.toFixed(2)}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[10px] text-muted-foreground">Hours</div>
+                            <div className="font-mono font-semibold text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                              {avgHours.toFixed(1)}h
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })()}
+                  </div>
+
+                  <div className="border rounded-lg p-3 bg-muted/30">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                      Trend analysis
+                    </div>
+                    {(() => {
+                      const data = comparisonView === 'weekly' ? weeklyComparisonData : monthlyComparisonData
+                      const nonZeroData = data.filter(d => d.netEarnings > 0)
+                      if (nonZeroData.length < 2) {
+                        return <div className="text-[clamp(0.75rem,2.4vw,0.85rem)] text-muted-foreground">Need more data</div>
+                      }
+                      const recent = nonZeroData.slice(-3).reduce((sum, curr) => sum + curr.netEarnings, 0) / Math.min(3, nonZeroData.length)
+                      const older = nonZeroData.slice(0, -3).reduce((sum, curr) => sum + curr.netEarnings, 0) / Math.max(1, nonZeroData.length - 3)
+                      const trend = older > 0 ? ((recent - older) / older * 100) : 0
+                      return (
+                        <div className="flex items-center gap-2">
+                          <TrendUp 
+                            size={20} 
+                            weight="fill" 
+                            className={trend >= 0 ? 'text-success' : 'text-destructive'}
+                            style={{ transform: trend < 0 ? 'rotate(180deg)' : 'none' }}
+                          />
+                          <div>
+                            <div className={`font-mono font-bold text-[clamp(0.9rem,2.8vw,1rem)] ${trend >= 0 ? 'text-success' : 'text-destructive'}`}>
+                              {trend >= 0 ? '+' : ''}{trend.toFixed(1)}%
+                            </div>
+                            <div className="text-[10px] text-muted-foreground">vs earlier periods</div>
+                          </div>
+                        </div>
+                      )
+                    })()}
+                  </div>
+                </div>
+              )}
+            </Card>
+          </div>
+
           <Card className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <Calculator size={18} weight="fill" className="text-primary" />
