@@ -9,7 +9,8 @@ import { TripCalculator } from '@/components/TripCalculator'
 import { Chatroom } from '@/components/Chatroom'
 import { AIAssistant } from '@/components/AIAssistant'
 import { CurrentLocationRouter } from '@/components/CurrentLocationRouter'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots } from '@phosphor-icons/react'
+import { LocationSettings } from '@/components/LocationSettings'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-6 max-w-5xl h-9">
+            <TabsList className="grid w-full grid-cols-7 max-w-5xl h-9">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -53,6 +54,10 @@ function App() {
               <TabsTrigger value="chatroom" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <ChatCircleDots size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Chat</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <Gear size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Settings</span>
               </TabsTrigger>
             </TabsList>
 
@@ -78,6 +83,9 @@ function App() {
             </TabsContent>
             <TabsContent value="chatroom" className="space-y-4">
               <Chatroom />
+            </TabsContent>
+            <TabsContent value="settings" className="space-y-4">
+              <LocationSettings />
             </TabsContent>
           </Tabs>
         </div>
