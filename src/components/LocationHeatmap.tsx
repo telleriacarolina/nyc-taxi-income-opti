@@ -6,7 +6,8 @@ import { Calendar } from '@/components/ui/calendar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe, Palette, Fire } from '@phosphor-icons/react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { MapPin, TrendUp, CurrencyDollar, DownloadSimple, CalendarBlank, X, ChartBar, Globe, Palette, Fire, FileCsv, Image } from '@phosphor-icons/react'
 import { Shift } from '@/lib/earnings-types'
 import { toast } from 'sonner'
 import * as d3 from 'd3'
@@ -417,6 +418,80 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
     toast.success('Location earnings exported to CSV')
   }
 
+  const handleExportImage = () => {
+    if (!svgRef.current || locationData.length === 0) {
+      toast.error('No chart data to export')
+      return
+    }
+
+    const svg = svgRef.current.cloneNode(true) as SVGElement
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    
+    const svgData = new XMLSerializer().serializeToString(svg)
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    if (!ctx) {
+      toast.error('Failed to create image')
+      return
+    }
+
+    const img = new window.Image()
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(svgBlob)
+
+    img.onload = () => {
+      canvas.width = svg.clientWidth || svg.getBoundingClientRect().width || 800
+      canvas.height = svg.clientHeight || svg.getBoundingClientRect().height || 600
+      
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(img, 0, 0)
+      
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          toast.error('Failed to create image')
+          return
+        }
+        
+        const link = document.createElement('a')
+        const imageUrl = URL.createObjectURL(blob)
+        
+        let filename = 'location-heatmap'
+        if (dateRange.from && dateRange.to) {
+          filename += `-${format(dateRange.from, 'yyyy-MM-dd')}-to-${format(dateRange.to, 'yyyy-MM-dd')}`
+        } else if (dateRange.from) {
+          filename += `-from-${format(dateRange.from, 'yyyy-MM-dd')}`
+        } else if (dateRange.to) {
+          filename += `-until-${format(dateRange.to, 'yyyy-MM-dd')}`
+        } else {
+          filename += `-${new Date().toISOString().split('T')[0]}`
+        }
+        filename += '.png'
+        
+        link.setAttribute('href', imageUrl)
+        link.setAttribute('download', filename)
+        link.style.visibility = 'hidden'
+        
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        URL.revokeObjectURL(imageUrl)
+        toast.success('Heatmap chart exported as image')
+      })
+      
+      URL.revokeObjectURL(url)
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      toast.error('Failed to export image')
+    }
+
+    img.src = url
+  }
+
   if (locationData.length === 0) {
     return null
   }
@@ -514,15 +589,28 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
               )}
             </PopoverContent>
           </Popover>
-          <Button
-            onClick={handleExportCSV}
-            size="sm"
-            variant="outline"
-            className="h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30"
-          >
-            <DownloadSimple size={16} weight="bold" />
-            <span className="hidden sm:inline">Export</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] bg-card hover:bg-accent/10 border-primary/30"
+              >
+                <DownloadSimple size={16} weight="bold" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV} className="gap-2 cursor-pointer">
+                <FileCsv size={16} weight="bold" />
+                <span>Export as CSV</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportImage} className="gap-2 cursor-pointer">
+                <Image size={16} weight="bold" />
+                <span>Export Chart as Image</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

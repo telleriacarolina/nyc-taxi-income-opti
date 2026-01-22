@@ -1,7 +1,10 @@
 import { useKV } from '@github/spark/hooks'
 import { Card } from '@/components/ui/card'
-import { Clock, TrendUp } from '@phosphor-icons/react'
-import { useMemo } from 'react'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Clock, TrendUp, DownloadSimple, FileCsv, Image } from '@phosphor-icons/react'
+import { useMemo, useRef } from 'react'
+import { toast } from 'sonner'
 
 interface ShiftData {
   date: string
@@ -16,6 +19,7 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export function TimeHeatmap() {
   const [shifts] = useKV<ShiftData[]>('driver-shifts', [])
+  const heatmapRef = useRef<HTMLDivElement>(null)
 
   const heatmapData = useMemo(() => {
     if (!shifts || shifts.length === 0) return null
@@ -89,6 +93,141 @@ export function TimeHeatmap() {
       .slice(0, 5)
   }, [heatmapData])
 
+  const handleExportCSV = () => {
+    if (!heatmapData) {
+      toast.error('No heatmap data to export')
+      return
+    }
+
+    const csvHeaders = ['Day', ...HOURS.map(h => 
+      h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h-12}pm`
+    )]
+
+    const csvRows = DAYS.map((day, dayIdx) => {
+      const row = [day]
+      HOURS.forEach(hour => {
+        const earnings = heatmapData.averages[dayIdx][hour]
+        row.push(earnings > 0 ? earnings.toFixed(2) : '0')
+      })
+      return row
+    })
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    const filename = `time-heatmap-${new Date().toISOString().split('T')[0]}.csv`
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', filename)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success('Time heatmap exported to CSV')
+  }
+
+  const handleExportImage = () => {
+    if (!heatmapRef.current || !heatmapData) {
+      toast.error('No heatmap to export')
+      return
+    }
+
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    if (!ctx) {
+      toast.error('Failed to create image')
+      return
+    }
+
+    const element = heatmapRef.current
+    const rect = element.getBoundingClientRect()
+    
+    canvas.width = Math.max(rect.width, 1200)
+    canvas.height = Math.max(rect.height, 600)
+    
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    
+    const cellWidth = canvas.width / 25
+    const cellHeight = canvas.height / 8
+    const fontSize = Math.min(cellWidth, cellHeight) * 0.3
+    
+    ctx.font = `bold ${fontSize}px sans-serif`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    
+    ctx.fillStyle = '#64748b'
+    HOURS.forEach((hour, idx) => {
+      const label = hour === 0 ? '12a' : hour < 12 ? `${hour}a` : hour === 12 ? '12p' : `${hour-12}p`
+      ctx.fillText(label, (idx + 1) * cellWidth + cellWidth / 2, cellHeight / 2)
+    })
+    
+    DAYS.forEach((day, dayIdx) => {
+      ctx.fillStyle = '#64748b'
+      ctx.textAlign = 'right'
+      ctx.fillText(day, cellWidth - 10, (dayIdx + 1) * cellHeight + cellHeight / 2)
+      
+      HOURS.forEach((hour, hourIdx) => {
+        const earnings = heatmapData.averages[dayIdx][hour]
+        const x = (hourIdx + 1) * cellWidth
+        const y = (dayIdx + 1) * cellHeight
+        
+        if (earnings === 0) {
+          ctx.fillStyle = '#f1f5f9'
+        } else {
+          const { maxEarnings, minEarnings } = heatmapData
+          const range = maxEarnings - minEarnings
+          const normalized = range > 0 ? (earnings - minEarnings) / range : 0
+          
+          if (normalized >= 0.8) ctx.fillStyle = '#3b82f6'
+          else if (normalized >= 0.6) ctx.fillStyle = '#60a5fa'
+          else if (normalized >= 0.4) ctx.fillStyle = '#93c5fd'
+          else if (normalized >= 0.2) ctx.fillStyle = '#bfdbfe'
+          else ctx.fillStyle = '#dbeafe'
+        }
+        
+        ctx.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4)
+      })
+    })
+    
+    ctx.fillStyle = '#1e293b'
+    ctx.font = `bold ${fontSize * 1.5}px sans-serif`
+    ctx.textAlign = 'left'
+    ctx.fillText('Peak Earning Hours', 20, 30)
+    
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        toast.error('Failed to create image')
+        return
+      }
+      
+      const link = document.createElement('a')
+      const imageUrl = URL.createObjectURL(blob)
+      
+      const filename = `time-heatmap-${new Date().toISOString().split('T')[0]}.png`
+      
+      link.setAttribute('href', imageUrl)
+      link.setAttribute('download', filename)
+      link.style.visibility = 'hidden'
+      
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      URL.revokeObjectURL(imageUrl)
+      toast.success('Time heatmap exported as image')
+    })
+  }
+
   if (!shifts || shifts.length === 0) {
     return (
       <Card className="p-6">
@@ -119,16 +258,40 @@ export function TimeHeatmap() {
             Peak Earning Hours
           </h3>
         </div>
-        {heatmapData && (
-          <div className="flex items-center gap-2 text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">
-            <span>Max: ${heatmapData.maxEarnings.toFixed(0)}/hr</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {heatmapData && (
+            <div className="flex items-center gap-2 text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">
+              <span>Max: ${heatmapData.maxEarnings.toFixed(0)}/hr</span>
+            </div>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 px-3 gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)]"
+              >
+                <DownloadSimple size={16} weight="bold" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV} className="gap-2 cursor-pointer">
+                <FileCsv size={16} weight="bold" />
+                <span>Export as CSV</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportImage} className="gap-2 cursor-pointer">
+                <Image size={16} weight="bold" />
+                <span>Export as Image</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {heatmapData && (
         <>
-          <div className="overflow-x-auto -mx-4 px-4">
+          <div className="overflow-x-auto -mx-4 px-4" ref={heatmapRef}>
             <div className="min-w-[640px]">
               <div className="grid grid-cols-[60px_repeat(24,1fr)] gap-0.5 text-[clamp(0.65rem,1.8vw,0.7rem)]">
                 <div className="h-6"></div>
