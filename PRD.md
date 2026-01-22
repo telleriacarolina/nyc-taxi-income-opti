@@ -143,11 +143,11 @@ This is a multi-view application with document tracking, deadline management, sh
 
 ### Tabbed Navigation
 
-- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, platform information, trip income calculator, and driver communication
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, rideshare platform information, delivery platform information, trip income calculator, driver communication, and location settings
 
 ### The Chatroom
 
@@ -243,6 +243,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Trigger**: View Ride Share Apps tab
 - **Progression**: Cards display key metrics → Compare commission rates → Review features and best-use scenarios → Star favorites
 - **Success criteria**: Driver understands commission differences and can choose optimal platforms for their strategy
+
+### Delivery Platforms Directory
+
+- **Functionality**: Comprehensive directory of food, grocery, and package delivery platforms including Uber Eats, DoorDash, Grubhub, Seamless, Instacart, Amazon Flex, Relay, and Gopuff with detailed information on earnings, requirements, and features
+- **Purpose**: Help drivers understand delivery opportunities beyond traditional rideshare, diversify income streams, and optimize multi-app delivery strategy
+- **Trigger**: Navigate to Delivery tab
+- **Progression**: Tab opens → Platform cards display with filtering by type (All/Food/Grocery/Package) → Each card shows earnings structure, commission rates, peak times, coverage areas, features list, requirements, and best-use cases → Mark platforms as active/enrolled to track which services driver is signed up for → View enrollment count badge → Read strategy tips for maximizing delivery earnings
+- **Success criteria**: Driver can compare all major delivery platforms at a glance, understand earnings potential and requirements for each service, filter by delivery type (food/grocery/package), track which platforms they're enrolled in, learn optimal strategies for bike vs. car delivery, and make informed decisions about which delivery services to add to their income mix
 
 ### Multi-Apping Tips
 
@@ -466,6 +474,11 @@ Here's some content about multi-apping tips...
 - **Weekly Plan Change Schedule for Day**: Selecting new schedule replaces existing assignment seamlessly
 - **Weekly Plan Persistence**: All day-to-schedule assignments persist in KV storage across sessions
 - **Weekly Plan with Deleted Schedule**: If assigned schedule is deleted, show "Schedule Not Found" state on that day with option to reassign
+- **No Delivery Platforms Enrolled**: Delivery tab displays all platforms without enrollment filter
+- **Single Delivery Platform Active**: Display single platform with encouragement to try multi-apping across delivery services
+- **Delivery Platform Type Filter**: Filter platforms by food, grocery, or package delivery categories
+- **Delivery Platform Enrollment Tracking**: Track and display count of enrolled delivery platforms with badge
+- **Bike vs Car Delivery Guidance**: Show appropriate platforms and tips based on delivery vehicle type
 
 ## Design Direction
 
@@ -520,7 +533,7 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Trip Calculator, and Chatroom views; Secondary navigation for Chart vs Map view in Location Heatmap and Chat vs Fellow Drivers in Chatroom
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views; Secondary navigation for Chart vs Map view in Location Heatmap, Chat vs Fellow Drivers in Chatroom, and delivery type filtering (All/Food/Grocery/Package)
   - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, <https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png>) and Leaflet.markercluster for geographic visualization of earnings locations and traffic patterns. Automatically clusters markers when displaying large datasets (100+ locations) with color-coded cluster size indicators (small: 1-20, medium: 21-100, large: 100+). Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking <https://github.com/telleriacarolina/openfreemap> - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
   - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
   - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
@@ -561,6 +574,13 @@ Animations should provide clear feedback for status changes and guide attention 
   - Difference badge showing absolute dollar amount and percentage variance
   - Contextual recommendations based on which option pays more
   - Provider-specific rates and fee structures displayed in selectors
+  - Delivery platform cards with type-specific icons (food, grocery, package, multi-service) and color-coded left borders
+  - Delivery platform enrollment tracking with active/join button toggle
+  - Delivery earnings structure display with per-delivery or hourly rates
+  - Commission rate and peak times display for delivery platforms
+  - Delivery type filter tabs (All/Food/Grocery/Package) with category icons
+  - Delivery strategy cards comparing bike vs. car delivery with pros/cons
+  - Enrollment count badge showing number of active delivery platforms
   - Traffic overlay card with gradient background (destructive/warning/success mix) and warning-colored border
   - Traffic speed cards with status-coded badges and colors (green free-flow, yellow moderate, orange/red congested)
   - Incident cards with severity-coded badges (green low, yellow medium, red high) and type-specific icons
@@ -676,6 +696,11 @@ Animations should provide clear feedback for status changes and guide attention 
   - Trash: Delete shifts or rides
   - DownloadSimple: CSV export for tax records
   - FirstAidKit: Medical transport icon
+  - Package: Delivery platforms tab, package delivery
+  - Pizza: Food delivery platforms
+  - ShoppingBag: Grocery delivery platforms
+  - Bicycle: Bike delivery, delivery vehicle type
+  - Bag: Multi-service delivery platforms
   - Percent: Platform fees and commission rates
   - TrafficSign: Real-time traffic overlay, traffic intelligence, traffic alerts
   - Gauge: Traffic speed indicator, speed metrics
@@ -696,9 +721,10 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets, 6-column grid on larger screens wrapping as needed
+  - Tabs span full width with clear touch targets, 8-column grid on larger screens wrapping as needed
   - Stat grid collapses to 2 columns on mobile
   - Platform cards stack in single column on mobile
+  - Delivery platform cards stack in single column on mobile, 2-column grid on desktop
   - Ride cards stack in single column on mobile, 2-column grid on desktop
   - Calculator comparison cards stack vertically on mobile, side-by-side on desktop
   - Chat interface optimized for mobile with full-width message bubbles

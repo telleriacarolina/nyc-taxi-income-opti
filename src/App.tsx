@@ -10,7 +10,8 @@ import { Chatroom } from '@/components/Chatroom'
 import { AIAssistant } from '@/components/AIAssistant'
 import { CurrentLocationRouter } from '@/components/CurrentLocationRouter'
 import { LocationSettings } from '@/components/LocationSettings'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear } from '@phosphor-icons/react'
+import { DeliveryPlatforms } from '@/components/DeliveryPlatforms'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Package } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-7 max-w-5xl h-9">
+            <TabsList className="grid w-full grid-cols-8 max-w-6xl h-9">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -46,6 +47,10 @@ function App() {
               <TabsTrigger value="apps" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <CarProfile size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Apps</span>
+              </TabsTrigger>
+              <TabsTrigger value="delivery" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <Package size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Delivery</span>
               </TabsTrigger>
               <TabsTrigger value="calculator" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Calculator size={16} weight="fill" className="flex-shrink-0" />
@@ -76,6 +81,10 @@ function App() {
 
             <TabsContent value="apps" className="space-y-4">
               <RideShareApps />
+            </TabsContent>
+
+            <TabsContent value="delivery" className="space-y-4">
+              <DeliveryPlatforms />
             </TabsContent>
 
             <TabsContent value="calculator" className="space-y-4">
