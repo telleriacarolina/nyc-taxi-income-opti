@@ -76,7 +76,7 @@ function App() {
             <TabsContent value="calculator" className="space-y-4">
               <TripCalculator />
             </TabsContent>
-
+            <TabsContent value="chatroom" className="space-y-4">
             <TabsContent value="chatroom" className="space-y-4">
               <Chatroom />
             </TabsContent>
