@@ -12,6 +12,7 @@ import { RideDialog } from './RideDialog'
 import { RideCard } from './RideCard'
 import { RideFilters, RideFilterOptions } from './RideFilters'
 import { SmartRideRecommender } from './SmartRideRecommender'
+import { LocationComparisonMap } from './LocationComparisonMap'
 import { toast } from 'sonner'
 import { 
   Plus, 
@@ -153,6 +154,8 @@ export function RideComparison() {
 
       {filteredRides.length > 0 && (
         <>
+          <LocationComparisonMap rides={filteredRides} />
+
           <div className="grid gap-3 md:grid-cols-4 mb-4">
             <Card className="p-4">
               <div className="flex items-center justify-between mb-1">
