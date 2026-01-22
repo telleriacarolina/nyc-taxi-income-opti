@@ -13,6 +13,7 @@ import { Insights } from './Insights'
 import { AIInsights } from './AIInsights'
 import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
+import { TrafficAlerts } from './TrafficAlerts'
 import { LocationHeatmap } from './LocationHeatmap'
 import { OptimalPositioningMap } from './OptimalPositioningMap'
 import { RoutePlanner } from './RoutePlanner'
@@ -384,6 +385,8 @@ export function EarningsOptimizer() {
       <TrafficPatternComparison />
 
       <AIInsights />
+
+      <TrafficAlerts />
 
       <TrafficOverlay />
 

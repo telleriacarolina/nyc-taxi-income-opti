@@ -53,6 +53,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Component loads → Driver selects weekday or weekend mode → AI analyzes typical NYC traffic and demand patterns for selected day type → Generates detailed comparison for 5 time slots showing average speed, congestion level, estimated hourly earnings, trip volume, average trip time, and 3 hot zone neighborhoods → Displays color-coded cards with metrics, hot zones as badges, and specific actionable recommendations for each time period → Highlights best earnings time and heaviest traffic time in summary cards → Driver can refresh for updated patterns → Use insights to plan optimal work schedule
 - **Success criteria**: Driver can instantly compare all time periods side-by-side, identify the most profitable hours with least congestion, learn which neighborhoods are hotspots during each period, understand weekday vs weekend differences, and receive specific actionable advice for timing their shifts to maximize earnings while minimizing traffic delays
 
+### Real-Time Traffic Alerts & Hotspot Notifications
+
+- **Functionality**: Intelligent notification system monitoring traffic conditions, high-earning zones, incidents, and earning opportunities with customizable alert preferences and real-time notifications
+- **Purpose**: Keep drivers informed about changing conditions throughout their shift so they can make proactive decisions about where to position themselves, which routes to avoid, and which opportunities to pursue without constantly checking multiple data sources
+- **Trigger**: Automatically displayed on Earnings Optimizer tab, generates periodic alerts every 2 minutes based on enabled notification types, initial alerts load on component mount
+- **Progression**: Component loads → Displays 4 notification toggle switches (Traffic Alerts for congestion, Hotspot Notifications for high-demand zones, Incident Alerts for accidents/closures, Opportunity Alerts for surge pricing) → Driver enables/disables alert types based on preferences → System automatically generates realistic NYC-specific alerts using AI every 2 minutes for enabled types → New alerts appear at top of scrollable feed with unread badge → Alert card shows type icon (traffic sign/trend up/warning/lightning), severity color coding (low green/medium yellow/high red), title, detailed message, specific NYC location, and timestamp → Desktop users see toast notification popup for new alerts while app is visible → Driver can mark individual alerts as read, delete specific alerts, mark all as read, or clear entire feed → Test Alert button generates on-demand sample alert → Unread count badge shows number of new alerts → Read alerts display with reduced opacity but remain accessible → Alerts persist across sessions in KV storage
+- **Success criteria**: Driver receives timely notifications about traffic congestion on specific corridors (FDR, BQE), high-demand hotspots with surge pricing in specific neighborhoods (Midtown, JFK), road incidents affecting their routes, and premium earning opportunities (airport runs, event-driven demand), can customize which alert types they want to receive, sees clear visual distinction between alert severity levels, gets actionable location-specific information in each alert, can manage alert history by marking as read or clearing old notifications, and maintains awareness of changing conditions without manually refreshing multiple data views
+
 ### Real-Time Traffic Overlay
 
 - **Functionality**: Live NYC DOT traffic intelligence displaying real-time traffic speeds and incident data across all five boroughs with interactive map visualization and borough filtering
@@ -256,6 +264,28 @@ Here's some content about multi-apping tips...
 
 ## Edge Case Handling
 
+- **No Active Alerts**: Display empty state with success icon and encouraging message, offer Test Alert button to generate sample
+- **All Notification Types Disabled**: System stops generating periodic alerts but maintains existing alert history
+- **Alert Generation Fails**: Silently handle failure, continue periodic generation attempts for next cycle
+- **New Alert While App Hidden**: Alert added to feed but toast notification only shown when app is visible
+- **Unread Alert Count**: Badge displays count of unread alerts, updates in real-time as alerts are marked read
+- **Mark All as Read**: Batch operation marks all alerts as read simultaneously, shows success toast
+- **Clear All Alerts**: Removes entire alert history from storage and UI, shows confirmation toast
+- **Delete Individual Alert**: Removes single alert from feed, remaining alerts maintain position
+- **Read Alert Display**: Alerts marked as read show with 60% opacity but remain accessible in scrollable feed
+- **Alert Persistence**: All alerts and notification settings persist in KV storage across sessions
+- **Long Alert Messages**: Messages constrained to 120 characters during generation, wrap gracefully in UI
+- **Long Location Names**: Location names truncate with ellipsis if exceeding container width
+- **Rapid Alert Generation**: Test Alert button disabled while generating to prevent duplicate requests
+- **Initial Load with No History**: Generates 3 sample alerts on first mount to demonstrate functionality
+- **Timestamp Formatting**: Smart relative time (just now, minutes/hours ago, or date) updates based on alert age
+- **Severity Color Coding**: Three severity levels (low/medium/high) with distinct colors (green/yellow/red) and border styling
+- **Alert Type Icons**: Four distinct icons for traffic/hotspot/incident/opportunity with semantic colors
+- **Toast Notification Styling**: Toast inherits severity colors and styling, displays for 6 seconds in top-right
+- **Scrollable Alert Feed**: ScrollArea with 500px max height handles long alert history with smooth scrolling
+- **Alert Settings Toggle**: Switch components immediately update preferences in KV storage
+- **Periodic Generation Timing**: 120-second interval between automatic alert generation cycles
+- **Time-Appropriate Content**: AI generates alerts relevant to current hour (rush hour congestion, late-night opportunities)
 - **No Messages in Chatroom**: Display empty state encouraging users to start first conversation
 - **Message Without Current User**: Prevent sending messages until user identity is initialized
 - **Empty Message Input**: Disable send button when message field is empty or whitespace-only
@@ -491,6 +521,22 @@ Animations should provide clear feedback for status changes and guide attention 
   - Real-time timestamp display with clock icon
   - Refresh button with spinning animation during data load
   - Travel time index display (1.0x normal, >1.5x congested)
+  - Traffic alerts card with Bell icon and notification settings
+  - Alert notification toggle switches for 4 alert types (traffic/hotspot/incident/opportunity)
+  - Toggle switches with descriptive labels and icons showing alert categories
+  - Alert feed with scrollable area (500px height) containing chronological alert cards
+  - Alert cards with severity-based border colors and background tints (low green, medium yellow, high red)
+  - Alert type icons: TrafficSign (traffic), TrendUp (hotspot), Warning (incident), Lightning (opportunity)
+  - Unread badge showing count of new alerts in destructive red
+  - Alert card headers with title, message, location (MapPin icon), and timestamp
+  - Read/unread visual distinction (read alerts at 60% opacity)
+  - Individual alert actions: Mark Read button, Delete button (X icon)
+  - Bulk actions: Mark All Read, Clear All, Test Alert buttons
+  - Toast notifications for new alerts with severity styling (6 second duration, top-right position)
+  - Alert timestamp with smart relative formatting (just now, Xm ago, Xh ago, date)
+  - Empty state for no alerts with CheckCircle icon and Test Alert CTA
+  - Loading state for Test Alert button during AI generation
+  - Alert persistence in KV storage with automatic periodic generation every 2 minutes
   - Optimal positioning map card with gradient primary background and border
   - Hot zone summary cards showing top 3 zones with ranking badges (#1, #2, #3)
   - Zone cards with color-coded demand levels (high/medium/low) and traffic status
@@ -580,10 +626,12 @@ Animations should provide clear feedback for status changes and guide attention 
   - DownloadSimple: CSV export for tax records
   - FirstAidKit: Medical transport icon
   - Percent: Platform fees and commission rates
-  - TrafficSign: Real-time traffic overlay, traffic intelligence
+  - TrafficSign: Real-time traffic overlay, traffic intelligence, traffic alerts
   - Gauge: Traffic speed indicator, speed metrics
   - ArrowsClockwise: Refresh traffic data
-  - X: Road closures, clear/cancel actions
+  - Bell: Traffic alerts and notifications, alert system
+  - BellSlash: Notifications disabled
+  - X: Road closures, clear/cancel actions, delete alerts
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays, seasonal insights
 
