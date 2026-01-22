@@ -21,7 +21,10 @@ import {
   Star,
   Plus,
   Trash,
-  PencilSimple
+  PencilSimple,
+  Calendar,
+  Check,
+  X
 } from '@phosphor-icons/react'
 import { OpenFreeMap } from './OpenFreeMap'
 import { toast } from 'sonner'
@@ -380,15 +383,34 @@ const SCHEDULE_ROUTES: ScheduleRoute[] = [
   }
 ]
 
+type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+
+interface WeeklyAssignments {
+  [key: string]: string | null
+}
+
+const DAYS_OF_WEEK: { id: DayOfWeek; name: string; short: string }[] = [
+  { id: 'monday', name: 'Monday', short: 'Mon' },
+  { id: 'tuesday', name: 'Tuesday', short: 'Tue' },
+  { id: 'wednesday', name: 'Wednesday', short: 'Wed' },
+  { id: 'thursday', name: 'Thursday', short: 'Thu' },
+  { id: 'friday', name: 'Friday', short: 'Fri' },
+  { id: 'saturday', name: 'Saturday', short: 'Sat' },
+  { id: 'sunday', name: 'Sunday', short: 'Sun' }
+]
+
 export function DailySchedulePlanner() {
   const [selectedBlock, setSelectedBlock] = useState<TimeBlock | null>(null)
   const [selectedRoute, setSelectedRoute] = useState<ScheduleRoute | null>(null)
-  const [viewMode, setViewMode] = useState<'blocks' | 'routes' | 'favorites'>('blocks')
+  const [viewMode, setViewMode] = useState<'blocks' | 'routes' | 'favorites' | 'weekly'>('blocks')
   const [customSchedules, setCustomSchedules] = useKV<ScheduleRoute[]>('custom-schedules', [])
   const [favoriteSchedules, setFavoriteSchedules] = useKV<string[]>('favorite-schedule-ids', [])
+  const [weeklyAssignments, setWeeklyAssignments] = useKV<WeeklyAssignments>('weekly-schedule-assignments', {})
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
   const [editingSchedule, setEditingSchedule] = useState<ScheduleRoute | null>(null)
+  const [selectedDay, setSelectedDay] = useState<DayOfWeek | null>(null)
   const [selectedTimeBlocks, setSelectedTimeBlocks] = useState<string[]>([])
   const [scheduleName, setScheduleName] = useState('')
   const [scheduleDescription, setScheduleDescription] = useState('')
@@ -518,6 +540,99 @@ export function DailySchedulePlanner() {
     setIsCreateDialogOpen(true)
   }
 
+  const openAssignDialog = (day: DayOfWeek) => {
+    setSelectedDay(day)
+    setIsAssignDialogOpen(true)
+  }
+
+  const assignScheduleToDay = (scheduleId: string | null) => {
+    if (!selectedDay) return
+    
+    setWeeklyAssignments((current) => ({
+      ...(current || {}),
+      [selectedDay]: scheduleId
+    }))
+    
+    setIsAssignDialogOpen(false)
+    setSelectedDay(null)
+    
+    if (scheduleId === null) {
+      toast.success('Day marked as off')
+    } else {
+      const schedule = allSchedules.find(s => s.id === scheduleId)
+      toast.success(`Assigned ${schedule?.name} to ${selectedDay}`)
+    }
+  }
+
+  const clearDay = (day: DayOfWeek) => {
+    setWeeklyAssignments((current) => {
+      const updated = { ...(current || {}) }
+      delete updated[day]
+      return updated
+    })
+    toast.success('Day cleared')
+  }
+
+  const clearAllWeek = () => {
+    setWeeklyAssignments({})
+    toast.success('All weekly assignments cleared')
+  }
+
+  const assignWeekdays = (scheduleId: string) => {
+    const weekdays: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+    setWeeklyAssignments((current) => {
+      const updated = { ...(current || {}) }
+      weekdays.forEach(day => {
+        updated[day] = scheduleId
+      })
+      return updated
+    })
+    const schedule = allSchedules.find(s => s.id === scheduleId)
+    toast.success(`Assigned ${schedule?.name} to Mon-Fri`)
+  }
+
+  const assignWeekends = (scheduleId: string) => {
+    const weekends: DayOfWeek[] = ['saturday', 'sunday']
+    setWeeklyAssignments((current) => {
+      const updated = { ...(current || {}) }
+      weekends.forEach(day => {
+        updated[day] = scheduleId
+      })
+      return updated
+    })
+    const schedule = allSchedules.find(s => s.id === scheduleId)
+    toast.success(`Assigned ${schedule?.name} to Sat-Sun`)
+  }
+
+  const getWeeklyTotals = () => {
+    const assignments = weeklyAssignments || {}
+    let totalEarnings = 0
+    let totalHours = 0
+    let totalRides = 0
+    
+    DAYS_OF_WEEK.forEach(day => {
+      const scheduleId = assignments[day.id]
+      if (scheduleId && scheduleId !== 'day-off') {
+        const schedule = allSchedules.find(s => s.id === scheduleId)
+        if (schedule) {
+          totalEarnings += schedule.totalEarnings
+          totalHours += schedule.totalHours
+          totalRides += schedule.rideCount
+        }
+      }
+    })
+    
+    return { totalEarnings, totalHours, totalRides }
+  }
+
+  const getDaySchedule = (day: DayOfWeek) => {
+    const assignments = weeklyAssignments || {}
+    const scheduleId = assignments[day]
+    if (!scheduleId) return null
+    if (scheduleId === 'day-off') return 'day-off'
+    return allSchedules.find(s => s.id === scheduleId) || 'not-found'
+  }
+
   const getZoneMarkers = (zones: TimeBlock['zones']) => {
     return zones.map(zone => ({
       position: [zone.lat, zone.lng] as [number, number],
@@ -576,8 +691,8 @@ export function DailySchedulePlanner() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'blocks' | 'routes' | 'favorites')}>
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'blocks' | 'routes' | 'favorites' | 'weekly')}>
+            <TabsList className="grid w-full grid-cols-4 mb-4">
               <TabsTrigger value="blocks" className="gap-2">
                 <Clock weight="fill" />
                 <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Time Blocks</span>
@@ -589,6 +704,10 @@ export function DailySchedulePlanner() {
               <TabsTrigger value="favorites" className="gap-2">
                 <Star weight="fill" />
                 <span className="text-[clamp(0.7rem,2vw,0.85rem)]">My Schedules</span>
+              </TabsTrigger>
+              <TabsTrigger value="weekly" className="gap-2">
+                <Calendar weight="fill" />
+                <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Weekly Plan</span>
               </TabsTrigger>
             </TabsList>
 
@@ -1208,9 +1327,301 @@ export function DailySchedulePlanner() {
                 </>
               )}
             </TabsContent>
+
+            <TabsContent value="weekly" className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)]">Weekly Schedule</h3>
+                  <p className="text-[clamp(0.7rem,2vw,0.8rem)] text-muted-foreground">
+                    Assign schedules to each day of the week
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={clearAllWeek}
+                  className="gap-2 text-[clamp(0.7rem,2vw,0.8rem)]"
+                >
+                  <X weight="bold" />
+                  Clear All
+                </Button>
+              </div>
+
+              {(() => {
+                const { totalEarnings, totalHours, totalRides } = getWeeklyTotals()
+                return (
+                  <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)] flex items-center gap-2">
+                        <TrendUp weight="fill" className="text-purple-600" />
+                        Weekly Projections
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-3 gap-3">
+                      <div>
+                        <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Projected Earnings</p>
+                        <p className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-green-600">
+                          ${totalEarnings}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Hours</p>
+                        <p className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-blue-600">
+                          {totalHours}h
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Rides</p>
+                        <p className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-purple-600">
+                          {totalRides}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })()}
+
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {DAYS_OF_WEEK.map((day) => {
+                  const daySchedule = getDaySchedule(day.id)
+                  
+                  return (
+                    <Card 
+                      key={day.id}
+                      className="cursor-pointer transition-all hover:shadow-md"
+                      onClick={() => openAssignDialog(day.id)}
+                    >
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)]">
+                              {day.name}
+                            </CardTitle>
+                            {!daySchedule && (
+                              <CardDescription className="text-[clamp(0.7rem,2vw,0.75rem)] mt-0.5">
+                                No schedule assigned
+                              </CardDescription>
+                            )}
+                          </div>
+                          {daySchedule && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 flex-shrink-0"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                clearDay(day.id)
+                              }}
+                            >
+                              <X size={16} />
+                            </Button>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {!daySchedule && (
+                          <div className="text-center py-4">
+                            <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-2">
+                              Click to assign a schedule
+                            </p>
+                            <Badge variant="outline" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                              Unassigned
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        {daySchedule === 'day-off' && (
+                          <div className="text-center py-4">
+                            <Badge variant="secondary" className="text-[clamp(0.7rem,2vw,0.8rem)] bg-gray-200">
+                              Day Off
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        {daySchedule === 'not-found' && (
+                          <div className="text-center py-4">
+                            <Badge variant="destructive" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                              Schedule Not Found
+                            </Badge>
+                            <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground mt-1">
+                              Click to reassign
+                            </p>
+                          </div>
+                        )}
+                        
+                        {daySchedule && typeof daySchedule === 'object' && (
+                          <>
+                            <div>
+                              <p className="text-[clamp(0.75rem,2.4vw,0.85rem)] font-semibold line-clamp-1">
+                                {daySchedule.name}
+                              </p>
+                              <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground line-clamp-1">
+                                {daySchedule.description}
+                              </p>
+                            </div>
+                            
+                            <div className="grid grid-cols-3 gap-1.5">
+                              <div>
+                                <p className="text-[clamp(0.6rem,1.8vw,0.65rem)] text-muted-foreground">Earnings</p>
+                                <p className="text-[clamp(0.8rem,2.2vw,0.9rem)] font-bold text-green-600">
+                                  ${daySchedule.totalEarnings}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-[clamp(0.6rem,1.8vw,0.65rem)] text-muted-foreground">Hours</p>
+                                <p className="text-[clamp(0.8rem,2.2vw,0.9rem)] font-bold text-blue-600">
+                                  {daySchedule.totalHours}h
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-[clamp(0.6rem,1.8vw,0.65rem)] text-muted-foreground">Rides</p>
+                                <p className="text-[clamp(0.8rem,2.2vw,0.9rem)] font-bold text-purple-600">
+                                  {daySchedule.rideCount}
+                                </p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+
+              {allSchedules.length > 0 && (
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[clamp(0.85rem,2.5vw,0.95rem)] flex items-center gap-2">
+                      <Lightning weight="fill" className="text-primary" />
+                      Quick Assign
+                    </CardTitle>
+                    <CardDescription className="text-[clamp(0.7rem,2vw,0.75rem)]">
+                      Apply a schedule to multiple days at once
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {allSchedules.slice(0, 3).map((schedule) => (
+                      <div key={schedule.id} className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <p className="text-[clamp(0.75rem,2.4vw,0.85rem)] font-semibold line-clamp-1">
+                            {schedule.name}
+                          </p>
+                          <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">
+                            ${schedule.totalEarnings} · {schedule.totalHours}h · {schedule.rideCount} rides
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => assignWeekdays(schedule.id)}
+                          className="text-[clamp(0.7rem,2vw,0.75rem)]"
+                        >
+                          Mon-Fri
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => assignWeekends(schedule.id)}
+                          className="text-[clamp(0.7rem,2vw,0.75rem)]"
+                        >
+                          Sat-Sun
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[clamp(1rem,3vw,1.25rem)] flex items-center gap-2">
+              <Calendar weight="fill" className="text-primary" />
+              Assign Schedule to {selectedDay && DAYS_OF_WEEK.find(d => d.id === selectedDay)?.name}
+            </DialogTitle>
+            <DialogDescription className="text-[clamp(0.75rem,2.4vw,0.875rem)]">
+              Choose a schedule or mark as day off
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-4">
+            <Card 
+              className="cursor-pointer transition-all hover:shadow-md border-2 border-dashed"
+              onClick={() => assignScheduleToDay('day-off')}
+            >
+              <CardContent className="flex items-center gap-3 p-4">
+                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                  <X size={20} weight="bold" />
+                </div>
+                <div>
+                  <p className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)]">Day Off</p>
+                  <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">
+                    Mark this day as a rest day
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {allSchedules.length === 0 ? (
+              <Card className="p-6 text-center">
+                <p className="text-[clamp(0.75rem,2.4vw,0.85rem)] text-muted-foreground mb-3">
+                  No schedules available
+                </p>
+                <Button onClick={() => {
+                  setIsAssignDialogOpen(false)
+                  openCreateDialog()
+                }} className="gap-2">
+                  <Plus weight="bold" />
+                  Create First Schedule
+                </Button>
+              </Card>
+            ) : (
+              <div className="space-y-2">
+                {allSchedules.map((schedule) => (
+                  <Card 
+                    key={schedule.id}
+                    className="cursor-pointer transition-all hover:shadow-md"
+                    onClick={() => assignScheduleToDay(schedule.id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex-1">
+                          <p className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)] line-clamp-1">
+                            {schedule.name}
+                          </p>
+                          <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground line-clamp-1">
+                            {schedule.description}
+                          </p>
+                        </div>
+                        {schedule.isCustom && (
+                          <Badge variant="secondary" className="text-[clamp(0.6rem,1.8vw,0.65rem)]">
+                            Custom
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex gap-3 text-[clamp(0.7rem,2vw,0.75rem)]">
+                        <span className="text-green-600 font-semibold">${schedule.totalEarnings}</span>
+                        <span className="text-blue-600 font-semibold">{schedule.totalHours}h</span>
+                        <span className="text-purple-600 font-semibold">{schedule.rideCount} rides</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
