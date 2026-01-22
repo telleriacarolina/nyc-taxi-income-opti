@@ -1,10 +1,11 @@
 # NYC TAXI Income Optimizer
 
-**Rideshare Optimization & Mapping Platform**
+## Rideshare Optimization & Mapping Platform
 
 An end-to-end analytics and decision-support platform for maximizing NYC taxi and rideshare income using TLC trip data, traffic-aware optimization, and map-based visualization.
 
 Built for web, desktop, tablet (iPad), and mobile-first interfaces, the NYC TAXI Income Optimizer helps drivers and analysts:
+
 - **Increase hourly and daily earnings**
 - **Optimize airport, borough, and zone strategies**
 - **Analyze real NYC TLC trip data**
@@ -15,12 +16,12 @@ Designed with performance, scalability, and data transparency in mind.
 
 ---
 
-## 📚 Quick Links
+## 📚 Project Documentation
 
 - 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
 - 📋 [Product Requirements Document (PRD)](PRD.md) - Full feature specifications and roadmap
 - 🐍 [Python Setup Guide](PYTHON_SETUP.md) - uv toolchain and data processing
-- 🗺️ [Map Integration](#-map-integration-with-openfreemap) - Jump to interactive mapping documentation
+- 🗺️ [Map Integration](#️-map-integration-with-openfreemap) - Jump to interactive mapping documentation
 
 ---
 
@@ -59,6 +60,7 @@ Designed with performance, scalability, and data transparency in mind.
 This project uses **uv**, a modern Rust-based Python toolchain.
 
 ### Why uv?
+
 - ⚡ **10–100× faster** than pip
 - 📦 Dependency & project management
 - 🐍 Python version pinning
@@ -68,16 +70,18 @@ This project uses **uv**, a modern Rust-based Python toolchain.
 ### Install uv
 
 **macOS / Linux:**
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows:**
+
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### Quick Start
+### Python Quick Start
 
 ```bash
 # Install recommended Python
@@ -93,6 +97,50 @@ uv run main.py
 ```
 
 **📖 Full Documentation**: See [PYTHON_SETUP.md](PYTHON_SETUP.md) for complete Python setup, data processing, and NYC TLC integration.
+
+---
+
+## 🐛 Debugging
+
+### VS Code Debug Configurations
+
+This project includes pre-configured debug launch configurations in `.vscode/launch.json`:
+
+#### Launch Chrome (Vite)
+
+- Automatically starts the Vite dev server
+- Launches Chrome with debugging enabled
+- Sets breakpoints in TypeScript/React code
+- Press **F5** to start
+
+#### Debug in Firefox (Vite)
+
+- Same as Chrome but uses Firefox
+- Requires Firefox Developer Edition or Firefox with remote debugging enabled
+
+#### Python Debugger
+
+- Debug Python scripts in the integrated terminal
+- Set breakpoints in `.py` files
+- Full variable inspection and call stack
+
+### Debugging Quick Start
+
+1. Open a file you want to debug
+2. Set breakpoints by clicking left of line numbers
+3. Press **F5** or go to **Run and Debug** panel
+4. Select **Launch Chrome (Vite)**
+5. Browser opens with debugger attached
+
+### Manual Dev Server
+
+To run the dev server without debugging:
+
+```bash
+npm run dev
+```
+
+Then use **Attach to Chrome** configuration to attach the debugger to the running instance.
 
 ---
 
@@ -135,16 +183,19 @@ A three-layer text system ensures clean layouts across small and large screens.
 ## 📊 NYC TLC Trip Data Integration
 
 ### Supported Fleets
+
 - Yellow Taxi
 - Green Taxi
 - FHV / HVFHS (Uber, Lyft, Via, Juno)
 
 ### Data Sources
+
 - [NYC TLC Official Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 - [NYC Open Data Portal](https://opendata.cityofnewyork.us/)
 - CSV & Parquet formats
 
 ### Supported Fields
+
 - Pickup / Dropoff time
 - Zone IDs (1–263)
 - Distance & duration
@@ -173,17 +224,20 @@ interface Ride {
 ### Data Processing (CSV & Parquet)
 
 **Install Data Tools:**
+
 ```bash
 uv pip install pandas pyarrow
 ```
 
 **Read Parquet (Recommended):**
+
 ```python
 import pandas as pd
 trips = pd.read_parquet("fhv_tripdata.parquet")
 ```
 
 **Export for App Import:**
+
 ```python
 rides.to_csv("app_format.csv", index=False)
 rides.to_parquet("app_format.parquet", index=False)
@@ -195,7 +249,8 @@ rides.to_parquet("app_format.parquet", index=False)
 
 ## 🗺️ Map Integration with OpenFreeMap
 
-### Why OpenFreeMap?
+### Why Use OpenFreeMap?
+
 - 🆓 Free & open-source
 - 🔒 Privacy-first
 - 🚀 Fast CDN
@@ -205,7 +260,7 @@ rides.to_parquet("app_format.parquet", index=False)
 ### Styles
 
 | Style | URL |
-|-------|-----|
+| ------- | ----- |
 | **Liberty** | `https://tiles.openfreemap.org/styles/liberty` |
 | **Bright** | `https://tiles.openfreemap.org/styles/bright` |
 | **Positron** | `https://tiles.openfreemap.org/styles/positron` |
@@ -233,6 +288,7 @@ const map = new maplibregl.Map({
 - Python 3.13 recommended
 
 **Example Dockerfile:**
+
 ```dockerfile
 FROM python:3.13-slim
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
@@ -247,6 +303,7 @@ CMD ["uv", "run", "main.py"]
 ## 🤖 Recommended AI Components
 
 This app benefits strongly from:
+
 - 📈 Demand forecasting (time + location)
 - 🧠 Driver behavior modeling
 - 🗺️ Zone heatmap prediction
@@ -265,6 +322,7 @@ You've just launched your brand-new Spark Template Codespace — everything’s 
 This template is your blank canvas. It comes with a minimal setup to help you get started quickly with Spark development.
 
 🚀 What's Inside?
+
 - A clean, minimal Spark environment
 - Pre-configured for local development
 - Ready to scale with your ideas
@@ -276,19 +334,20 @@ This template is your blank canvas. It comes with a minimal setup to help you ge
 
 Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
 
-## 📚 Quick Links
+## 📚 Template Quick Links
 
 - 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
 - 📋 [Product Requirements](PRD.md) - Full feature specifications
-- 🗺️ [Map Integration Documentation](#🗺️-map-integration-with-openfreemap) - Jump to mapping section below
+- 🗺️ [Map Integration Documentation](#️-map-integration-with-openfreemap) - Jump to mapping section below
 
-## 🐍 Python Development with uv
+## 🐍 Python with uv - Quick Reference
 
 This template includes **uv** - an extremely fast Python package manager and project management tool.
 
 ### What is uv?
 
 uv is a modern Python toolchain written in Rust that provides:
+
 - ⚡ **10-100x faster** than pip for package installation
 - 🔧 Complete Python version management
 - 📦 Project and dependency management
@@ -300,23 +359,27 @@ uv is a modern Python toolchain written in Rust that provides:
 uv is pre-installed in this dev container. To install on your local system:
 
 **macOS and Linux:**
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows:**
+
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 **Alternative methods:**
+
 - Homebrew: `brew install uv`
 - pip: `pipx install uv` or `pip install uv`
 - WinGet: `winget install --id=astral-sh.uv -e`
 
-### Quick Start
+### uv Quick Start
 
 **Python Version Management:**
+
 ```bash
 uv python install              # Install latest Python
 uv python install 3.12         # Install specific version
@@ -325,6 +388,7 @@ uv python install --default    # Install with python/python3 commands
 ```
 
 **Running Scripts:**
+
 ```bash
 uv run script.py               # Run a Python script
 uv add --script requests       # Add dependency to a script
@@ -332,6 +396,7 @@ uvx ruff check .               # Run a tool without installing
 ```
 
 **Project Management:**
+
 ```bash
 uv init myproject              # Create new project
 uv add requests                # Add dependency
@@ -341,6 +406,7 @@ uv build                       # Build distribution
 ```
 
 **Virtual Environments:**
+
 ```bash
 uv venv                        # Create virtual environment
 uv pip install package         # Install packages (pip-compatible)
@@ -348,6 +414,7 @@ uv pip freeze                  # List installed packages
 ```
 
 **Tools:**
+
 ```bash
 uvx black .                    # Run black formatter
 uvx ruff check .               # Run ruff linter
@@ -358,6 +425,7 @@ uv tool list                   # List installed tools
 ### Key Features
 
 #### 🐍 Python Versions
+
 - `uv python install` - Install Python versions
 - `uv python list` - View available Python versions
 - `uv python find` - Find an installed Python version
@@ -388,7 +456,8 @@ uvx --python 3.13 tool-name
 This dev container has **Python 3.14.2** pre-installed. While Python 3.14 is cutting-edge, some packages may not yet have pre-built wheels:
 
 **Common Issue:**
-```
+
+```text
 onnxruntime>=1.17.0 has no wheels with a matching Python ABI tag (e.g., cp314)
 You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp312, cp313
 ```
@@ -396,6 +465,7 @@ You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp
 **Solutions:**
 
 1. **Use Python 3.13 (Recommended):**
+
    ```bash
    # Install Python 3.13
    uv python install 3.13
@@ -408,6 +478,7 @@ You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp
    ```
 
 2. **Enable Pre-releases:**
+
    ```bash
    # Allow pre-release versions
    uv pip install --prerelease=allow package-name
@@ -415,12 +486,14 @@ You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp
    ```
 
 3. **Install Specific Tool with Python 3.13:**
+
    ```bash
    uvx --python 3.13 markitdown-mcp
    uv tool install --python 3.13 package-name
    ```
 
 4. **Project-level Python Version:**
+
    ```bash
    # Create pyproject.toml with specific Python requirement
    uv init
@@ -431,6 +504,7 @@ You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp
    ```
 
 **Why This Happens:**
+
 - Python 3.14 was released in October 2024
 - Many packages need time to build and release wheels for new Python versions
 - Packages with C extensions (like `onnxruntime`, `numpy`, `pandas`) require compilation
@@ -438,10 +512,12 @@ You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp
 
 **Best Practice:**
 For production use and maximum package compatibility, use **Python 3.12 or 3.13** until the ecosystem catches up with Python 3.14.
+
 - `uv python pin` - Pin project to specific Python version
 - `uv python uninstall` - Uninstall a Python version
 
 #### 📜 Scripts
+
 - `uv run` - Run standalone Python scripts
 - `uv add --script` - Add script dependencies
 - `uv remove --script` - Remove script dependencies
@@ -463,7 +539,7 @@ uv init
 
 uv creates and manages the following structure:
 
-```
+```script
 .
 ├── .venv/                    # Virtual environment (created on first run)
 │   ├── bin/
@@ -478,6 +554,7 @@ uv creates and manages the following structure:
 ```
 
 **Key Files:**
+
 - **`pyproject.toml`** - Project metadata, dependencies, and configuration
 - **`.python-version`** - Python version to use for the project
 - **`uv.lock`** - Exact dependency versions (version controlled, auto-managed)
@@ -584,6 +661,7 @@ uv export --format cyclonedx1.5 --output-file sbom.json
 **Note:** The `uv.lock` format is more powerful than `requirements.txt` and includes features that cannot be expressed in the traditional format. Consider using `uv.lock` directly when possible.
 
 **Important Notes:**
+
 - `uv run` automatically keeps lockfile and environment in sync
 - Lockfile (`uv.lock`) should be committed to version control
 - Virtual environment (`.venv/`) is project-specific and isolated
@@ -660,6 +738,7 @@ uv tool update-shell           # Add tool bin directory to PATH
 ```
 
 **Important Notes:**
+
 - Tools installed via `uvx` run in temporary, isolated environments
 - Tools installed via `uv tool install` are persistent and added to PATH
 - Use `uv run` (not `uvx`) for project tools that need access to your project (e.g., pytest, mypy)
@@ -667,12 +746,14 @@ uv tool update-shell           # Add tool bin directory to PATH
 - Multiple executables from a package are installed together
 
 #### 🔄 pip Interface
+
 - `uv venv` - Create virtual environments
 - `uv pip install` / `uninstall` / `list` / `freeze` - Package management
 - `uv pip compile` / `sync` - Lock dependencies
 - `uv pip tree` - View dependency tree
 
 #### 🧹 Utilities
+
 - `uv cache clean` / `prune` / `dir` - Manage cache
 - `uv python dir` / `uv tool dir` - Show directories
 - `uv self update` - Update uv itself
@@ -680,11 +761,13 @@ uv tool update-shell           # Add tool bin directory to PATH
 ### Installed Python
 
 This dev container has **Python 3.14.2** pre-installed via uv with the following executables:
+
 - `python` - Generic Python executable
 - `python3` - Python 3 executable
 - `python3.14` - Versioned executable
 
 **Recommended:** Install Python 3.13 for maximum package compatibility:
+
 ```bash
 uv python install 3.13
 uv python pin 3.13  # Set as default for projects
@@ -695,7 +778,8 @@ uv python pin 3.13  # Set as default for projects
 #### Package Installation Fails with "No wheels for cpXXX"
 
 **Error Example:**
-```
+
+```text
 × No solution found when resolving dependencies:
   ╰─▶ onnxruntime>=1.17.0 has no wheels with a matching Python ABI tag (e.g., cp314)
       You require CPython 3.14 (cp314), but we only found wheels for: cp310, cp311, cp312, cp313
@@ -706,6 +790,7 @@ uv python pin 3.13  # Set as default for projects
 **Solutions:**
 
 1. **Switch to Python 3.13 (Recommended):**
+
    ```bash
    uv python install 3.13
    uv python pin 3.13
@@ -713,12 +798,14 @@ uv python pin 3.13  # Set as default for projects
    ```
 
 2. **Use older Python for specific tool:**
+
    ```bash
    uvx --python 3.13 tool-name
    uv tool install --python 3.13 tool-name
    ```
 
 3. **Enable pre-releases (advanced):**
+
    ```bash
    uv pip install --prerelease=allow package-name
    ```
@@ -728,6 +815,7 @@ uv python pin 3.13  # Set as default for projects
 **Error:** "No solution found when resolving dependencies"
 
 **Solutions:**
+
 - Check if packages support your Python version
 - Try `--prerelease=allow` for experimental versions
 - Use constraints: `uv pip install 'package>=1.0,<2.0'`
@@ -738,6 +826,7 @@ uv python pin 3.13  # Set as default for projects
 **Error:** `command not found: tool-name`
 
 **Solution:**
+
 ```bash
 uv tool update-shell  # Add tools to PATH
 # Or use full path: $(uv tool dir)/tool-name/bin/tool-name
@@ -748,6 +837,7 @@ uv tool update-shell  # Add tools to PATH
 **Error:** `ModuleNotFoundError: No module named 'package'`
 
 **Solutions:**
+
 - Tool installations: Use `uvx tool-name` (tools aren't importable)
 - Project packages: Use `uv pip install package` in active venv
 - Missing activation: Run `source .venv/bin/activate` first
@@ -759,11 +849,13 @@ uv provides official Docker images for containerized Python development. See the
 #### Available Images
 
 **Distroless images** (uv binaries only):
+
 - `ghcr.io/astral-sh/uv:latest`
 - `ghcr.io/astral-sh/uv:0.9.26` (version-pinned, recommended)
 - `ghcr.io/astral-sh/uv:0.9` (latest patch)
 
 **Derived images** (with OS + uv pre-installed):
+
 - Alpine: `ghcr.io/astral-sh/uv:alpine`, `ghcr.io/astral-sh/uv:alpine3.22`
 - Debian Slim: `ghcr.io/astral-sh/uv:debian-slim`, `ghcr.io/astral-sh/uv:bookworm-slim`
 - Debian Full: `ghcr.io/astral-sh/uv:debian`, `ghcr.io/astral-sh/uv:bookworm`
@@ -863,6 +955,7 @@ CMD ["python", "-m", "my_app"]
 ```
 
 **Key optimizations:**
+
 - `--mount=type=cache` preserves uv cache across builds
 - `--no-install-project` separates dependency installation from app code
 - Dependencies layer rebuilds only when `uv.lock` or `pyproject.toml` change
@@ -970,9 +1063,11 @@ cosign verify-blob-attestation \
 This template includes a three-layer text handling system for responsive, elegant typography across all screen sizes:
 
 ### Layer 1 — Line Clamp (Core, Recommended)
+
 Truncate text to a specific number of lines with ellipsis using Tailwind's line-clamp plugin.
 
 **Setup** (in [tailwind.config.js](tailwind.config.js)):
+
 ```js
 module.exports = {
   plugins: [require("@tailwindcss/line-clamp")],
@@ -980,6 +1075,7 @@ module.exports = {
 ```
 
 **Usage:**
+
 ```jsx
 <p className="text-sm leading-snug line-clamp-2">
   This text will be truncated cleanly to two lines with an ellipsis.
@@ -987,9 +1083,11 @@ module.exports = {
 ```
 
 ### Layer 2 — Responsive Font Scaling (Sleek Look)
+
 Use fluid typography that adapts smoothly to screen size using CSS clamp.
 
 **Example:**
+
 ```jsx
 <p className="text-[clamp(0.75rem,2.5vw,0.95rem)] leading-tight">
   Responsive text that shrinks on small screens and grows on desktop.
@@ -997,14 +1095,17 @@ Use fluid typography that adapts smoothly to screen size using CSS clamp.
 ```
 
 **Common Presets:**
+
 - **Labels**: `text-[clamp(0.65rem,2vw,0.75rem)]`
 - **Body**: `text-[clamp(0.75rem,2.5vw,0.95rem)]`
 - **Titles**: `text-[clamp(1rem,3vw,1.25rem)]`
 
 ### Layer 3 — Auto-Fit Text (Hard Constraint Boxes)
+
 For tight UI elements (buttons, badges, pills) where text must fit within fixed dimensions.
 
 **Component** ([src/components/AutoFitText.tsx](src/components/AutoFitText.tsx)):
+
 ```jsx
 <div className="w-32 h-10 border flex items-center px-2">
   <AutoFitText>Very long button text</AutoFitText>
@@ -1014,6 +1115,7 @@ For tight UI elements (buttons, badges, pills) where text must fit within fixed 
 ### Sleek Presets (Drop-In)
 
 **Card Title:**
+
 ```jsx
 <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] line-clamp-1">
   Card Title That Might Be Long
@@ -1021,6 +1123,7 @@ For tight UI elements (buttons, badges, pills) where text must fit within fixed 
 ```
 
 **Card Description:**
+
 ```jsx
 <p className="text-muted-foreground text-[clamp(0.75rem,2.4vw,0.9rem)] line-clamp-2">
   Description text that stays compact across all devices.
@@ -1028,6 +1131,7 @@ For tight UI elements (buttons, badges, pills) where text must fit within fixed 
 ```
 
 **Button:**
+
 ```jsx
 <button className="h-9 px-3 text-[clamp(0.7rem,2vw,0.85rem)] truncate">
   Join Lounge
@@ -1035,11 +1139,13 @@ For tight UI elements (buttons, badges, pills) where text must fit within fixed 
 ```
 
 **Platform-Specific:**
+
 ```jsx
 <p className="text-xs sm:text-sm md:text-[0.9rem] leading-tight line-clamp-2">
   Platform-aware typography
 </p>
 ```
+
 ## 🚕 NYC TLC Trip Data Integration
 
 This Spark template includes ride tracking and earnings optimization features designed to align with NYC Taxi & Limousine Commission (TLC) trip data formats.
@@ -1047,6 +1153,7 @@ This Spark template includes ride tracking and earnings optimization features de
 ### About NYC TLC Data
 
 The NYC TLC collects comprehensive trip records for all licensed vehicles including:
+
 - **Yellow Taxis** - Traditional street-hail medallion taxis (all 5 boroughs)
 - **Green Taxis** - Boro taxis (above W 110 St/E 96th St in Manhattan and boroughs)
 - **FHV (For-Hire Vehicles)** - App-based services: Uber, Lyft, Via, Juno
@@ -1054,6 +1161,7 @@ The NYC TLC collects comprehensive trip records for all licensed vehicles includ
 ### Data Availability
 
 **Official Sources:**
+
 - **TLC Website**: [https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
   - CSV format, organized by year/month/type
   - Updated every 6 months (Jan-Jun by end of Aug, Jul-Dec by end of Feb)
@@ -1064,6 +1172,7 @@ The NYC TLC collects comprehensive trip records for all licensed vehicles includ
   - API access available
 
 **Timeline:**
+
 - 2009: TLC begins collecting taxi trip data
 - 2013: Green taxis added to fleet
 - 2015: FHV trip data collection begins (including app bases)
@@ -1077,8 +1186,8 @@ TLC trip records include comprehensive fields that align with this app's trackin
 #### Yellow Taxi Data Dictionary
 
 | Field | Description | Values/Notes |
-|-------|-------------|--------------|
-| `VendorID` | TPEP provider | 1=Creative Mobile Tech, 2=Curb, 6=Myle, 7=Helix |
+| ------- | ------------- | -------------- |
+| `VendorID` | TPEP provider | 1=Creative Mobile Tech |
 | `tpep_pickup_datetime` | Meter engaged date/time | Maps to `date` + `time` |
 | `tpep_dropoff_datetime` | Meter disengaged date/time | Calculate `duration` |
 | `passenger_count` | Number of passengers | Optional tracking |
@@ -1102,7 +1211,7 @@ TLC trip records include comprehensive fields that align with this app's trackin
 #### Green Taxi (LPEP) Data Dictionary
 
 | Field | Description | Values/Notes |
-|-------|-------------|--------------|
+| ------- | ------------- | -------------- |
 | `VendorID` | LPEP provider | 1=Creative Mobile Tech, 2=Curb, 6=Myle |
 | `lpep_pickup_datetime` | Meter engaged date/time | Maps to `date` + `time` |
 | `lpep_dropoff_datetime` | Meter disengaged date/time | Calculate `duration` |
@@ -1127,7 +1236,7 @@ TLC trip records include comprehensive fields that align with this app's trackin
 #### FHV (For-Hire Vehicle) Data Dictionary
 
 | Field | Description | Values/Notes |
-|-------|-------------|--------------|
+| ------- | ------------- | -------------- |
 | `dispatching_base_num` | Base license number | Map to platform (Uber/Lyft/Via/Juno) |
 | `pickup_datetime` | Trip pickup date/time | Maps to `date` + `time` |
 | `dropOff_datetime` | Trip dropoff date/time | Calculate `duration` |
@@ -1141,6 +1250,7 @@ TLC trip records include comprehensive fields that align with this app's trackin
 #### HVFHS (High Volume FHV) Additional Fields
 
 For Uber, Lyft, Via, Juno (post-2019 data includes):
+
 - Trip miles, trip time
 - Base passenger fare
 - Tolls, sales tax, congestion surcharge
@@ -1156,6 +1266,7 @@ For Uber, Lyft, Via, Juno (post-2019 data includes):
 - **265**: Outside of NYC
 
 **Key Zones:**
+
 - **1**: Newark Airport (EWR)
 - **132**: JFK Airport
 - **138**: LaGuardia Airport
@@ -1166,10 +1277,12 @@ For Uber, Lyft, Via, Juno (post-2019 data includes):
 - **113-114**: Greenwich Village
 
 **Download Full Lookup:**
+
 - CSV: [https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv](https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv)
 - Shapefile: [https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip](https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip)
 
 **Service Zones:**
+
 - **Yellow Zone**: Manhattan below 96th St/110th St (Yellow taxi exclusive areas)
 - **Boro Zone**: Outer boroughs and upper Manhattan (Green taxi areas)
 - **Airports**: JFK, LaGuardia, Newark
@@ -1222,17 +1335,21 @@ app_ride = {
 The app supports tracking for major rideshare platforms. TLC data uses base license numbers to identify companies:
 
 **Uber (HV0003)** - 27 Base Licenses:
+
 - B02877, B02866, B02882, B02869, B02617, B02876, B02865, B02512, B02888, B02864, B02883, B02875, B02682, B02880, B02870, B02404, B02598, B02765, B02879, B02867, B02878, B02887, B02872, B02836, B02884, B02835, B02764, B02889, B02871, B02395
 
 **Lyft (HV0005)** - 2 Base Licenses:
+
 - B02510 (TRI-CITY, LLC)
 - B02844 (ENDOR CAR & DRIVER, LLC)
 
 **Via (HV0004)** - 2 Base Licenses:
+
 - B03136 (GREENPOINT TRANSIT LLC)
 - B02800 (FLATIRON TRANSIT LLC)
 
 **Juno (HV0002)** - 4 Base Licenses:
+
 - B02914 (VULCAN CARS LLC)
 - B02907 (SABO ONE LLC)
 - B02908 (SABO TWO LLC)
@@ -1241,6 +1358,7 @@ The app supports tracking for major rideshare platforms. TLC data uses base lice
 ### NYC Taxi Zones
 
 TLC uses 263 numbered zones to represent pickup/dropoff locations:
+
 - Based on NYC Department of City Planning's Neighborhood Tabulation Areas (NTAs)
 - Approximate neighborhood boundaries
 - **Download Lookup Table**: [https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv](https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv)
@@ -1249,10 +1367,12 @@ TLC uses 263 numbered zones to represent pickup/dropoff locations:
 ### Shared Rides (Uber Pool / Lyft Line)
 
 The TLC data includes a `SR_Flag` field to identify shared ride trips:
+
 - **Value = 1**: Shared ride (pool/line service)
 - **Value = null**: Non-shared ride
 
 **Important Notes:**
+
 - Most companies flag only successfully matched shared rides
 - Lyft also flags requested-but-unmatched shared rides (potential overcount)
 - Juno does not offer shared rides
@@ -1262,6 +1382,7 @@ The TLC data includes a `SR_Flag` field to identify shared ride trips:
 The app's data structure is designed to be compatible with TLC CSV exports:
 
 **Ride Tracking Alignment:**
+
 ```typescript
 // App's Ride interface aligns with TLC fields
 interface Ride {
@@ -1306,6 +1427,7 @@ interface Ride {
 **Why Parquet?**
 
 TLC is switching from CSV to Parquet format for storing raw trip data. Parquet is the industry standard for big data with significant benefits:
+
 - **Smaller file sizes** - Columnar compression reduces storage by 50-90%
 - **Faster processing** - Columnar format enables efficient querying
 - **Better performance** - Industry standard for large-scale data analysis
@@ -1425,10 +1547,10 @@ uvx --from pandas,pyarrow python process_tlc_parquet.py
 
 **Parquet vs CSV Performance:**
 
-| Format | File Size | Read Speed | Use Case |
-|--------|-----------|------------|----------|
-| CSV | 100% | Baseline | Legacy compatibility, spreadsheets |
-| Parquet | 10-50% | 5-10x faster | Big data, analytics, production pipelines |
+| Format  | File Size | Read Speed   | Use Case                                  |
+|---------|-----------|--------------|-------------------------------------------|
+| CSV     | 100%      | Baseline     | Legacy compatibility, spreadsheets        |
+| Parquet | 10-50%    | 5-10x faster | Big data, analytics, production pipelines |
 
 **Python Data Processing with uv:**
 
@@ -1447,6 +1569,7 @@ uvx jupyter notebook
 ```
 
 **Additional Resources:**
+
 - **PyArrow Documentation**: [https://arrow.apache.org/docs/python/parquet.html](https://arrow.apache.org/docs/python/parquet.html)
 - **Arrow R Package**: [https://arrow.apache.org/docs/r/reference/read_parquet.html](https://arrow.apache.org/docs/r/reference/read_parquet.html)
 - **Pandas Parquet I/O**: [https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html](https://pandas.pydata.org/docs/reference/api/pandas.read_parquet.html)
@@ -1492,6 +1615,7 @@ rides.to_csv('app_format.csv', index=False)
 ### Data Dictionary Resources
 
 **Official TLC Documentation:**
+
 - [Yellow Taxi Data Dictionary (PDF)](https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf)
 - [Green Taxi Data Dictionary (PDF)](https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_green.pdf)
 - [FHV Data Dictionary (PDF)](https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_fhv.pdf)
@@ -1566,6 +1690,7 @@ curl "https://data.cityofnewyork.us/resource/2v9c-2k7f.json?\$order=month%20DESC
 ```
 
 **Insights You Can Generate:**
+
 - **Market positioning**: See how your chosen platform(s) compare in trip volume
 - **Driver efficiency**: Calculate trips per driver vs platform averages
 - **Capacity utilization**: Analyze vehicle-to-driver ratios
@@ -1575,16 +1700,18 @@ curl "https://data.cityofnewyork.us/resource/2v9c-2k7f.json?\$order=month%20DESC
 ### Contact & Resources
 
 **Questions about TLC Data:**
-- Email: research@tlc.nyc.gov
+
+- Email: <research@tlc.nyc.gov>
 - TLC Blog: [https://medium.com/@NYCTLC](https://medium.com/@NYCTLC)
 - Open Data Portal: Submit feedback on specific datasets
 
 **App Data Questions:**
+
 - This template's data structure is designed for driver earnings tracking
 - Compatible with TLC public data formats for analysis and import
 - Use Python (via uv) for data transformation and ETL workflows
 
-## 🗺️ Map Integration with OpenFreeMap
+## 🗺️ Detailed Map Integration Guide
 
 This template can display ride locations on interactive maps using free, open-source map tiles from [OpenFreeMap](https://openfreemap.org/).
 
@@ -1593,6 +1720,7 @@ This template can display ride locations on interactive maps using free, open-so
 This project includes the OpenFreeMap repository as a git remote for development and customization purposes.
 
 **Quick Verification:**
+
 ```bash
 # Verify OpenFreeMap remote configuration
 chmod +x verify-openfreemap.sh
@@ -1600,6 +1728,7 @@ chmod +x verify-openfreemap.sh
 ```
 
 **Git Remote Setup:**
+
 ```bash
 # Remote is already configured as 'openfreemap'
 git remote -v
@@ -1615,7 +1744,8 @@ git log openfreemap/main --oneline
 ```
 
 **OpenFreeMap Repository:**
-- **URL**: https://github.com/telleriacarolina/openfreemap.git
+
+- **URL**: <https://github.com/telleriacarolina/openfreemap.git>
 - **Purpose**: MapLibre-based open-source mapping solution
 - **Usage**: Reference implementation for tile serving and map styles
 - **Documentation**: See [.github/OPENFREEMAP.md](.github/OPENFREEMAP.md) for complete guide
@@ -1652,16 +1782,13 @@ uv run npm install maplibre-gl
 
 **Basic Usage:**
 
-```html
-<div id="map" style="width: 100%; height: 500px"></div>
-<script>
-  const map = new maplibregl.Map({
-    style: 'https://tiles.openfreemap.org/styles/liberty',
-    center: [13.388, 52.517], // [longitude, latitude]
-    zoom: 9.5,
-    container: 'map',
-  })
-</script>
+```javascript
+const map = new maplibregl.Map({
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [13.388, 52.517], // [longitude, latitude]
+  zoom: 9.5,
+  container: 'map',
+})
 ```
 
 **For NYC (Centered on Manhattan):**
@@ -1722,12 +1849,13 @@ map.on('load', () => {
 OpenFreeMap provides three style options:
 
 | Style | URL | Best For |
-|-------|-----|----------|
+| ----- | --- | -------- |
 | **Liberty** | `https://tiles.openfreemap.org/styles/liberty` | Colorful, detailed, general use |
 | **Bright** | `https://tiles.openfreemap.org/styles/bright` | Clean, minimal, professional |
 | **Positron** | `https://tiles.openfreemap.org/styles/positron` | Light, minimal, data overlays |
 
 **Customize with Maputnik:**
+
 - [Customize Liberty](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/liberty)
 - [Customize Bright](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/bright)
 - [Customize Positron](https://maputnik.github.io/editor/#https://tiles.openfreemap.org/styles/positron)
@@ -1863,6 +1991,7 @@ export function RideMap({ pickup, dropoff }: RideMapProps) {
 TLC data uses zone IDs (1-263). To display on a map, convert zone IDs to coordinates:
 
 **Download zone shapefile:**
+
 ```bash
 curl -O https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip
 unzip taxi_zones.zip
@@ -1899,6 +2028,7 @@ For React Native or mobile apps, use [MapLibre Native](https://github.com/maplib
 ### Self-Hosting
 
 For production with high traffic, consider self-hosting:
+
 - Download [OpenFreeMap Btrfs images](https://github.com/hyperknot/openfreemap)
 - Host tiles on your infrastructure
 - Full control and no external dependencies
@@ -1912,6 +2042,7 @@ For production with high traffic, consider self-hosting:
 - **NYC Taxi Zones Shapefile**: [https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip](https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip)
 
 **Working with the OpenFreeMap Remote:**
+
 ```bash
 # Compare local map implementation with OpenFreeMap upstream
 git diff main openfreemap/main -- path/to/map/files
@@ -1932,6 +2063,6 @@ No problem! If you were just checking things out and don’t need to keep this c
 - Simply delete your Spark.
 - Everything will be cleaned up — no traces left behind.
 
-📄 License For Spark Template Resources 
+📄 License For Spark Template Resources
 
 The Spark Template files and resources from GitHub are licensed under the terms of the MIT license, Copyright GitHub, Inc.

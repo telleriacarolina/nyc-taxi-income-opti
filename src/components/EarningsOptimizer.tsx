@@ -10,6 +10,7 @@ import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { Insights } from './Insights'
+import { AIInsights } from './AIInsights'
 import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { LocationHeatmap } from './LocationHeatmap'
@@ -381,6 +382,8 @@ export function EarningsOptimizer() {
       <WeeklyScheduleComparison />
 
       <TrafficPatternComparison />
+
+      <AIInsights />
 
       <TrafficOverlay />
 

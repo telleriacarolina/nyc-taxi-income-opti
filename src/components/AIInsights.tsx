@@ -35,54 +35,140 @@ export function AIInsights() {
         startLocation: s.startLocation || 'Not specified'
       }))
 
-      const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight based on START LOCATION patterns to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
+      const hvfhApiUrl = 'https://data.cityofnewyork.us/resource/8wbx-tsch.json'
+      const baseAggregateUrl = 'https://data.cityofnewyork.us/resource/2v9c-2k7f.json'
+      
+      const currentDate = new Date()
+      const threeMonthsAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1)
+      const dateFilter = threeMonthsAgo.toISOString().split('T')[0]
 
-NYC TLC Trip Record Data Context (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page):
-The official TLC Trip Record Data contains millions of historical trip records organized by taxi zones showing pickup location patterns:
+      let hvfhData: any[] = []
+      let baseAggregateData: any[] = []
 
-**Top Earning Pickup Locations by Taxi Zone:**
-- **Manhattan Core** (Zone 161-163, 237): Midtown, Times Square, Penn Station - Average pickup fare $45-65
-- **Financial District** (Zone 87): Morning rush premium, avg $50+ pickups to outer boroughs
-- **Upper East/West Side** (Zones 236, 237): Residential to business district runs $35-45
-- **Airport Zones**: JFK (Zone 132), LGA (Zone 138), Newark (Zone 1) - Long-haul premium $55-75+
-- **Hotel Districts**: Theater District (Zone 161), Garment District (Zone 113) - High tip potential
-- **Entertainment Hubs**: Williamsburg (Zone 265), LES (Zone 79), Meatpacking (Zone 90) - Weekend nights $40-60
+      try {
+        const hvfhParams = new URLSearchParams({
+          '$limit': '5000',
+          '$where': `pickup_datetime >= '${dateFilter}'`,
+          '$select': 'hvfhs_license_num,PULocationID,DOLocationID,driver_pay,tips,trip_miles,trip_time,pickup_datetime',
+          '$order': 'driver_pay DESC'
+        })
+        const hvfhResponse = await fetch(`${hvfhApiUrl}?${hvfhParams}`)
+        if (hvfhResponse.ok) {
+          hvfhData = await hvfhResponse.json()
+        }
+      } catch (error) {
+        console.warn('HVFH data fetch failed:', error)
+      }
 
-**Pickup Location Performance Metrics from TLC Data:**
-- Starting in Manhattan business districts = 35% higher average fare vs outer boroughs
-- Airport pickups = 2.5x longer trips, 45% higher earnings per trip
-- Hotel zone pickups = 20% higher tip rates
-- Weekend entertainment district pickups (after 8pm) = $15-20 premium vs weekday
+      try {
+        const baseParams = new URLSearchParams({
+          '$limit': '500',
+          '$where': `month >= '${dateFilter}'`,
+          '$select': 'base_number,base_name,month,total_dispatched_trips,unique_dispatched_drivers,total_trip_miles',
+          '$order': 'month DESC'
+        })
+        const baseResponse = await fetch(`${baseAggregateUrl}?${baseParams}`)
+        if (baseResponse.ok) {
+          baseAggregateData = await baseResponse.json()
+        }
+      } catch (error) {
+        console.warn('Base aggregate data fetch failed:', error)
+      }
 
-**Strategic Positioning by Start Location:**
-- Morning 7-9am: Position in residential areas (UES, UWS, Astoria, Park Slope) for Manhattan/airport runs
-- Midday 11am-2pm: Stay in Manhattan core for short high-turnover business trips
-- Evening 5-8pm: Position in Manhattan business districts for outer borough runs  
-- Late night 10pm-2am: Entertainment districts for premium weekend fares
+      const platformMap: Record<string, string[]> = {
+        'Uber': ['B02764', 'B02617', 'B02598', 'B02682', 'B02765', 'HV0003'],
+        'Lyft': ['B02510', 'B02844', 'HV0005'],
+        'Via': ['B03136', 'B02800', 'HV0004'],
+        'Juno': ['B02914', 'B02907', 'B02835', 'B02864', 'HV0002']
+      }
 
-NYC DOT Real-Time Data (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml):
-- Traffic speed feeds to avoid congestion when repositioning
-- Construction alerts to plan staging locations
-- Event data for surge demand areas
+      let marketIntel = 'NYC TLC Database Market Intelligence:\n\n'
+
+      if (hvfhData.length > 0) {
+        const avgDriverPay = hvfhData.reduce((sum: number, trip: any) => 
+          sum + (parseFloat(trip.driver_pay) || 0), 0) / hvfhData.length
+        const avgTips = hvfhData.reduce((sum: number, trip: any) => 
+          sum + (parseFloat(trip.tips) || 0), 0) / hvfhData.length
+        const topZones = hvfhData.reduce((acc: Record<number, number>, trip: any) => {
+          const zone = parseInt(trip.pulocationid)
+          if (!isNaN(zone)) {
+            acc[zone] = (acc[zone] || 0) + parseFloat(trip.driver_pay || 0)
+          }
+          return acc
+        }, {})
+        const topZonesSorted = Object.entries(topZones)
+          .sort(([, a], [, b]) => (b as number) - (a as number))
+          .slice(0, 5)
+
+        marketIntel += `Recent Trip Data (Last 3 Months):\n`
+        marketIntel += `- Average driver pay per trip: $${avgDriverPay.toFixed(2)}\n`
+        marketIntel += `- Average tips per trip: $${avgTips.toFixed(2)}\n`
+        marketIntel += `- Top earning pickup zones: ${topZonesSorted.map(([zone]) => `Zone ${zone}`).join(', ')}\n`
+        marketIntel += `- Sample size: ${hvfhData.length} trips analyzed\n\n`
+      }
+
+      if (baseAggregateData.length > 0) {
+        const platformStats: Record<string, { trips: number, drivers: number }> = {}
+        
+        baseAggregateData.forEach((record: any) => {
+          for (const [platform, bases] of Object.entries(platformMap)) {
+            if (bases.includes(record.base_number)) {
+              if (!platformStats[platform]) {
+                platformStats[platform] = { trips: 0, drivers: 0 }
+              }
+              platformStats[platform].trips += parseInt(record.total_dispatched_trips || 0)
+              platformStats[platform].drivers += parseInt(record.unique_dispatched_drivers || 0)
+            }
+          }
+        })
+
+        marketIntel += `Platform Performance (Last 3 Months):\n`
+        for (const [platform, stats] of Object.entries(platformStats)) {
+          const tripsPerDriver = stats.drivers > 0 ? stats.trips / stats.drivers : 0
+          marketIntel += `- ${platform}: ${tripsPerDriver.toFixed(1)} trips per driver\n`
+        }
+        marketIntel += `\n`
+      }
+
+      const shiftsJson = JSON.stringify(shiftsData, null, 2)
+
+      const prompt = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight using REAL NYC TLC DATABASE DATA to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
+
+${marketIntel}
+
+Additional TLC Database Context:
+NYC maintains several real-time data sources:
+- HVFH Trip Records: Individual trip-level data with driver_pay, tips, pickup/dropoff zones
+- FHV Base Aggregate Reports: Monthly platform statistics (trips, drivers, miles)
+- Active Vehicle Database: Fleet sizes by platform
+- New Driver Applications: Supply growth indicators
+
+Top Earning Pickup Locations by Taxi Zone (from TLC data):
+- Manhattan Core (Zone 161-163, 237): Midtown, Times Square, Penn Station
+- Financial District (Zone 87): Morning rush premium pickups
+- Upper East/West Side (Zones 236, 237): Residential to business district runs
+- Airport Zones: JFK (Zone 132), LGA (Zone 138), Newark (Zone 1)
+- Hotel Districts: Theater District (Zone 161), Garment District (Zone 113)
+- Entertainment Hubs: Williamsburg (Zone 265), LES (Zone 79), Meatpacking (Zone 90)
 
 Shift data with START LOCATIONS (${shiftsData.length} shifts):
-${JSON.stringify(shiftsData, null, 2)}
+${shiftsJson}
 
-**CRITICAL: Analyze the START LOCATION field in the driver's shifts.** Identify which neighborhoods/areas they're starting from and compare against TLC Trip Record Data patterns. Focus your insight on:
-1. Which start locations in their history correlate with higher earnings
-2. Recommend specific NYC taxi zones or neighborhoods to begin shifts based on time of day
-3. Compare their start location strategy to TLC data showing premium pickup zones
-4. Suggest repositioning to high-value pickup areas that match their typical shift times
-5. Reference specific location names from their data and TLC high-fare zones
+CRITICAL: Use the REAL DATABASE INTEL above combined with the driver's shift patterns. Analyze:
+1. Compare their earnings to TLC database averages (driver_pay per trip)
+2. Identify if their platform choice aligns with trips-per-driver metrics
+3. Match their start locations to high-earning pickup zones from TLC data
+4. Reference specific data points from the market intelligence section
+5. Provide actionable recommendations based on real TLC database patterns
 
 Return your response as JSON in this exact format:
 {
   "type": "location",
-  "title": "Brief location-focused insight title (6-8 words)",
-  "content": "One specific recommendation about which neighborhoods/areas to START from based on their shift patterns and TLC Trip Record Data showing those zones' average pickup values. MUST reference specific location names. (2-3 sentences max)"
+  "title": "Brief data-driven insight title (6-8 words)",
+  "content": "One specific recommendation using REAL database statistics. MUST reference actual numbers from the market intel. (2-3 sentences max)"
 }`
 
-      const response = await spark.llm(promptText, 'gpt-4o-mini', true)
+      const response = await spark.llm(prompt, 'gpt-4o-mini', true)
       const data = JSON.parse(response)
       
       setInsight({
@@ -115,7 +201,7 @@ Return your response as JSON in this exact format:
           <div className="flex-1">
             <h3 className="font-semibold text-lg mb-2">AI-Powered Insights</h3>
             <p className="text-sm text-muted-foreground">
-              Log at least 3 shifts to unlock personalized AI recommendations using TLC Trip Record Data patterns.
+              Log at least 3 shifts to unlock personalized AI recommendations using TLC database intel.
             </p>
           </div>
         </div>
@@ -150,7 +236,7 @@ Return your response as JSON in this exact format:
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Sparkle size={16} weight="fill" className="text-primary" />
-              <h3 className="font-semibold text-lg">AI Insight</h3>
+              <h3 className="font-semibold text-lg">Database-Powered Insight</h3>
             </div>
             <Button
               variant="ghost"

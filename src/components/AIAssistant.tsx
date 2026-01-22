@@ -48,24 +48,97 @@ export function AIAssistant() {
         startLocations: [...new Set(shifts?.map(s => s.startLocation).filter(Boolean) || [])]
       }
 
-      const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business.
+      const hvfhApiUrl = 'https://data.cityofnewyork.us/resource/8wbx-tsch.json'
+      const baseAggregateUrl = 'https://data.cityofnewyork.us/resource/2v9c-2k7f.json'
+      
+      const currentDate = new Date()
+      const threeMonthsAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1)
+      const dateFilter = threeMonthsAgo.toISOString().split('T')[0]
 
-You have access to insights from NYC TLC Trip Record Data (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page), which contains millions of historical trip records organized by taxi zones including:
-- **Pickup location performance**: Which neighborhoods/zones have the highest average fares
-- **Top earning pickup zones**: Manhattan Core (Midtown, Times Square $45-65), Financial District ($50+), Airports (JFK/LGA $55-75+)
-- **Time-of-day patterns by zone**: When each neighborhood produces the best fares
-- Trip distances, durations, and fare amounts by pickup location
-- Payment types and tip percentages by area
-- High-demand locations and surge patterns
-- Seasonal variations by neighborhood
-- Average trip statistics by borough and specific taxi zones
+      let hvfhData: any[] = []
+      let baseAggregateData: any[] = []
 
-You also have knowledge of NYC DOT real-time data feeds (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml):
-- Traffic Speed Data (XML feed with real-time speeds)
-- Real-Time Traffic Advisories (construction, incidents, closures)
-- Planned Events Data (events affecting traffic)
-- Parking Regulations
-- @NYC_DOT Twitter for live updates
+      try {
+        const hvfhParams = new URLSearchParams({
+          '$limit': '3000',
+          '$where': `pickup_datetime >= '${dateFilter}'`,
+          '$select': 'hvfhs_license_num,PULocationID,driver_pay,tips,pickup_datetime',
+          '$order': 'driver_pay DESC'
+        })
+        const hvfhResponse = await fetch(`${hvfhApiUrl}?${hvfhParams}`)
+        if (hvfhResponse.ok) {
+          hvfhData = await hvfhResponse.json()
+        }
+      } catch (error) {
+        console.warn('HVFH data fetch failed:', error)
+      }
+
+      try {
+        const baseParams = new URLSearchParams({
+          '$limit': '300',
+          '$where': `month >= '${dateFilter}'`,
+          '$select': 'base_number,base_name,total_dispatched_trips,unique_dispatched_drivers',
+          '$order': 'month DESC'
+        })
+        const baseResponse = await fetch(`${baseAggregateUrl}?${baseParams}`)
+        if (baseResponse.ok) {
+          baseAggregateData = await baseResponse.json()
+        }
+      } catch (error) {
+        console.warn('Base aggregate data fetch failed:', error)
+      }
+
+      let marketIntel = ''
+
+      if (hvfhData.length > 0) {
+        const avgDriverPay = hvfhData.reduce((sum: number, trip: any) => 
+          sum + (parseFloat(trip.driver_pay) || 0), 0) / hvfhData.length
+        const avgTips = hvfhData.reduce((sum: number, trip: any) => 
+          sum + (parseFloat(trip.tips) || 0), 0) / hvfhData.length
+
+        marketIntel += `\nREAL TLC DATABASE STATS (Last 3 Months):\n`
+        marketIntel += `- Market avg driver pay: $${avgDriverPay.toFixed(2)}/trip\n`
+        marketIntel += `- Market avg tips: $${avgTips.toFixed(2)}/trip\n`
+        marketIntel += `- Data from ${hvfhData.length} recent trips\n`
+      }
+
+      if (baseAggregateData.length > 0) {
+        const platformMap: Record<string, string[]> = {
+          'Uber': ['B02764', 'B02617', 'B02598', 'B02682', 'B02765'],
+          'Lyft': ['B02510', 'B02844'],
+          'Via': ['B03136', 'B02800'],
+          'Juno': ['B02914', 'B02907', 'B02835', 'B02864']
+        }
+
+        const platformStats: Record<string, { trips: number, drivers: number }> = {}
+        
+        baseAggregateData.forEach((record: any) => {
+          for (const [platform, bases] of Object.entries(platformMap)) {
+            if (bases.includes(record.base_number)) {
+              if (!platformStats[platform]) {
+                platformStats[platform] = { trips: 0, drivers: 0 }
+              }
+              platformStats[platform].trips += parseInt(record.total_dispatched_trips || 0)
+              platformStats[platform].drivers += parseInt(record.unique_dispatched_drivers || 0)
+            }
+          }
+        })
+
+        marketIntel += `\nPLATFORM PERFORMANCE (TLC Database):\n`
+        for (const [platform, stats] of Object.entries(platformStats)) {
+          const tripsPerDriver = stats.drivers > 0 ? stats.trips / stats.drivers : 0
+          marketIntel += `- ${platform}: ${tripsPerDriver.toFixed(1)} trips/driver avg\n`
+        }
+      }
+
+      const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business using REAL NYC TLC DATABASE INTELLIGENCE.
+
+${marketIntel}
+
+You have access to LIVE NYC TLC Open Data APIs:
+- HVFH Trip Records API: Real trip-level data with driver_pay, tips, pickup zones (https://data.cityofnewyork.us/resource/8wbx-tsch.json)
+- FHV Base Aggregate API: Platform statistics, trips per driver (https://data.cityofnewyork.us/resource/2v9c-2k7f.json)
+- NYC DOT Real-Time Feeds: Traffic speeds, construction alerts, events
 
 Context about this driver:
 - Total shifts logged: ${context.shiftsCount}
@@ -77,20 +150,16 @@ Context about this driver:
 
 2025 Earnings Target: $300 per day with 7-10 quality rides (approx $35/trip)
 
-Known patterns from TLC Trip Record Data by PICKUP LOCATION:
-- **Manhattan Core zones** (morning 7-9am): High demand to other Manhattan areas, airports - avg $45-65/pickup
-- **Residential neighborhoods** (morning rush): UES, UWS, Astoria, Park Slope to Manhattan business districts
-- **Financial District** (lunch 12-2pm): Short trips within FiDi/downtown - high turnover
-- **Manhattan business districts** (evening 5-8pm): High demand leaving Manhattan to outer boroughs - avg $40-55
-- **Entertainment districts** (late night 10pm-2am): Williamsburg, LES, Meatpacking - premium weekend fares $40-60
-- **Airport staging**: JFK, LGA pickups = 2.5x longer trips, 45% higher earnings per trip
-- **Hotel districts**: Theater District, Garment District - 20% higher tip rates
-
-**IMPORTANT**: When the driver mentions or asks about locations, refer to the "Start locations used" field above showing where they've been starting their shifts. Provide insights comparing their location choices to TLC Trip Record Data showing which zones/neighborhoods have the best pickup performance.
+Top Earning Pickup Zones from TLC Data:
+- Manhattan Core (Zone 161-163, 237): Midtown, Times Square
+- Financial District (Zone 87): Morning rush premium
+- Airports: JFK (Zone 132), LGA (Zone 138)
+- Hotel Districts: Theater District (Zone 161)
+- Entertainment: Williamsburg (Zone 265), LES (Zone 79)
 
 Driver's question: ${userMessage.content}
 
-Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging TLC Trip Record Data patterns (especially pickup location strategies) and NYC DOT real-time feeds for better positioning. When relevant, reference specific neighborhoods, times, or location-based patterns from TLC records and compare to the driver's start location history.`
+**CRITICAL**: Use the REAL DATABASE STATS above when answering. Reference actual numbers from the market intel. Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging database patterns.`
 
       const response = await spark.llm(promptText, 'gpt-4o-mini')
 
@@ -123,10 +192,10 @@ Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 
   }
 
   const suggestedQuestions = [
-    "What locations have the best fares?",
-    "When should I drive for $35+ trips?",
-    "How do I use TLC trip data patterns?",
-    "Should I focus on airport runs?"
+    "How do my earnings compare to market averages?",
+    "Which platform has the best trips per driver?",
+    "What are the top earning pickup zones right now?",
+    "Should I switch platforms based on TLC data?"
   ]
 
   return (
