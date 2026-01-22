@@ -17,6 +17,7 @@ import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { TrafficAlerts } from './TrafficAlerts'
 import { LocationHeatmap } from './LocationHeatmap'
 import { MultiRangeHeatmap } from './MultiRangeHeatmap'
+import { LocationHistoryHeatmap } from './LocationHistoryHeatmap'
 import { OptimalPositioningMap } from './OptimalPositioningMap'
 import { RoutePlanner } from './RoutePlanner'
 import { DailySchedulePlanner } from './DailySchedulePlanner'
@@ -399,6 +400,7 @@ export function EarningsOptimizer() {
         <>
           <LocationHeatmap shifts={shifts || []} />
           <MultiRangeHeatmap shifts={shifts || []} />
+          <LocationHistoryHeatmap shifts={shifts || []} />
         </>
       )}
 
