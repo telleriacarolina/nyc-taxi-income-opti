@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MTMEnrollmentWalkthrough } from '@/components/MTMEnrollmentWalkthrough'
 import { 
   FirstAidKit,
   Wheelchair,
@@ -202,6 +203,41 @@ export function MedicalVouchers() {
           </div>
         </div>
       </div>
+
+      <Card className="p-4 bg-gradient-to-br from-primary/10 to-blue-600/10 border-primary/30">
+        <div className="flex flex-col md:flex-row items-start gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20">
+                <Star size={22} className="text-primary" weight="fill" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold">Ready to Join MTM?</h3>
+                <p className="text-xs text-muted-foreground">Step-by-step enrollment guide</p>
+              </div>
+            </div>
+            <p className="text-xs text-foreground/80 mb-3">
+              Follow our comprehensive 10-step walkthrough to complete your MTM (ModivCare) provider enrollment. From document preparation to your first trip, we'll guide you through every requirement.
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <Badge variant="secondary" className="gap-1">
+                <Clock size={12} weight="fill" />
+                2-3 weeks total
+              </Badge>
+              <Badge variant="secondary" className="gap-1">
+                <CurrencyDollar size={12} weight="fill" />
+                $25-45 per trip
+              </Badge>
+              <Badge variant="secondary">
+                No upfront costs
+              </Badge>
+            </div>
+          </div>
+          <div className="w-full md:w-auto">
+            <MTMEnrollmentWalkthrough />
+          </div>
+        </div>
+      </Card>
 
       <Tabs value={activeType || 'all'} onValueChange={setActiveType} className="space-y-4">
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
