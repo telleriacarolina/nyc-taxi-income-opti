@@ -44,7 +44,7 @@ export function OptimalPositioningMap() {
       const currentDay = new Date().getDay()
       const isWeekend = currentDay === 0 || currentDay === 6
       
-      const prompt = spark.llmPrompt`You are an NYC TLC Trip Record Data analyst with access to millions of historical trip records showing pickup locations, fare amounts, tip percentages, and demand patterns by time and location.
+      const prompt = (spark.llmPrompt as any)`You are an NYC TLC Trip Record Data analyst with access to millions of historical trip records showing pickup locations, fare amounts, tip percentages, and demand patterns by time and location.
 
 Based on ${period === 'now' ? `current time (${currentHour}:00, ${isWeekend ? 'weekend' : 'weekday'})` : `${period} time period`}, analyze historical TLC Trip Record Data to identify the top 5-7 NYC neighborhoods where drivers should position themselves for maximum earnings.
 

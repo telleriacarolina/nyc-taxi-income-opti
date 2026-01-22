@@ -65,7 +65,7 @@ export function RoutePlanner() {
       const currentDay = new Date().getDay()
       const isWeekend = currentDay === 0 || currentDay === 6
       
-      const prompt = spark.llmPrompt`You are an NYC TLC routing expert with access to historical trip data showing optimal paths between high-earning zones.
+      const prompt = (spark.llmPrompt as any)`You are an NYC TLC routing expert with access to historical trip data showing optimal paths between high-earning zones.
 
 Based on ${period} time period ${isWeekend ? '(weekend)' : '(weekday)'}, generate 3 optimal routes connecting hot zones for maximum earnings.
 
