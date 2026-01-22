@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { 
   Clock, 
   MapPin, 
@@ -12,9 +17,14 @@ import {
   CalendarBlank,
   Path,
   Target,
-  Lightning
+  Lightning,
+  Star,
+  Plus,
+  Trash,
+  PencilSimple
 } from '@phosphor-icons/react'
 import { OpenFreeMap } from './OpenFreeMap'
+import { toast } from 'sonner'
 
 interface TimeBlock {
   id: string
@@ -45,6 +55,9 @@ interface ScheduleRoute {
   totalHours: number
   rideCount: number
   description: string
+  isFavorite?: boolean
+  isCustom?: boolean
+  customNotes?: string
 }
 
 const TIME_BLOCKS: TimeBlock[] = [
@@ -370,7 +383,140 @@ const SCHEDULE_ROUTES: ScheduleRoute[] = [
 export function DailySchedulePlanner() {
   const [selectedBlock, setSelectedBlock] = useState<TimeBlock | null>(null)
   const [selectedRoute, setSelectedRoute] = useState<ScheduleRoute | null>(null)
-  const [viewMode, setViewMode] = useState<'blocks' | 'routes'>('blocks')
+  const [viewMode, setViewMode] = useState<'blocks' | 'routes' | 'favorites'>('blocks')
+  const [customSchedules, setCustomSchedules] = useKV<ScheduleRoute[]>('custom-schedules', [])
+  const [favoriteSchedules, setFavoriteSchedules] = useKV<string[]>('favorite-schedule-ids', [])
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingSchedule, setEditingSchedule] = useState<ScheduleRoute | null>(null)
+  const [selectedTimeBlocks, setSelectedTimeBlocks] = useState<string[]>([])
+  const [scheduleName, setScheduleName] = useState('')
+  const [scheduleDescription, setScheduleDescription] = useState('')
+  const [scheduleNotes, setScheduleNotes] = useState('')
+
+  const allSchedules = [...SCHEDULE_ROUTES, ...(customSchedules || [])]
+  const favoriteSchedulesList = allSchedules.filter(s => (favoriteSchedules || []).includes(s.id))
+
+  const toggleFavorite = (scheduleId: string) => {
+    setFavoriteSchedules((current) => {
+      const currentFavorites = current || []
+      if (currentFavorites.includes(scheduleId)) {
+        toast.success('Removed from favorites')
+        return currentFavorites.filter(id => id !== scheduleId)
+      } else {
+        toast.success('Added to favorites')
+        return [...currentFavorites, scheduleId]
+      }
+    })
+  }
+
+  const handleCreateSchedule = () => {
+    if (!scheduleName.trim()) {
+      toast.error('Please enter a schedule name')
+      return
+    }
+    if (selectedTimeBlocks.length === 0) {
+      toast.error('Please select at least one time block')
+      return
+    }
+
+    const selectedBlocks = TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id))
+    const totalEarnings = selectedBlocks.reduce((sum, b) => sum + b.earningsTarget, 0)
+    const totalHours = selectedBlocks.length * 4
+    const rideCount = selectedBlocks.reduce((sum, b) => sum + b.expectedRides, 0)
+
+    const newSchedule: ScheduleRoute = {
+      id: `custom-${Date.now()}`,
+      name: scheduleName,
+      timeBlocks: selectedTimeBlocks,
+      totalEarnings,
+      totalHours,
+      rideCount,
+      description: scheduleDescription || 'Custom schedule',
+      isCustom: true,
+      customNotes: scheduleNotes
+    }
+
+    setCustomSchedules((current) => [...(current || []), newSchedule])
+    setIsCreateDialogOpen(false)
+    setScheduleName('')
+    setScheduleDescription('')
+    setScheduleNotes('')
+    setSelectedTimeBlocks([])
+    toast.success('Custom schedule created!')
+  }
+
+  const handleUpdateSchedule = () => {
+    if (!editingSchedule) return
+    if (!scheduleName.trim()) {
+      toast.error('Please enter a schedule name')
+      return
+    }
+    if (selectedTimeBlocks.length === 0) {
+      toast.error('Please select at least one time block')
+      return
+    }
+
+    const selectedBlocks = TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id))
+    const totalEarnings = selectedBlocks.reduce((sum, b) => sum + b.earningsTarget, 0)
+    const totalHours = selectedBlocks.length * 4
+    const rideCount = selectedBlocks.reduce((sum, b) => sum + b.expectedRides, 0)
+
+    const updatedSchedule: ScheduleRoute = {
+      ...editingSchedule,
+      name: scheduleName,
+      timeBlocks: selectedTimeBlocks,
+      totalEarnings,
+      totalHours,
+      rideCount,
+      description: scheduleDescription || 'Custom schedule',
+      customNotes: scheduleNotes
+    }
+
+    setCustomSchedules((current) => 
+      (current || []).map(s => s.id === editingSchedule.id ? updatedSchedule : s)
+    )
+    setIsEditDialogOpen(false)
+    setEditingSchedule(null)
+    setScheduleName('')
+    setScheduleDescription('')
+    setScheduleNotes('')
+    setSelectedTimeBlocks([])
+    toast.success('Schedule updated!')
+  }
+
+  const handleEditSchedule = (schedule: ScheduleRoute) => {
+    setEditingSchedule(schedule)
+    setScheduleName(schedule.name)
+    setScheduleDescription(schedule.description)
+    setScheduleNotes(schedule.customNotes || '')
+    setSelectedTimeBlocks(schedule.timeBlocks)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleDeleteSchedule = (scheduleId: string) => {
+    setCustomSchedules((current) => (current || []).filter(s => s.id !== scheduleId))
+    setFavoriteSchedules((current) => (current || []).filter(id => id !== scheduleId))
+    toast.success('Schedule deleted')
+  }
+
+  const toggleTimeBlock = (blockId: string) => {
+    setSelectedTimeBlocks((current) => {
+      if (current.includes(blockId)) {
+        return current.filter(id => id !== blockId)
+      } else {
+        return [...current, blockId]
+      }
+    })
+  }
+
+  const openCreateDialog = () => {
+    setScheduleName('')
+    setScheduleDescription('')
+    setScheduleNotes('')
+    setSelectedTimeBlocks([])
+    setIsCreateDialogOpen(true)
+  }
 
   const getZoneMarkers = (zones: TimeBlock['zones']) => {
     return zones.map(zone => ({
@@ -430,15 +576,19 @@ export function DailySchedulePlanner() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'blocks' | 'routes')}>
-            <TabsList className="grid w-full grid-cols-2 mb-4">
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'blocks' | 'routes' | 'favorites')}>
+            <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="blocks" className="gap-2">
                 <Clock weight="fill" />
                 <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Time Blocks</span>
               </TabsTrigger>
               <TabsTrigger value="routes" className="gap-2">
                 <Path weight="fill" />
-                <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Full Day Routes</span>
+                <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Templates</span>
+              </TabsTrigger>
+              <TabsTrigger value="favorites" className="gap-2">
+                <Star weight="fill" />
+                <span className="text-[clamp(0.7rem,2vw,0.85rem)]">My Schedules</span>
               </TabsTrigger>
             </TabsList>
 
@@ -645,12 +795,31 @@ export function DailySchedulePlanner() {
                     onClick={() => setSelectedRoute(route)}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">
-                        {route.name}
-                      </CardTitle>
-                      <CardDescription className="text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-2">
-                        {route.description}
-                      </CardDescription>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">
+                            {route.name}
+                          </CardTitle>
+                          <CardDescription className="text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-2">
+                            {route.description}
+                          </CardDescription>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0 flex-shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleFavorite(route.id)
+                          }}
+                        >
+                          <Star 
+                            size={16} 
+                            weight={(favoriteSchedules || []).includes(route.id) ? 'fill' : 'regular'}
+                            className={(favoriteSchedules || []).includes(route.id) ? 'text-yellow-500' : ''}
+                          />
+                        </Button>
+                      </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-3 gap-2">
@@ -814,9 +983,492 @@ export function DailySchedulePlanner() {
                 </Card>
               )}
             </TabsContent>
+
+            <TabsContent value="favorites" className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)]">My Custom Schedules</h3>
+                  <p className="text-[clamp(0.7rem,2vw,0.8rem)] text-muted-foreground">
+                    Create and save your favorite daily schedules
+                  </p>
+                </div>
+                <Button onClick={openCreateDialog} className="gap-2">
+                  <Plus weight="bold" />
+                  <span className="hidden sm:inline text-[clamp(0.75rem,2vw,0.85rem)]">Create Schedule</span>
+                </Button>
+              </div>
+
+              {favoriteSchedulesList.length === 0 && (customSchedules || []).length === 0 ? (
+                <Card className="p-8 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <Star size={48} className="text-muted-foreground" />
+                    <div>
+                      <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] mb-1">No Schedules Yet</h3>
+                      <p className="text-[clamp(0.75rem,2.4vw,0.85rem)] text-muted-foreground mb-4">
+                        Create your first custom schedule or mark templates as favorites
+                      </p>
+                      <Button onClick={openCreateDialog} className="gap-2">
+                        <Plus weight="bold" />
+                        Create Your First Schedule
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ) : (
+                <>
+                  {(customSchedules || []).length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)] flex items-center gap-2">
+                        <PencilSimple weight="fill" className="text-primary" />
+                        Custom Schedules
+                      </h4>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {(customSchedules || []).map((schedule) => (
+                          <Card 
+                            key={schedule.id}
+                            className="cursor-pointer transition-all hover:shadow-md"
+                            onClick={() => setSelectedRoute(schedule)}
+                          >
+                            <CardHeader className="pb-2">
+                              <div className="flex items-start justify-between gap-2">
+                                <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">
+                                  {schedule.name}
+                                </CardTitle>
+                                <div className="flex gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      toggleFavorite(schedule.id)
+                                    }}
+                                  >
+                                    <Star 
+                                      size={16} 
+                                      weight={(favoriteSchedules || []).includes(schedule.id) ? 'fill' : 'regular'}
+                                      className={(favoriteSchedules || []).includes(schedule.id) ? 'text-yellow-500' : ''}
+                                    />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleEditSchedule(schedule)
+                                    }}
+                                  >
+                                    <PencilSimple size={16} />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleDeleteSchedule(schedule.id)
+                                    }}
+                                  >
+                                    <Trash size={16} />
+                                  </Button>
+                                </div>
+                              </div>
+                              <CardDescription className="text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-2">
+                                {schedule.description}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <div className="grid grid-cols-3 gap-2">
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Earnings</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-green-600">
+                                    ${schedule.totalEarnings}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Hours</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-blue-600">
+                                    {schedule.totalHours}h
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Rides</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-purple-600">
+                                    {schedule.rideCount}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {schedule.customNotes && (
+                                <p className="text-[clamp(0.75rem,2.4vw,0.85rem)] text-muted-foreground italic border-l-2 border-primary pl-2">
+                                  {schedule.customNotes}
+                                </p>
+                              )}
+
+                              <div>
+                                <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-1">Time Blocks:</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {schedule.timeBlocks.map(blockId => {
+                                    const block = TIME_BLOCKS.find(b => b.id === blockId)
+                                    return block ? (
+                                      <Badge key={blockId} variant="outline" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                                        {block.name.split(' ')[0]}
+                                      </Badge>
+                                    ) : null
+                                  })}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {favoriteSchedulesList.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)] flex items-center gap-2">
+                        <Star weight="fill" className="text-yellow-500" />
+                        Favorite Templates
+                      </h4>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {favoriteSchedulesList.filter(s => !s.isCustom).map((schedule) => (
+                          <Card 
+                            key={schedule.id}
+                            className="cursor-pointer transition-all hover:shadow-md"
+                            onClick={() => setSelectedRoute(schedule)}
+                          >
+                            <CardHeader className="pb-2">
+                              <div className="flex items-start justify-between gap-2">
+                                <CardTitle className="text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">
+                                  {schedule.name}
+                                </CardTitle>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    toggleFavorite(schedule.id)
+                                  }}
+                                >
+                                  <Star 
+                                    size={16} 
+                                    weight="fill"
+                                    className="text-yellow-500"
+                                  />
+                                </Button>
+                              </div>
+                              <CardDescription className="text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-2">
+                                {schedule.description}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <div className="grid grid-cols-3 gap-2">
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Earnings</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-green-600">
+                                    ${schedule.totalEarnings}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Hours</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-blue-600">
+                                    {schedule.totalHours}h
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-[clamp(0.65rem,2vw,0.7rem)] text-muted-foreground">Rides</p>
+                                  <p className="text-[clamp(0.9rem,2.5vw,1rem)] font-bold text-purple-600">
+                                    {schedule.rideCount}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-1">Time Blocks:</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {schedule.timeBlocks.map(blockId => {
+                                    const block = TIME_BLOCKS.find(b => b.id === blockId)
+                                    return block ? (
+                                      <Badge key={blockId} variant="outline" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                                        {block.name.split(' ')[0]}
+                                      </Badge>
+                                    ) : null
+                                  })}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[clamp(1rem,3vw,1.25rem)] flex items-center gap-2">
+              <Plus weight="fill" className="text-primary" />
+              Create Custom Schedule
+            </DialogTitle>
+            <DialogDescription className="text-[clamp(0.75rem,2.4vw,0.875rem)]">
+              Build your own daily schedule by selecting time blocks
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="schedule-name">Schedule Name*</Label>
+              <Input
+                id="schedule-name"
+                placeholder="e.g., My Monday Schedule"
+                value={scheduleName}
+                onChange={(e) => setScheduleName(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schedule-description">Description</Label>
+              <Input
+                id="schedule-description"
+                placeholder="Brief description of this schedule"
+                value={scheduleDescription}
+                onChange={(e) => setScheduleDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schedule-notes">Personal Notes</Label>
+              <Textarea
+                id="schedule-notes"
+                placeholder="Add any personal notes or reminders for this schedule"
+                value={scheduleNotes}
+                onChange={(e) => setScheduleNotes(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Select Time Blocks*</Label>
+              <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-2">
+                Choose which time periods to include in your schedule
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {TIME_BLOCKS.map((block) => (
+                  <Card 
+                    key={block.id}
+                    className={`cursor-pointer transition-all ${
+                      selectedTimeBlocks.includes(block.id) 
+                        ? 'ring-2 ring-primary bg-primary/5' 
+                        : 'hover:bg-accent'
+                    }`}
+                    onClick={() => toggleTimeBlock(block.id)}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-[clamp(0.85rem,2.5vw,0.95rem)] line-clamp-1">
+                          {block.name}
+                        </CardTitle>
+                        {selectedTimeBlocks.includes(block.id) && (
+                          <Badge className="bg-primary">Selected</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] text-muted-foreground">
+                        <Clock size={14} />
+                        <span className="truncate">{block.timeRange}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="secondary" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                          ${block.earningsTarget}
+                        </Badge>
+                        <Badge variant="outline" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                          {block.expectedRides} rides
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {selectedTimeBlocks.length > 0 && (
+              <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-[clamp(0.85rem,2.5vw,0.95rem)]">Schedule Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Earnings</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-green-600">
+                      ${TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id)).reduce((sum, b) => sum + b.earningsTarget, 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Hours</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-blue-600">
+                      {selectedTimeBlocks.length * 4}h
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Rides</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-purple-600">
+                      {TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id)).reduce((sum, b) => sum + b.expectedRides, 0)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateSchedule}>
+              Create Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[clamp(1rem,3vw,1.25rem)] flex items-center gap-2">
+              <PencilSimple weight="fill" className="text-primary" />
+              Edit Custom Schedule
+            </DialogTitle>
+            <DialogDescription className="text-[clamp(0.75rem,2.4vw,0.875rem)]">
+              Update your schedule details and time blocks
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-schedule-name">Schedule Name*</Label>
+              <Input
+                id="edit-schedule-name"
+                placeholder="e.g., My Monday Schedule"
+                value={scheduleName}
+                onChange={(e) => setScheduleName(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-schedule-description">Description</Label>
+              <Input
+                id="edit-schedule-description"
+                placeholder="Brief description of this schedule"
+                value={scheduleDescription}
+                onChange={(e) => setScheduleDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-schedule-notes">Personal Notes</Label>
+              <Textarea
+                id="edit-schedule-notes"
+                placeholder="Add any personal notes or reminders for this schedule"
+                value={scheduleNotes}
+                onChange={(e) => setScheduleNotes(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Select Time Blocks*</Label>
+              <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-2">
+                Choose which time periods to include in your schedule
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {TIME_BLOCKS.map((block) => (
+                  <Card 
+                    key={block.id}
+                    className={`cursor-pointer transition-all ${
+                      selectedTimeBlocks.includes(block.id) 
+                        ? 'ring-2 ring-primary bg-primary/5' 
+                        : 'hover:bg-accent'
+                    }`}
+                    onClick={() => toggleTimeBlock(block.id)}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-[clamp(0.85rem,2.5vw,0.95rem)] line-clamp-1">
+                          {block.name}
+                        </CardTitle>
+                        {selectedTimeBlocks.includes(block.id) && (
+                          <Badge className="bg-primary">Selected</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[clamp(0.7rem,2vw,0.8rem)] text-muted-foreground">
+                        <Clock size={14} />
+                        <span className="truncate">{block.timeRange}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="secondary" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                          ${block.earningsTarget}
+                        </Badge>
+                        <Badge variant="outline" className="text-[clamp(0.65rem,2vw,0.7rem)]">
+                          {block.expectedRides} rides
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {selectedTimeBlocks.length > 0 && (
+              <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-[clamp(0.85rem,2.5vw,0.95rem)]">Schedule Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Earnings</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-green-600">
+                      ${TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id)).reduce((sum, b) => sum + b.earningsTarget, 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Hours</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-blue-600">
+                      {selectedTimeBlocks.length * 4}h
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground">Total Rides</p>
+                    <p className="text-[clamp(1rem,2.8vw,1.25rem)] font-bold text-purple-600">
+                      {TIME_BLOCKS.filter(b => selectedTimeBlocks.includes(b.id)).reduce((sum, b) => sum + b.expectedRides, 0)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateSchedule}>
+              Update Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
