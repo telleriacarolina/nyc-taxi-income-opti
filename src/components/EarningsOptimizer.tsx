@@ -16,6 +16,7 @@ import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { TrafficAlerts } from './TrafficAlerts'
 import { LocationHeatmap } from './LocationHeatmap'
+import { MultiRangeHeatmap } from './MultiRangeHeatmap'
 import { OptimalPositioningMap } from './OptimalPositioningMap'
 import { RoutePlanner } from './RoutePlanner'
 import { DailySchedulePlanner } from './DailySchedulePlanner'
@@ -395,7 +396,10 @@ export function EarningsOptimizer() {
       <TrafficOverlay />
 
       {(shifts || []).filter(s => s.startLocation && s.startLocation.trim() !== '').length > 0 && (
-        <LocationHeatmap shifts={shifts || []} />
+        <>
+          <LocationHeatmap shifts={shifts || []} />
+          <MultiRangeHeatmap shifts={shifts || []} />
+        </>
       )}
 
       {(shifts || []).length >= 3 && (
