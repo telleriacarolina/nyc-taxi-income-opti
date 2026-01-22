@@ -11,6 +11,7 @@ import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { Insights } from './Insights'
 import { AIInsights } from './AIInsights'
+import { LocationInsightComparison } from './LocationInsightComparison'
 import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { TrafficAlerts } from './TrafficAlerts'
@@ -385,6 +386,8 @@ export function EarningsOptimizer() {
       <TrafficPatternComparison />
 
       <AIInsights />
+
+      <LocationInsightComparison />
 
       <TrafficAlerts />
 
