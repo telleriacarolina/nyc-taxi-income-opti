@@ -16,6 +16,7 @@ import { LocationHeatmap } from './LocationHeatmap'
 import { OptimalPositioningMap } from './OptimalPositioningMap'
 import { RoutePlanner } from './RoutePlanner'
 import { DailySchedulePlanner } from './DailySchedulePlanner'
+import { WeeklyScheduleComparison } from './WeeklyScheduleComparison'
 import { Progress } from '@/components/ui/progress'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
@@ -275,6 +276,8 @@ export function EarningsOptimizer() {
       <RoutePlanner />
 
       <DailySchedulePlanner />
+
+      <WeeklyScheduleComparison />
 
       <TrafficPatternComparison />
 
