@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 
 interface AIInsight {
   id: string
-  type: 'earnings' | 'timing' | 'platform' | 'strategy' | 'location'
+  type: 'earnings' | 'timing' | 'platform' | 'strategy'
   title: string
   content: string
   generated: number
@@ -35,55 +35,40 @@ export function Insights() {
         endTime: s.endTime,
         earnings: s.earnings,
         trips: s.trips,
-        expenses: s.expenses,
-        startLocation: s.startLocation || 'Not specified'
+        expenses: s.expenses
       }))
 
-      const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable insight based on START LOCATION patterns to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
+      const promptText = `Analyze this NYC TLC driver's shift data and provide ONE actionable general insight to help them reach the 2025 target: $300 per day with 7-10 quality rides (approx $35/trip).
 
 NYC TLC Trip Record Data Context (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page):
-The official TLC Trip Record Data contains millions of historical trip records organized by taxi zones showing pickup location patterns:
+The official TLC Trip Record Data contains millions of historical trip records organized by taxi zones showing general pickup patterns and earnings trends across NYC.
 
-**Top Earning Pickup Locations by Taxi Zone:**
-- **Manhattan Core** (Zone 161-163, 237): Midtown, Times Square, Penn Station - Average pickup fare $45-65
-- **Financial District** (Zone 87): Morning rush premium, avg $50+ pickups to outer boroughs
-- **Upper East/West Side** (Zones 236, 237): Residential to business district runs $35-45
-- **Airport Zones**: JFK (Zone 132), LGA (Zone 138), Newark (Zone 1) - Long-haul premium $55-75+
-- **Hotel Districts**: Theater District (Zone 161), Garment District (Zone 113) - High tip potential
-- **Entertainment Hubs**: Williamsburg (Zone 265), LES (Zone 79), Meatpacking (Zone 90) - Weekend nights $40-60
-
-**Pickup Location Performance Metrics from TLC Data:**
-- Starting in Manhattan business districts = 35% higher average fare vs outer boroughs
-- Airport pickups = 2.5x longer trips, 45% higher earnings per trip
-- Hotel zone pickups = 20% higher tip rates
-- Weekend entertainment district pickups (after 8pm) = $15-20 premium vs weekday
-
-**Strategic Positioning by Start Location:**
-- Morning 7-9am: Position in residential areas (UES, UWS, Astoria, Park Slope) for Manhattan/airport runs
-- Midday 11am-2pm: Stay in Manhattan core for short high-turnover business trips
-- Evening 5-8pm: Position in Manhattan business districts for outer borough runs  
-- Late night 10pm-2am: Entertainment districts for premium weekend fares
+**General TLC Data Insights:**
+- Manhattan business districts show 35% higher average fare vs outer boroughs
+- Airport trips average 2.5x longer distance and 45% higher earnings
+- Weekend evening trips (after 8pm) show $15-20 premium vs weekday
+- Morning rush (7-9am) and evening rush (5-8pm) show highest trip frequency
+- Midday (11am-2pm) offers high-turnover short trips
 
 NYC DOT Real-Time Data (https://www.nyc.gov/html/dot/html/about/datafeeds.shtml):
-- Traffic speed feeds to avoid congestion when repositioning
-- Construction alerts to plan staging locations
-- Event data for surge demand areas
+- Traffic patterns affect trip efficiency throughout the day
+- Event data indicates surge demand areas
+- Construction and road conditions impact routing strategies
 
-Shift data with START LOCATIONS (${shiftsData.length} shifts):
+Shift data (${shiftsData.length} shifts):
 ${JSON.stringify(shiftsData, null, 2)}
 
-**CRITICAL: Analyze the START LOCATION field in the driver's shifts.** Identify which neighborhoods/areas they're starting from and compare against TLC Trip Record Data patterns. Focus your insight on:
-1. Which start locations in their history correlate with higher earnings
-2. Recommend specific NYC taxi zones or neighborhoods to begin shifts based on time of day
-3. Compare their start location strategy to TLC data showing premium pickup zones
-4. Suggest repositioning to high-value pickup areas that match their typical shift times
-5. Reference specific location names from their data and TLC high-fare zones
+Provide a GENERAL insight about optimizing earnings based on their shift patterns. Focus on:
+1. Time-of-day strategies based on their shift timing
+2. Platform performance patterns
+3. Trip efficiency and earnings per hour trends
+4. General recommendations without specific location references
 
 Return your response as JSON in this exact format:
 {
-  "type": "location",
-  "title": "Brief location-focused insight title (6-8 words)",
-  "content": "One specific recommendation about which neighborhoods/areas to START from based on their shift patterns and TLC Trip Record Data showing those zones' average pickup values. MUST reference specific location names. (2-3 sentences max)"
+  "type": "timing" | "platform" | "strategy" | "earnings",
+  "title": "Brief insight title (6-8 words)",
+  "content": "One actionable recommendation based on general TLC data patterns and their shift performance. NO specific location names or neighborhoods. (2-3 sentences max)"
 }`
 
       const response = await spark.llm(promptText, 'gpt-4o-mini', true)
@@ -114,8 +99,8 @@ Return your response as JSON in this exact format:
   const getIcon = () => {
     switch (aiInsight?.type) {
       case 'timing': return <Clock size={24} weight="fill" />
-      case 'location': return <MapPin size={24} weight="fill" />
-      case 'platform': return <MapPin size={24} weight="fill" />
+      case 'platform': return <TrendUp size={24} weight="fill" />
+      case 'strategy': return <MapPin size={24} weight="fill" />
       default: return <TrendUp size={24} weight="fill" />
     }
   }
@@ -194,7 +179,7 @@ Return your response as JSON in this exact format:
                 AI-Powered Insights
               </h4>
               <p className="text-muted-foreground text-[clamp(0.75rem,2.2vw,0.85rem)] line-clamp-2">
-                Log at least 3 shifts to unlock personalized AI recommendations using TLC Trip Record Data patterns.
+                Log at least 3 shifts to unlock AI recommendations using TLC Trip Record Data patterns.
               </p>
             </div>
           </div>
@@ -214,7 +199,7 @@ Return your response as JSON in this exact format:
           </motion.div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-[clamp(0.9rem,2.5vw,1rem)]">Your Personalized Insight</h4>
+              <h4 className="font-semibold text-[clamp(0.9rem,2.5vw,1rem)]">AI-Generated Insight</h4>
               <Button
                 variant="ghost"
                 size="sm"

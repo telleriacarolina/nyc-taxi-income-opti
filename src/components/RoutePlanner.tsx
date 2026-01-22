@@ -65,57 +65,57 @@ export function RoutePlanner() {
       const currentDay = new Date().getDay()
       const isWeekend = currentDay === 0 || currentDay === 6
       
-      const prompt = (spark.llmPrompt as any)`You are an NYC TLC routing expert with access to historical trip data showing optimal paths between high-earning zones.
+      const prompt = (spark.llmPrompt as any)`You are an NYC TLC routing expert with access to historical trip data showing optimal patterns between zone types.
 
-Based on ${period} time period ${isWeekend ? '(weekend)' : '(weekday)'}, generate 3 optimal routes connecting hot zones for maximum earnings.
+Based on ${period} time period ${isWeekend ? '(weekend)' : '(weekday)'}, generate 3 general route patterns connecting zone types for maximum earnings WITHOUT specific neighborhood names.
 
 Each route should:
-- Connect 3-5 high-earning neighborhoods in a logical geographic sequence
+- Connect 3-5 general zone types in a logical sequence (e.g., "Residential areas", "Business districts", "Airport zones", "Entertainment areas")
 - Consider traffic patterns, demand flow, and fare potential
-- Include travel time between stops
+- Include travel time between zone types
 - Calculate total earnings potential based on TLC historical data
-- Have a strategic theme (e.g., "Airport Loop", "Manhattan Core", "Cross-Borough")
+- Have a strategic theme (e.g., "Airport Loop", "Business Core", "Cross-Borough Pattern")
 
 For each route, provide:
-- Route name (descriptive, e.g., "Morning Commuter Circuit")
+- Route name (descriptive but general, e.g., "Morning Commuter Pattern")
 - Array of 3-5 stops with:
-  * Neighborhood name
-  * Borough
-  * Precise coordinates [lat, lng]
+  * General zone type (NOT specific neighborhoods)
+  * Borough category (Manhattan-focused, Outer boroughs, Multi-borough)
+  * General NYC coordinates (use areas around 40.75, -73.98 with variations)
   * Average fare from TLC data ($25-75 range)
   * Demand level: high/medium/low
   * Expected rides per hour (2-8)
-  * Estimated time at stop in minutes (15-45)
-  * Reason for this stop citing TLC patterns
+  * Estimated time at zone type in minutes (15-45)
+  * Reason for this zone type citing general TLC patterns
 - Total distance in miles (8-25 range)
 - Total time in minutes including stops (90-180)
 - Estimated earnings (sum of avg fare * rides per hour * time at stop)
 - Estimated total rides
-- Route type (e.g., "Airport Run", "Manhattan Loop", "Outer Borough")
+- Route type (e.g., "Airport Pattern", "Business Loop", "Mixed Zone")
 
-Consider real patterns:
-- Morning: Residential → Business districts → Airports
-- Midday: Business hubs → Hotels → Shopping districts
-- Evening: Business districts → Residential → Entertainment
-- Night: Entertainment → Late-night food areas → Hotels
+Consider general patterns:
+- Morning: Residential areas → Business districts → Airport zones
+- Midday: Business hubs → Commercial areas → Transit centers
+- Evening: Business districts → Residential areas → Entertainment zones
+- Night: Entertainment zones → Late-night areas → Transit hubs
 
 Return ONLY valid JSON in this exact format:
 {
   "routes": [
     {
       "id": "route-1",
-      "name": "Morning Commuter Circuit",
+      "name": "Morning Commuter Pattern",
       "stops": [
         {
           "id": "stop-1",
-          "neighborhood": "Upper West Side",
-          "borough": "Manhattan",
+          "neighborhood": "Residential Areas",
+          "borough": "Manhattan-focused",
           "coordinates": [40.7870, -73.9754],
           "averageFare": 35.00,
           "demandLevel": "high",
           "expectedRidesPerHour": 6,
           "estimatedTimeAtStop": 30,
-          "reason": "Morning residential pickup demand - TLC data shows $35 avg to Midtown"
+          "reason": "Morning residential pickup demand - TLC data shows $35 avg to business districts"
         }
       ],
       "totalDistance": 12.5,
@@ -179,7 +179,7 @@ Return ONLY valid JSON in this exact format:
           <div>
             <h3 className="font-semibold text-lg mb-2">No Routes Generated</h3>
             <p className="text-muted-foreground text-sm mb-4">
-              Generate optimal routes connecting high-earning zones to maximize your efficiency
+              Generate general route patterns connecting zone types to maximize your efficiency
             </p>
             <Button onClick={() => generateRoutes(selectedPeriod)}>
               <Sparkle className="mr-2" />
@@ -201,7 +201,7 @@ Return ONLY valid JSON in this exact format:
             </div>
             <div>
               <h3 className="font-bold text-lg">Route Planner</h3>
-              <p className="text-sm text-muted-foreground">Optimal paths between hot zones</p>
+              <p className="text-sm text-muted-foreground">General route patterns between zone types</p>
             </div>
           </div>
           <Button 

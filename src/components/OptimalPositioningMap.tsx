@@ -44,43 +44,42 @@ export function OptimalPositioningMap() {
       const currentDay = new Date().getDay()
       const isWeekend = currentDay === 0 || currentDay === 6
       
-      const prompt = (spark.llmPrompt as any)`You are an NYC TLC Trip Record Data analyst with access to millions of historical trip records showing pickup locations, fare amounts, tip percentages, and demand patterns by time and location.
+      const prompt = (spark.llmPrompt as any)`You are an NYC TLC Trip Record Data analyst with access to millions of historical trip records showing general demand patterns by time period.
 
-Based on ${period === 'now' ? `current time (${currentHour}:00, ${isWeekend ? 'weekend' : 'weekday'})` : `${period} time period`}, analyze historical TLC Trip Record Data to identify the top 5-7 NYC neighborhoods where drivers should position themselves for maximum earnings.
+Based on ${period === 'now' ? `current time (${currentHour}:00, ${isWeekend ? 'weekend' : 'weekday'})` : `${period} time period`}, provide GENERAL insights about NYC TLC driving patterns during this time without specific neighborhood recommendations.
 
-For each hot zone, provide:
-- Specific neighborhood name (e.g., "Financial District", "Times Square", "LGA Airport")
-- Borough (Manhattan, Brooklyn, Queens, Bronx, Staten Island)
-- Precise latitude/longitude coordinates
-- Average fare amount based on TLC historical data ($30-75 range)
+Provide 3-5 general zone types (NOT specific neighborhoods) with general characteristics:
+- Zone type category (e.g., "Business Districts", "Airport Areas", "Entertainment Zones", "Residential Areas")
+- General borough distribution (Manhattan-focused, Outer boroughs, Multi-borough)
+- Center coordinates for NYC (use general NYC center point around 40.75, -73.98 with slight variations)
+- Average fare range based on TLC historical data ($30-75 range)
 - Demand level: high/medium/low
 - Expected rides per hour during this time (2-8 range)
 - Current traffic level: light/moderate/heavy
-- Brief reason citing TLC data patterns (e.g., "Morning commuter demand to Midtown - TLC data shows $45 avg fares")
-- Peak times for this location (array of time ranges)
+- Brief reason citing GENERAL TLC data patterns (e.g., "Business districts typically see morning commuter demand - TLC data shows higher average fares during rush hours")
+- Peak times for this zone type (array of time ranges)
 
-Consider real factors:
-- Commuter patterns (Financial District morning rush, Midtown all day, residential evening)
-- Airport zones (JFK, LGA, Newark - consistent high fares $50-75+)
-- Entertainment districts (Times Square, Meatpacking - evening/night demand)
-- Business districts (Midtown, FiDi - weekday morning/evening peaks)
-- Weekend vs weekday patterns (brunch zones, nightlife vs business)
-- Current time of day demand patterns from TLC historical records
+Consider general factors:
+- Commuter patterns (morning/evening rush)
+- Airport travel (consistent throughout day with peaks)
+- Entertainment/nightlife (evening/late night)
+- Business activity (weekday patterns)
+- Weekend vs weekday general patterns
 
 Return ONLY valid JSON (no markdown, no explanation) in this exact format:
 {
   "zones": [
     {
       "id": "unique-id",
-      "neighborhood": "Times Square",
-      "borough": "Manhattan",
+      "neighborhood": "Business Districts",
+      "borough": "Manhattan-focused",
       "coordinates": [40.7580, -73.9855],
       "averageFare": 42.50,
       "demandLevel": "high",
       "expectedRidesPerHour": 6,
       "currentTrafficLevel": "moderate",
-      "reason": "Evening entertainment demand - TLC data shows $42 avg fares with high tips",
-      "peakTimes": ["6PM-10PM", "Weekend evenings"]
+      "reason": "Business districts show high demand during commute hours - TLC data indicates elevated fares",
+      "peakTimes": ["6AM-9AM", "5PM-8PM"]
     }
   ]
 }`
@@ -139,10 +138,10 @@ Return ONLY valid JSON (no markdown, no explanation) in this exact format:
         </div>
         <div className="flex-1">
           <h2 className="text-[clamp(0.9rem,2.8vw,1.125rem)] font-semibold mb-0.5 line-clamp-1">
-            Optimal Positioning Map
+            General Zone Patterns
           </h2>
           <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground line-clamp-2">
-            Real-time hot zones based on TLC Trip Record Data patterns
+            General zone patterns based on TLC Trip Record Data
           </p>
         </div>
         <Button
@@ -262,7 +261,7 @@ Return ONLY valid JSON (no markdown, no explanation) in this exact format:
             <div className="mt-3 flex items-start gap-2 text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground bg-muted/30 rounded-lg p-3">
               <Sparkle size={16} className="flex-shrink-0 mt-0.5" weight="fill" />
               <p className="leading-snug">
-                Markers show high-earning zones from TLC historical data. Larger fares indicate better positioning opportunities.
+                Markers show general zone types from TLC historical data. This shows typical demand patterns, not specific location recommendations.
               </p>
             </div>
           </TabsContent>
@@ -340,7 +339,7 @@ Return ONLY valid JSON (no markdown, no explanation) in this exact format:
             </div>
             <h3 className="font-semibold mb-1 text-[clamp(0.9rem,2.8vw,1rem)]">No Data Available</h3>
             <p className="text-muted-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] mb-4">
-              Click refresh to load optimal positioning zones
+              Click refresh to load general zone pattern data
             </p>
             <Button
               onClick={handleRefresh}
@@ -348,7 +347,7 @@ Return ONLY valid JSON (no markdown, no explanation) in this exact format:
               className="bg-accent text-accent-foreground hover:bg-accent/90"
             >
               <ArrowsClockwise size={18} weight="bold" className="mr-1" />
-              Load Hot Zones
+              Load Zone Patterns
             </Button>
           </div>
         </Card>
