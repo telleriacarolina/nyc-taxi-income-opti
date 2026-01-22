@@ -4,7 +4,7 @@ import { Shift } from '@/lib/earnings-types'
 import { calculateStats, formatCurrency, formatHours, getPlatformStats, getDailyEarnings } from '@/lib/earnings-utils'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb, Target, Download } from '@phosphor-icons/react'
+import { Plus, ChartBar, TrendUp, Clock, CurrencyDollar, Car, Lightbulb, Target, Download, Gear } from '@phosphor-icons/react'
 import { ShiftDialog } from './ShiftDialog'
 import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
@@ -17,6 +17,7 @@ import { OptimalPositioningMap } from './OptimalPositioningMap'
 import { RoutePlanner } from './RoutePlanner'
 import { DailySchedulePlanner } from './DailySchedulePlanner'
 import { WeeklyScheduleComparison } from './WeeklyScheduleComparison'
+import { DailyGoalDialog } from './DailyGoalDialog'
 import { Progress } from '@/components/ui/progress'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
@@ -24,9 +25,10 @@ import { toast } from 'sonner'
 
 export function EarningsOptimizer() {
   const [shifts, setShifts] = useKV<Shift[]>('driver-shifts', [])
-  const [dailyGoalMin] = useKV<number>('daily-goal-min', 500)
-  const [dailyGoalMax] = useKV<number>('daily-goal-max', 1000)
+  const [dailyGoalMin, setDailyGoalMin] = useKV<number>('daily-goal-min', 500)
+  const [dailyGoalMax, setDailyGoalMax] = useKV<number>('daily-goal-max', 1000)
   const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false)
+  const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false)
   const [editingShift, setEditingShift] = useState<Shift | null>(null)
 
   const stats = calculateStats(shifts || [])
@@ -89,6 +91,12 @@ export function EarningsOptimizer() {
     }
   }
 
+  const handleSaveGoals = (minGoal: number, maxGoal: number) => {
+    setDailyGoalMin(minGoal)
+    setDailyGoalMax(maxGoal)
+    toast.success('Daily goals updated')
+  }
+
   return (
     <>
       <div className="grid gap-3 md:grid-cols-4 mb-4">
@@ -149,6 +157,14 @@ export function EarningsOptimizer() {
                 Target: {formatCurrency(goalMin)} - {formatCurrency(goalMax)} per day
               </p>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsGoalDialogOpen(true)}
+              className="h-8 px-2 text-[clamp(0.65rem,2vw,0.75rem)] flex-shrink-0"
+            >
+              <Gear size={16} weight="fill" className="flex-shrink-0" />
+            </Button>
           </div>
 
           <div className="space-y-3">
@@ -205,25 +221,110 @@ export function EarningsOptimizer() {
           </div>
 
           {dailyEarnings.length > 0 && (
-            <div className="mt-3 pt-3 border-t grid grid-cols-3 gap-2">
-              <div className="text-center">
-                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Min</div>
-                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-primary">
-                  {dailyEarnings.filter(d => d.earnings >= goalMin).length}
+            <div className="mt-3 pt-3 border-t">
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="text-center">
+                  <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Min</div>
+                  <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-primary">
+                    {dailyEarnings.filter(d => d.earnings >= goalMin).length}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Max</div>
+                  <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-success">
+                    {dailyEarnings.filter(d => d.earnings >= goalMax).length}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Avg Daily</div>
+                  <div className="font-bold text-[clamp(1rem,3vw,1.2rem)]">
+                    {formatCurrency(dailyEarnings.reduce((sum, d) => sum + d.earnings, 0) / dailyEarnings.length)}
+                  </div>
                 </div>
               </div>
-              <div className="text-center">
-                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Days at Max</div>
-                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)] text-success">
-                  {dailyEarnings.filter(d => d.earnings >= goalMax).length}
+
+              <div className="bg-muted/50 rounded-lg p-3 border space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[clamp(0.7rem,2.2vw,0.8rem)] font-medium">Weekly Goal Progress</span>
+                  <span className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                    Last 7 days
+                  </span>
                 </div>
+                {(() => {
+                  const last7Days = dailyEarnings.slice(0, 7)
+                  const weeklyTotal = last7Days.reduce((sum, d) => sum + d.earnings, 0)
+                  const weeklyGoal = goalMax * last7Days.length
+                  const weeklyProgress = Math.min((weeklyTotal / weeklyGoal) * 100, 100)
+                  const daysWorked = last7Days.length
+
+                  return (
+                    <>
+                      <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`absolute h-full transition-all duration-300 ${
+                            weeklyProgress >= 100 ? 'bg-success' : weeklyProgress >= 70 ? 'bg-primary' : 'bg-warning'
+                          }`}
+                          style={{ width: `${weeklyProgress}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-bold text-[clamp(0.9rem,2.8vw,1.1rem)]">
+                            {formatCurrency(weeklyTotal)}
+                          </div>
+                          <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                            {daysWorked} {daysWorked === 1 ? 'day' : 'days'} worked
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-[clamp(0.9rem,2.8vw,1.1rem)]">
+                            {Math.round(weeklyProgress)}%
+                          </div>
+                          <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                            of {formatCurrency(weeklyGoal)}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )
+                })()}
               </div>
-              <div className="text-center">
-                <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mb-1">Avg Daily</div>
-                <div className="font-bold text-[clamp(1rem,3vw,1.2rem)]">
-                  {formatCurrency(dailyEarnings.reduce((sum, d) => sum + d.earnings, 0) / dailyEarnings.length)}
-                </div>
-              </div>
+
+              {(() => {
+                const recentDays = dailyEarnings.slice(0, 7)
+                let currentStreak = 0
+                for (const day of recentDays) {
+                  if (day.earnings >= goalMin) {
+                    currentStreak++
+                  } else {
+                    break
+                  }
+                }
+
+                if (currentStreak > 0) {
+                  return (
+                    <div className="bg-success/10 border border-success/30 rounded-lg p-3 mt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="text-2xl">🔥</div>
+                        <div className="flex-1">
+                          <div className="font-bold text-[clamp(0.85rem,2.6vw,1rem)] text-success">
+                            {currentStreak} Day Streak!
+                          </div>
+                          <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                            Keep hitting your minimum goal
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-[clamp(1.1rem,3.5vw,1.4rem)] text-success">
+                            {currentStreak}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                }
+                return null
+              })()}
             </div>
           )}
         </Card>
@@ -377,6 +478,14 @@ export function EarningsOptimizer() {
         }}
         shift={editingShift}
         onSave={handleSaveShift}
+      />
+
+      <DailyGoalDialog
+        open={isGoalDialogOpen}
+        onOpenChange={setIsGoalDialogOpen}
+        minGoal={goalMin}
+        maxGoal={goalMax}
+        onSave={handleSaveGoals}
       />
     </>
   )
