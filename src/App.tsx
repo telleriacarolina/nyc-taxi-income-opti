@@ -8,6 +8,7 @@ import { RideComparison } from '@/components/RideComparison'
 import { TripCalculator } from '@/components/TripCalculator'
 import { Chatroom } from '@/components/Chatroom'
 import { AIAssistant } from '@/components/AIAssistant'
+import { CurrentLocationRouter } from '@/components/CurrentLocationRouter'
 import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
@@ -64,6 +65,7 @@ function App() {
             </TabsContent>
 
             <TabsContent value="rides" className="space-y-4">
+              <CurrentLocationRouter />
               <RideComparison />
             </TabsContent>
 
