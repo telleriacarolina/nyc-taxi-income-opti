@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LicenseManager } from '@/components/LicenseManager'
@@ -12,7 +11,7 @@ import { CurrentLocationRouter } from '@/components/CurrentLocationRouter'
 import { LocationSettings } from '@/components/LocationSettings'
 import { DeliveryPlatforms } from '@/components/DeliveryPlatforms'
 import { PackageDeliveryWork } from '@/components/PackageDeliveryWork'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Package, Truck } from '@phosphor-icons/react'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -32,7 +31,7 @@ function App() {
           </header>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-9 max-w-6xl h-9">
+            <TabsList className="grid w-full grid-cols-7 max-w-6xl h-9">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -48,14 +47,6 @@ function App() {
               <TabsTrigger value="apps" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <CarProfile size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Apps</span>
-              </TabsTrigger>
-              <TabsTrigger value="delivery" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Package size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Delivery</span>
-              </TabsTrigger>
-              <TabsTrigger value="package-work" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Truck size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Packages</span>
               </TabsTrigger>
               <TabsTrigger value="calculator" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Calculator size={16} weight="fill" className="flex-shrink-0" />
@@ -85,15 +76,25 @@ function App() {
             </TabsContent>
 
             <TabsContent value="apps" className="space-y-4">
-              <RideShareApps />
-            </TabsContent>
-
-            <TabsContent value="delivery" className="space-y-4">
-              <DeliveryPlatforms />
-            </TabsContent>
-
-            <TabsContent value="package-work" className="space-y-4">
-              <PackageDeliveryWork />
+              <Tabs defaultValue="rideshare" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="rideshare">Rideshare</TabsTrigger>
+                  <TabsTrigger value="delivery">Delivery</TabsTrigger>
+                  <TabsTrigger value="packages">Packages</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="rideshare" className="space-y-4">
+                  <RideShareApps />
+                </TabsContent>
+                
+                <TabsContent value="delivery" className="space-y-4">
+                  <DeliveryPlatforms />
+                </TabsContent>
+                
+                <TabsContent value="packages" className="space-y-4">
+                  <PackageDeliveryWork />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
 
             <TabsContent value="calculator" className="space-y-4">
