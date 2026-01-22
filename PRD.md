@@ -61,6 +61,13 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Component loads → Driver selects time period (Right Now, Morning, Midday, Evening, Night) → AI analyzes TLC Trip Record Data patterns for that time period including average fares by pickup zone, historical demand patterns, and traffic conditions → Generates 5-7 hot zones with specific neighborhood names, coordinates, expected earnings, demand levels, and traffic status → Displays top 3 zones in summary cards → Interactive map view shows all hot zones with markers sized by earning potential → List view provides detailed breakdown with average fares, rides per hour, demand level, traffic conditions, and peak times → Each zone includes reasoning based on TLC historical data patterns → Refresh updates recommendations based on current time → Driver can toggle between map visualization and detailed zone information
 - **Success criteria**: Driver receives specific neighborhood recommendations for optimal positioning with data-backed earnings estimates, understands which zones offer best combination of high fares and ride volume for current time period, can visualize zones geographically on map with clear markers, and gets actionable advice on where to stage between rides to maximize earnings based on TLC Trip Record Data showing historical pickup location performance
 
+### Route Planner
+- **Functionality**: AI-powered route planner that generates optimal paths connecting 3-5 high-earning zones in strategic sequences, with detailed stop-by-stop guidance showing expected earnings, timing, and demand patterns
+- **Purpose**: Help drivers maximize efficiency by following pre-planned routes between hot zones rather than randomly moving around the city, reducing downtime and ensuring consistent ride flow throughout their shift
+- **Trigger**: Automatically displayed on Earnings Optimizer tab below Optimal Positioning Map, time period selection updates routes
+- **Progression**: Component loads → Generates 3 optimal routes for selected time period (Morning/Midday/Evening/Night) → Each route displays name, route type, total distance, total time, estimated earnings, and number of stops → Driver clicks route card to view details → Detail view shows interactive map with numbered stop markers and polyline path → Stop Details tab shows sequenced list of neighborhoods with average fares, expected rides per hour, estimated time at each stop, demand levels, and strategic reasoning → Each stop displays estimated earnings calculation → Route strategy card explains the logic behind the sequence → Driver can switch time periods to see different optimal routes → Refresh button regenerates routes with updated AI analysis
+- **Success criteria**: Driver receives 3 distinct route options connecting high-earning neighborhoods in logical geographic sequences, can visualize the complete path on an interactive map, understands timing and earnings potential for each stop, sees total estimated earnings and ride count for the complete route, and gets strategic guidance on why stops are sequenced in that specific order based on TLC historical data and traffic patterns
+
 ### Smart Ride Analyzer
 - **Functionality**: AI-powered tool to evaluate whether a ride offer is worth accepting based on historical performance and NYC TLC Trip Record Data patterns
 - **Purpose**: Help drivers make split-second decisions on which rides to accept for maximum profitability using both personal history and TLC historical data benchmarks
@@ -259,6 +266,27 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Zone Coordinates**: Uses precise NYC neighborhood coordinates for accurate map visualization
 - **Multiple Peak Times**: Displays all relevant peak time periods for each zone as separate badges
 - **Last Update Timestamp**: Shows when hot zones were last refreshed with clock icon
+- **Route Planner Initial Load**: Automatically generates 3 optimal routes based on morning time period on component mount
+- **Route Planner Time Period Change**: Regenerates all routes when driver selects different time period (Morning/Midday/Evening/Night)
+- **Route Planner Refresh**: Manually refresh routes with refresh button, animated spinner during AI generation
+- **Route Planner Generation Fails**: Show graceful error message with toast notification, allow retry
+- **No Routes Generated**: Show empty state with call-to-action to generate routes
+- **Route Loading State**: Display loading card with spinner and "Analyzing optimal routes..." message
+- **Route Selection**: Click any route card to select and view details in expanded view
+- **Selected Route Highlighting**: Active route card shows primary border and background tint
+- **Route Map View**: Interactive OpenFreeMap displays numbered markers for each stop showing route sequence
+- **Route Stop Details View**: Comprehensive list showing each stop with timing, earnings, demand, and reasoning
+- **Route Strategy Card**: Explains the logic behind the route sequence and optimization approach
+- **Multiple Routes Display**: Shows 3 distinct route options in grid layout, single column on mobile
+- **Route Metrics**: Each route card shows stops count, distance, time, estimated earnings, and route type
+- **Stop Numbering**: Stops numbered 1-5 showing logical sequence through hot zones
+- **Stop Earnings Calculation**: Displays estimated earnings per stop based on avg fare × rides per hour × time at stop
+- **Route Type Badges**: Color-coded badges showing route category (Residential to Business, Airport Run, etc.)
+- **Time Formatting**: Converts minutes to hours and minutes format (e.g., 120m → 2h 0m)
+- **Map Markers**: Each stop displays as numbered marker with neighborhood name and average fare in popup
+- **Demand Level Colors**: Color-coded demand badges (high green, medium yellow, low gray) on stop cards
+- **Next Stop Indicator**: Lightning icon between stops showing progression through route
+- **Total Route Stats**: Summary cards showing distance, time, earnings, and average per stop
 - **No Location Data for Heatmap**: Heatmap hidden until at least one shift has start location data
 - **Single Location Tracked**: Heatmap displays single location with stats in both chart and map views, encourages tracking from multiple start points
 - **Map View with Unknown Locations**: Locations not in NYC neighborhoods database default to Manhattan center coordinates, still show earnings data
@@ -423,6 +451,18 @@ Animations should provide clear feedback for status changes and guide attention 
   - Target icon for optimal positioning goals
   - Zone reason text citing TLC historical data patterns
   - Map marker clustering with color-coded cluster size badges (primary blue gradient: light for small clusters 1-20, medium for 21-100, dark for 100+). Clusters display count and expand on click with spiderfy animation. Custom cluster styling matches app's primary color scheme with rounded badges and drop shadow.
+  - Route planner card with gradient background (primary/accent mix) and navigation arrow icon
+  - Route option cards with route number badges, route type badges, and selectable state
+  - Selected route highlighting with primary border and background tint
+  - Route detail view with map/stop details tabs
+  - Interactive map showing numbered stop markers in sequence
+  - Stop cards with left border, numbered circles, and detailed metrics
+  - Stop-to-stop progression indicators with lightning icons
+  - Route summary statistics cards (distance, time, earnings, avg per stop)
+  - Route strategy explanation card with gradient success background
+  - Time period tabs for route generation (Morning/Midday/Evening/Night)
+  - Route loading state with spinner and "Analyzing optimal routes" message
+  - Empty state for no routes with navigation arrow icon
   - Chat message bubbles with rounded corners and directional tail (sender vs current user styling)
   - Message timestamp display with smart relative time formatting
   - Fellow driver cards with avatar, name, online/offline badge, and remove action
@@ -444,7 +484,9 @@ Animations should provide clear feedback for status changes and guide attention 
   - Brain: AI Assistant, intelligent features
   - Sparkle: AI insights, smart recommendations, AI-generated content
   - PaperPlaneRight: Send message to AI, send chat message
-  - Lightning: Quick AI analysis, fast recommendations
+  - Lightning: Quick AI analysis, fast recommendations, next stop indicator in routes
+  - NavigationArrow: Route planner feature, navigation and routing
+  - Path: Route paths, route planning, distance metrics, trip details
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab, Chart view in heatmap
   - Globe: Map view in location heatmap, geographic visualization
@@ -461,12 +503,10 @@ Animations should provide clear feedback for status changes and guide attention 
   - TrendUp: Performance improvements and best rates, best rides, expected earnings
   - TrendDown: Lowest value rides
   - Lightbulb: Insights and recommendations
-  - Lightning: Quick features and fast pay, rideshare advantages
   - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips, fellow drivers
   - Globe: Platform availability
-  - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap
-  - Path: Distance metrics, trip details
+  - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap, route stops
   - ArrowRight: Route direction indicator
   - Warning/WarningCircle: Expiring/expired alerts, important considerations
   - CheckCircle: Current/valid status

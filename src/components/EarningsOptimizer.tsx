@@ -14,6 +14,7 @@ import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { LocationHeatmap } from './LocationHeatmap'
 import { OptimalPositioningMap } from './OptimalPositioningMap'
+import { RoutePlanner } from './RoutePlanner'
 import { Progress } from '@/components/ui/progress'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
@@ -269,6 +270,8 @@ export function EarningsOptimizer() {
       <Insights />
 
       <OptimalPositioningMap />
+
+      <RoutePlanner />
 
       <TrafficPatternComparison />
 
