@@ -93,6 +93,15 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Component loads → AI generates realistic NYC DOT-style traffic data for major corridors (FDR Drive, West Side Highway, BQE, LIE, Major Deegan, Cross Bronx, etc.) → Displays current average speeds, travel time indices, and congestion status → Shows active incidents (construction, accidents, planned events, closures) with severity levels → Borough filter buttons allow focusing on specific areas → Traffic Speeds tab shows speed data with status-coded badges (free-flow/moderate/congested/severe) on interactive OpenFreeMap → Incidents tab shows construction and events with impact descriptions and timelines → Refresh button generates updated data reflecting current time patterns → Summary cards show citywide average speed, congestion count, active incidents, and corridors tracked
 - **Success criteria**: Driver sees real-time traffic conditions across NYC with average speeds by corridor, identifies congested areas to avoid, learns about active construction and road closures, can filter by borough for focused planning, and receives actionable tips on using traffic intelligence to reach high-earning zones efficiently
 
+### Weather Impact Analysis
+
+- **Functionality**: Comprehensive weather data overlay showing current conditions, seasonal patterns, and AI-powered analysis of how different weather scenarios impact rideshare demand and earnings, with detailed driver tips for optimizing performance in each weather condition
+- **Purpose**: Help drivers understand seasonal earnings patterns, anticipate demand changes based on weather conditions, and make strategic decisions about when to work based on weather forecasts to maximize earnings throughout the year
+- **Trigger**: Automatically displayed on Earnings Optimizer tab below Traffic Overlay, with current weather generated on load and AI-powered impact analysis available on demand
+- **Progression**: Component loads → Generates realistic current weather based on current season (temperature, feels-like temp, precipitation, wind, visibility) → Displays current weather card with condition icon and temperature → Shows precipitation, wind speed, and visibility metrics → Calculates demand impact multiplier based on conditions (+25-40% for rain/snow, -10-15% for extreme heat, stable for mild weather) → Weather Impacts tab: Driver clicks refresh → AI generates 5 different weather scenario analyses (Heavy Rain, Snow Storm, Extreme Heat, Clear & Mild, Fog) → Each scenario shows demand change percentage, earnings impact per hour, fare multiplier (e.g., 1.3x for snow), ride volume change description, and 3 specific actionable tips for drivers → Seasonal Patterns tab: Driver selects season (Spring/Summer/Fall/Winter) → Displays seasonal overview card with month range, demand multiplier, average temperature, precipitation, and wind speed → Shows top weather conditions for selected season as badges → Provides seasonal earnings strategy specific to that time of year → All data refreshable on demand
+- **Success criteria**: Driver sees current weather conditions with demand impact estimate, understands how 5 different weather scenarios affect earnings with specific dollar-per-hour impacts and fare multipliers, receives 3 actionable driver tips for each weather condition (e.g., "Position near transit hubs during heavy rain", "Focus on airport runs during snow"), can explore seasonal patterns for all four seasons with historical averages and demand multipliers (winter 1.35x, fall 1.15x, spring 1.1x, summer 0.95x), learns seasonal strategies for maximizing earnings (e.g., winter: focus on severe weather days and late-night shifts, summer: target evening entertainment districts), and makes informed decisions about working specific shifts based on weather forecasts and historical patterns showing which conditions drive highest demand
+
+
 ### Optimal Positioning Map
 
 - **Functionality**: Real-time interactive map showing optimal driver positioning zones based on NYC TLC Trip Record Data with AI-powered analysis of high-earning neighborhoods by time of day
@@ -369,6 +378,22 @@ Here's some content about multi-apping tips...
 - **Real-Time Timestamp**: Displays last update time in header, updates on each refresh
 - **Multiple Boroughs**: "All Boroughs" shows complete citywide data, individual boroughs show filtered view
 - **Travel Time Index**: Displays travel time multiplier (1.0x = normal, >1.5x = significant congestion)
+- **Weather Overlay Initial Load**: Automatically generates current weather data based on current season and time on component mount
+- **Weather Impacts Generation**: Driver clicks generate/refresh to fetch AI-powered analysis of 5 weather scenarios with earnings impacts
+- **Weather Impacts Loading**: Display loading state with spinner and "Analyzing weather impact patterns..." message while AI generates scenarios
+- **Weather Impacts Generation Fails**: Show graceful error message with toast notification, allow retry with refresh button
+- **No Weather Impact Data**: Show empty state with call-to-action button to generate first analysis
+- **Weather Condition Icons**: Dynamic icons based on condition type (sunny, cloudy, rainy, snowy, foggy, windy)
+- **Season Selection**: Dropdown selector switches between Spring, Summer, Fall, Winter seasonal data
+- **Seasonal Pattern Display**: Each season shows month range, average temperature, precipitation, wind speed, demand multiplier, and top conditions as badges
+- **Weather Demand Impact Colors**: Color-coded demand impact display (green for increases, red for decreases, muted for stable)
+- **Weather Multiplier Display**: Each weather scenario shows fare multiplier (e.g., 1.3x, 0.85x) prominently with formatted decimal
+- **Current Weather Refresh**: Refresh button updates both current weather and impact analysis simultaneously
+- **Weather Tips Display**: Each scenario includes 3 specific actionable driver tips displayed as bulleted list
+- **Seasonal Strategy Card**: Comprehensive paragraph strategy for selected season with specific recommendations
+- **Weather Tabs**: Two-tab interface switches between Weather Impacts (scenario analysis) and Seasonal Patterns (yearly overview)
+- **Temperature Display**: Shows actual temperature and "feels like" temperature with appropriate icon (thermometer hot/cold/sun)
+- **Precipitation Percentage**: Displays 0-100% precipitation chance with appropriate styling
 - **Optimal Positioning Initial Load**: Automatically generates hot zones based on current time on component mount
 - **Optimal Positioning Time Period Change**: Refreshes hot zone data when driver selects different time period
 - **Optimal Positioning Refresh**: Manually refresh hot zones with refresh button, animated spinner during AI generation
@@ -592,6 +617,18 @@ Animations should provide clear feedback for status changes and guide attention 
   - Real-time timestamp display with clock icon
   - Refresh button with spinning animation during data load
   - Travel time index display (1.0x normal, >1.5x congested)
+  - Weather overlay card with gradient background (primary/accent mix) and primary-colored border
+  - Current weather display with condition-specific icons (sun, cloud, rain, snow) and temperature
+  - Weather metrics cards showing precipitation percentage, wind speed, and visibility
+  - Weather demand impact card with success/warning coloring based on expected demand change
+  - Weather scenario cards with condition name, demand change badge, earnings impact badge, and fare multiplier
+  - Weather driver tips displayed as bulleted list with sparkle icon header
+  - Seasonal pattern cards with month range, temperature icon (hot/cold/sun), and demand multiplier
+  - Season selector dropdown for switching between Spring, Summer, Fall, Winter
+  - Top weather conditions displayed as badge collection
+  - Seasonal strategy card with gradient success background and detailed paragraph guidance
+  - Weather impacts/seasonal patterns tabs for switching between analysis views
+  - Weather refresh button updates both current conditions and AI-powered impact scenarios
   - Traffic alerts card with Bell icon and notification settings
   - Alert notification toggle switches for 4 alert types (traffic/hotspot/incident/opportunity)
   - Toggle switches with descriptive labels and icons showing alert categories
@@ -708,8 +745,15 @@ Animations should provide clear feedback for status changes and guide attention 
   - Bell: Traffic alerts and notifications, alert system
   - BellSlash: Notifications disabled
   - X: Road closures, clear/cancel actions, delete alerts
+  - CloudRain: Weather overlay, rain conditions, precipitation metrics
+  - CloudSnow: Snow conditions, winter weather
+  - Sun: Clear weather, sunny conditions, mild weather indicator
+  - Cloud: Cloudy weather, general weather icon
+  - Wind: Wind speed indicator, windy conditions
+  - ThermometerHot: High temperatures, heat conditions
+  - ThermometerCold: Cold temperatures, winter conditions
   - FileText: Document tracking
-  - CalendarBlank: Date/expiration displays, seasonal insights
+  - CalendarBlank: Date/expiration displays, seasonal insights, season selection
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)

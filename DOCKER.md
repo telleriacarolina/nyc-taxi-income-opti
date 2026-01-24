@@ -5,7 +5,31 @@ This project includes Docker configurations for both development and production 
 ## 📋 Prerequisites
 
 - Docker Desktop installed and running
-- Docker Compose (usually included with Docker Desktop)
+- Docker Compose V2 (included with Docker Desktop)
+
+## ⚠️ Important: Running Docker in Dev Container
+
+**Note:** If you're working inside a dev container (like this project), Docker commands need to be run from your **host machine**, not inside the dev container, unless you've configured Docker-in-Docker or Docker socket mounting.
+
+### Option 1: Run from Host Machine (Recommended)
+Open a terminal on your host machine and navigate to the project directory:
+```bash
+cd /path/to/spark-template
+npm run docker:dev
+```
+
+### Option 2: Enable Docker in Dev Container
+Add to `.devcontainer/devcontainer.json`:
+```json
+{
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
+  }
+}
+```
+Then rebuild your dev container.
 
 ## 🚀 Quick Start
 
@@ -36,23 +60,25 @@ Access the app at: http://localhost:8080
 
 ```bash
 # Start development environment
-docker-compose up dev
+docker compose up dev
 
 # Start production environment
-docker-compose up prod
+docker compose up prod
 
 # Stop all containers
-docker-compose down
+docker compose down
 
 # Rebuild containers
-docker-compose build
+docker compose build
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Remove all containers and volumes
-docker-compose down -v
+docker compose down -v
 ```
+
+**Note:** Modern Docker uses `docker compose` (with space) instead of the old `docker-compose` (with hyphen).
 
 ### Using Docker directly
 

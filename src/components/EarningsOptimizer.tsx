@@ -17,6 +17,7 @@ import { LocationInsightComparison } from './LocationInsightComparison'
 import { TrafficOverlay } from './TrafficOverlay'
 import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { TrafficAlerts } from './TrafficAlerts'
+import { WeatherOverlay } from './WeatherOverlay'
 import { LocationHeatmap } from './LocationHeatmap'
 import { MultiRangeHeatmap } from './MultiRangeHeatmap'
 import { LocationHistoryHeatmap } from './LocationHistoryHeatmap'
@@ -407,6 +408,8 @@ export function EarningsOptimizer() {
       <TrafficAlerts />
 
       <TrafficOverlay />
+
+      <WeatherOverlay />
 
       {(shifts || []).filter(s => s.startLocation && s.startLocation.trim() !== '').length > 0 && (
         <>
