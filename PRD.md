@@ -269,6 +269,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Cards display key metrics → Compare commission rates → Review features and best-use scenarios → Star favorites
 - **Success criteria**: Driver understands commission differences and can choose optimal platforms for their strategy
 
+### NYC TLC Current Bases Database
+
+- **Functionality**: Live searchable database of all licensed TLC bases operating in NYC, sourced from NYC Open Data API (https://data.cityofnewyork.us/resource/eccv-9dzr.json), displaying base information including name, base number, type (Black-Car, Livery), DBA name, app company affiliation (Uber, Lyft, Via), physical address, phone number, website, and vehicle count with real-time search filtering by name/number/affiliation and filtering by base type
+- **Purpose**: Help drivers discover and connect with licensed TLC bases that dispatch for their preferred platforms, understand which bases are affiliated with major ride-hailing apps, verify base legitimacy through official TLC data, and find contact information for potential base partnerships
+- **Trigger**: Navigate to Ride Share Apps tab → Select Bases sub-tab
+- **Progression**: Component loads → Automatically fetches up to 1,000 licensed bases from NYC Open Data API → Displays total count and last update time → Driver can search by base name, base number, DBA, or app affiliation in real-time → Filter by base type (All, Black-Car, Livery) with counts → Each base card shows base name, base number badge, base type badge, DBA name if different, app company affiliation (Uber, Lyft, Via, etc.) prominently displayed, full physical address with map pin icon, clickable phone number, clickable website link, vehicle count → Base cards have color-coded left borders (blue for Black-Car, green for Livery) → Scroll through results in 500px scrollable area → Refresh button manually updates data from API → Empty state shown when search/filter yields no results → Info card explains what TLC bases are and their role in FHV dispatch → Loading state with spinner during API fetch → Success toast shows number of bases loaded → Error handling with retry option if API fails
+- **Success criteria**: Driver can search and find specific bases by name or number within 2 seconds, filter bases by type to see only Black-Car or Livery bases, identify which bases are affiliated with Uber, Lyft, Via and other major apps, get complete contact information (address, phone, website) for any base, see total vehicle count to understand base size, verify base legitimacy through official TLC base number, understand the difference between Black-Car and Livery bases, refresh data to get latest TLC information, and use this data to make informed decisions about which base to partner with based on their preferred platforms and geographic location
+
 ### Delivery Platforms Directory
 
 - **Functionality**: Comprehensive directory of food, grocery, and package delivery platforms including Uber Eats, DoorDash, Grubhub, Seamless, Instacart, Amazon Flex, Relay, and Gopuff with detailed information on earnings, requirements, and features
@@ -543,6 +551,24 @@ Here's some content about multi-apping tips...
 - **Delivery Platform Type Filter**: Filter platforms by food, grocery, or package delivery categories
 - **Delivery Platform Enrollment Tracking**: Track and display count of enrolled delivery platforms with badge
 - **Bike vs Car Delivery Guidance**: Show appropriate platforms and tips based on delivery vehicle type
+- **NYC TLC Bases API Initial Load**: Component automatically fetches up to 1,000 bases from NYC Open Data on mount
+- **NYC TLC Bases API Loading**: Display loading state with spinner and "Loading TLC base data..." message during fetch
+- **NYC TLC Bases API Failure**: Show error toast "Failed to load TLC base data", allow retry with refresh button, maintain previous data if exists
+- **NYC TLC Bases No Results**: Show empty state with buildings icon when search/filter yields no bases
+- **NYC TLC Bases Search**: Real-time filtering as user types, searches across base name, base number, DBA, and app affiliation
+- **NYC TLC Bases Type Filter**: Tabs filter bases by type (All/Black-Car/Livery) with dynamic counts
+- **NYC TLC Bases Refresh**: Manually refresh data from API, show loading spinner in button during fetch
+- **NYC TLC Bases Success Toast**: Toast notification shows number of bases loaded on successful fetch
+- **NYC TLC Bases Missing Data**: Handle optional fields gracefully (phone, website, address, affiliation, vehicle count)
+- **NYC TLC Bases Phone Links**: Phone numbers render as clickable tel: links for mobile dialing
+- **NYC TLC Bases Website Links**: Websites render as clickable links, automatically prepend https:// if not present
+- **NYC TLC Bases Long Names**: Base names truncate with ellipsis if too long for container
+- **NYC TLC Bases Card Borders**: Color-coded left borders (blue for Black-Car, green for Livery) for quick visual identification
+- **NYC TLC Bases Scrollable List**: ScrollArea with 500px height handles long lists of bases with smooth scrolling
+- **NYC TLC Bases Empty Search**: Clear message "Try a different search term" when search yields no results
+- **NYC TLC Bases DBA Display**: Shows DBA name separately if different from base name
+- **NYC TLC Bases App Affiliation**: Prominently displays app company affiliation (Uber/Lyft/Via) with briefcase icon
+- **NYC TLC Bases Info Card**: Educational card explains what TLC bases are and their role in FHV dispatch
 
 ## Design Direction
 
@@ -597,19 +623,19 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views; Secondary navigation for Chart vs Map view in Location Heatmap, Chat vs Fellow Drivers in Chatroom, and delivery type filtering (All/Food/Grocery/Package)
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views; Secondary navigation for Chart vs Map view in Location Heatmap, Chat vs Fellow Drivers in Chatroom, delivery type filtering (All/Food/Grocery/Package), and TLC Bases filtering (All/Black-Car/Livery)
   - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, <https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png>) and Leaflet.markercluster for geographic visualization of earnings locations and traffic patterns. Automatically clusters markers when displaying large datasets (100+ locations) with color-coded cluster size indicators (small: 1-20, medium: 21-100, large: 100+). Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking <https://github.com/telleriacarolina/openfreemap> - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
-  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, and calculator results
-  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages
+  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, calculator results, and TLC base information
+  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages, base type badges (Black-Car, Livery)
   - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides
-  - **Button**: Primary actions (yellow accent), secondary (outline), and icon buttons for quick actions
-  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, pay amounts, and calculator inputs
-  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other), document types, rideshare platforms, and medical providers in calculator
+  - **Button**: Primary actions (yellow accent), secondary (outline), icon buttons for quick actions, and refresh buttons for API data
+  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, pay amounts, calculator inputs, and search fields
+  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other), document types, rideshare platforms, medical providers in calculator, and base type filters
   - **Textarea**: Notes fields for documents, shifts, and rides
   - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
   - **Progress**: Visual bars showing relative earnings performance between platforms and ride comparisons
   - **Separator**: Dividers between document groups, shift groups, and calculator sections
-  - **Scroll Area**: For long lists of documents, shifts, and rides on mobile
+  - **Scroll Area**: For long lists of documents, shifts, rides, TLC bases, and scrollable content areas on mobile
 
 - **Customizations**:
   - Custom colored borders on Cards based on status (green/orange/red for compliance, gradient for earnings)
@@ -742,6 +768,23 @@ Animations should provide clear feedback for status changes and guide attention 
   - Clear day and clear all week action buttons with confirmation
   - Schedule not found state when assigned schedule has been deleted
   - Day-to-schedule assignment persistence via KV storage
+  - TLC Bases database cards with color-coded left borders (blue for Black-Car, green for Livery)
+  - TLC Bases header card with gradient background and live data count
+  - TLC Bases search input with magnifying glass icon for real-time filtering
+  - TLC Bases type filter tabs (All/Black-Car/Livery) with dynamic counts
+  - TLC Bases card showing base name, base number badge (outline monospace), base type badge (secondary)
+  - TLC Bases DBA display as subtitle when different from base name
+  - TLC Bases app affiliation prominently displayed with briefcase icon and primary color
+  - TLC Bases contact information with clickable phone (tel:) and website links
+  - TLC Bases address display with map pin icon
+  - TLC Bases vehicle count with taxi icon
+  - TLC Bases refresh button with spinning animation during API fetch
+  - TLC Bases loading state with centered spinner and loading message
+  - TLC Bases empty state with buildings icon and helpful message
+  - TLC Bases scrollable list (500px height) with smooth scrolling
+  - TLC Bases info card explaining what TLC bases are with buildings icon
+  - TLC Bases success toast notification showing count of loaded bases
+  - TLC Bases last update timestamp display
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -760,7 +803,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - Path: Route paths, route planning, distance metrics, trip details
   - IdentificationCard: License/ID card representation, License Manager tab
   - ChartBar: Earnings analytics, Earnings Optimizer tab, Chart view in heatmap
-  - Globe: Map view in location heatmap, geographic visualization
+  - Globe: Map view in location heatmap, geographic visualization, website links
   - CarProfile: Ride share vehicles, Apps tab
   - MapTrifold: Individual rides, Ride Comparison tab
   - Calculator: Trip income calculator, Calculator tab
@@ -776,8 +819,8 @@ Animations should provide clear feedback for status changes and guide attention 
   - Lightbulb: Insights and recommendations
   - Star: Favorite/preferred platforms, ride ratings
   - Users: Multi-apping tips, fellow drivers
-  - Globe: Platform availability
-  - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap, route stops
+  - Globe: Platform availability, website links
+  - MapPin: Location markers for pickup/dropoff, veteran location insights, location heatmap, route stops, base addresses
   - ArrowRight: Route direction indicator
   - Warning/WarningCircle: Expiring/expired alerts, important considerations
   - CheckCircle: Current/valid status
@@ -794,7 +837,7 @@ Animations should provide clear feedback for status changes and guide attention 
   - Percent: Platform fees and commission rates
   - TrafficSign: Real-time traffic overlay, traffic intelligence, traffic alerts
   - Gauge: Traffic speed indicator, speed metrics
-  - ArrowsClockwise: Refresh traffic data
+  - ArrowsClockwise: Refresh traffic data, refresh TLC bases data, reload API data
   - Bell: Traffic alerts and notifications, alert system
   - BellSlash: Notifications disabled
   - X: Road closures, clear/cancel actions, delete alerts
@@ -807,6 +850,12 @@ Animations should provide clear feedback for status changes and guide attention 
   - ThermometerCold: Cold temperatures, winter conditions
   - FileText: Document tracking
   - CalendarBlank: Date/expiration displays, seasonal insights, season selection
+  - Buildings: TLC bases, base facilities, dispatch centers
+  - Taxi: TLC vehicles, base vehicle counts, ride-hailing
+  - Briefcase: App company affiliations, business relationships
+  - Phone: Contact information, base phone numbers
+  - MagnifyingGlass: Search functionality, filter TLC bases
+  - ListBullets: List counts, data summaries
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)

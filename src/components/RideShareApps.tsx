@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MedicalVouchers } from '@/components/MedicalVouchers'
 import { DailyPlatformPlanner } from '@/components/DailyPlatformPlanner'
+import { CurrentBases } from '@/components/CurrentBases'
 import { 
   CarProfile, 
   Globe, 
@@ -14,7 +15,8 @@ import {
   MapPin,
   Lightning,
   Users,
-  FirstAidKit
+  FirstAidKit,
+  Buildings
 } from '@phosphor-icons/react'
 
 interface RideShareApp {
@@ -156,7 +158,7 @@ export function RideShareApps() {
 
   return (
     <Tabs value={activeView || 'platforms'} onValueChange={setActiveView} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-2xl">
         <TabsTrigger value="platforms" className="gap-2 text-[clamp(0.7rem,2vw,0.85rem)] px-2">
           <CarProfile size={20} weight="fill" className="flex-shrink-0" />
           <span className="truncate">Rideshare</span>
@@ -164,6 +166,10 @@ export function RideShareApps() {
         <TabsTrigger value="medical" className="gap-2 text-[clamp(0.7rem,2vw,0.85rem)] px-2">
           <FirstAidKit size={20} weight="fill" className="flex-shrink-0" />
           <span className="truncate">Medical</span>
+        </TabsTrigger>
+        <TabsTrigger value="bases" className="gap-2 text-[clamp(0.7rem,2vw,0.85rem)] px-2">
+          <Buildings size={20} weight="fill" className="flex-shrink-0" />
+          <span className="truncate">Bases</span>
         </TabsTrigger>
       </TabsList>
 
@@ -297,6 +303,10 @@ export function RideShareApps() {
 
       <TabsContent value="medical" className="space-y-6">
         <MedicalVouchers />
+      </TabsContent>
+
+      <TabsContent value="bases" className="space-y-6">
+        <CurrentBases />
       </TabsContent>
     </Tabs>
   )
