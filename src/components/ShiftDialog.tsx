@@ -63,6 +63,20 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
     return hours + (minutes / 60)
   }
 
+  const getPlatformType = (platform: string): 'rideshare' | 'delivery' | 'package' => {
+    const rideshare = ['uber', 'lyft', 'via', 'curb', 'revel', 'juno']
+    const delivery = ['ubereats', 'doordash', 'grubhub']
+    const packagePlatforms = ['amazonflex']
+    
+    const normalizedPlatform = platform.toLowerCase()
+    
+    if (rideshare.includes(normalizedPlatform)) return 'rideshare'
+    if (delivery.includes(normalizedPlatform)) return 'delivery'
+    if (packagePlatforms.includes(normalizedPlatform)) return 'package'
+    
+    return 'rideshare'
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -72,6 +86,7 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
     }
 
     const hours = calculateHours(formData.startTime, formData.endTime)
+    const platformType = getPlatformType(formData.platform || 'uber')
 
     const newShift: Shift = {
       id: shift?.id || uuidv4(),
@@ -79,6 +94,7 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
       startTime: formData.startTime!,
       endTime: formData.endTime!,
       platform: (formData.platform as Shift['platform']) || 'uber',
+      platformType: platformType,
       earnings: Number(formData.earnings) || 0,
       hours: hours,
       trips: Number(formData.trips) || 0,
@@ -126,12 +142,22 @@ export function ShiftDialog({ open, onOpenChange, shift, onSave }: ShiftDialogPr
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="uber">Uber</SelectItem>
-                  <SelectItem value="lyft">Lyft</SelectItem>
-                  <SelectItem value="via">Via</SelectItem>
-                  <SelectItem value="curb">Curb</SelectItem>
-                  <SelectItem value="revel">Revel</SelectItem>
-                  <SelectItem value="juno">Juno</SelectItem>
+                  <optgroup label="Rideshare">
+                    <SelectItem value="uber">Uber</SelectItem>
+                    <SelectItem value="lyft">Lyft</SelectItem>
+                    <SelectItem value="via">Via</SelectItem>
+                    <SelectItem value="curb">Curb</SelectItem>
+                    <SelectItem value="revel">Revel</SelectItem>
+                    <SelectItem value="juno">Juno</SelectItem>
+                  </optgroup>
+                  <optgroup label="Food Delivery">
+                    <SelectItem value="ubereats">Uber Eats</SelectItem>
+                    <SelectItem value="doordash">DoorDash</SelectItem>
+                    <SelectItem value="grubhub">Grubhub</SelectItem>
+                  </optgroup>
+                  <optgroup label="Package Delivery">
+                    <SelectItem value="amazonflex">Amazon Flex</SelectItem>
+                  </optgroup>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>

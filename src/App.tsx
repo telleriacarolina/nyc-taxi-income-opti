@@ -19,19 +19,32 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
-          <header className="mb-6">
-            <h1 className="font-bold tracking-tight leading-tight mb-1 text-[clamp(1.25rem,3vw,1.5rem)]">
-              TLC Driver Hub
-            </h1>
-            <p className="text-muted-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] line-clamp-1">
-              Compliance & earnings tracking
-            </p>
-          </header>
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 opacity-80">
+          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-gradient-to-br from-primary/25 via-primary/10 to-transparent blur-3xl" />
+          <div className="absolute right-0 top-12 h-72 w-72 rounded-full bg-gradient-to-br from-success/20 via-accent/10 to-transparent blur-3xl" />
+          <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-gradient-to-br from-warning/20 via-secondary/10 to-transparent blur-3xl" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
+          <div className="rounded-2xl border bg-card/80 shadow-xl ring-1 ring-border/60 backdrop-blur supports-[backdrop-filter]:backdrop-blur p-5 md:p-6">
+            <header className="mb-6 space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="px-2.5 py-1 rounded-full border bg-muted/80 text-foreground/80">Live NYC Ops</span>
+                <span className="px-2.5 py-1 rounded-full border bg-primary/10 text-primary">Driver Success</span>
+                <span className="px-2.5 py-1 rounded-full border bg-success/10 text-success">Compliance Ready</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <h1 className="font-bold tracking-tight leading-tight text-[clamp(1.35rem,3vw,1.7rem)]">
+                  TLC Driver Hub
+                </h1>
+                <p className="text-muted-foreground text-[clamp(0.8rem,2.4vw,0.95rem)]">
+                  Smart compliance, earnings coaching, and daily routing in one place.
+                </p>
+              </div>
+            </header>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-7 max-w-6xl h-9">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+              <TabsList className="grid w-full grid-cols-7 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -107,6 +120,7 @@ function App() {
               <LocationSettings />
             </TabsContent>
           </Tabs>
+          </div>
         </div>
       </div>
 
