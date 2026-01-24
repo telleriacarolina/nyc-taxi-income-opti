@@ -24,7 +24,10 @@ Designed with performance, scalability, and data transparency in mind.
 - 🐳 [Rebuild Checklist](docs/docker/REBUILD_REQUIRED.md) - Steps after enabling Docker-in-Docker
 - 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
 - 📋 [Product Requirements Document (PRD)](PRD.md) - Full feature specifications and roadmap
-- 🐍 [Python Setup Guide](PYTHON_SETUP.md) - uv toolchain and data processing
+- 🐍 [Python Setup Guide](docs/PYTHON_SETUP.md) - uv toolchain and data processing
+- 🔒 [Security Guide](docs/SECURITY.md) - Security best practices and guidelines
+- 🤖 [AI Insights Database](docs/AI_INSIGHTS_DATABASE.md) - AI-powered insights and analytics
+- 📍 [Location Permissions](docs/LOCATION_PERMISSIONS.md) - Location tracking configuration
 - 🗺️ [Map Integration](#️-map-integration-with-openfreemap) - Jump to interactive mapping documentation
 
 ---
@@ -100,7 +103,7 @@ uv sync
 uv run main.py
 ```
 
-**📖 Full Documentation**: See [PYTHON_SETUP.md](PYTHON_SETUP.md) for complete Python setup, data processing, and NYC TLC integration.
+**📖 Full Documentation**: See [docs/PYTHON_SETUP.md](docs/PYTHON_SETUP.md) for complete Python setup, data processing, and NYC TLC integration.
 
 ---
 
@@ -247,7 +250,7 @@ rides.to_csv("app_format.csv", index=False)
 rides.to_parquet("app_format.parquet", index=False)
 ```
 
-**📖 Full Data Pipeline**: See [PYTHON_SETUP.md](PYTHON_SETUP.md) for complete examples.
+**📖 Full Data Pipeline**: See [docs/PYTHON_SETUP.md](docs/PYTHON_SETUP.md) for complete examples.
 
 ---
 

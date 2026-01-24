@@ -21,6 +21,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Open NYC TLC tab → View hub dashboard showing upcoming appointments count, active reminders count, and quick stats → Switch between three sections via tabs → Resource Directory: Browse 12+ official TLC resources organized by 11 categories (Licensing, Renewals, Inspections, Drug Testing, Appointments, Hearings, Violations, Payments, Education, Support), search by keyword or tag, view featured quick-access links (LARS, License Status, Appointments, Renewals), click any resource to open official TLC page in new tab → Appointments: Add TLC appointments by selecting type (License Renewal, Vehicle Inspection, Drug Test, Hearing, Education, DMV, Base Registration, Other), enter title, date, time, location, confirmation number, related TLC link, and notes, mark as recurring (annual/biannual/monthly), view upcoming appointments with countdown badges and status colors, edit or delete appointments, see past appointment history → Reminders: Create compliance reminders by selecting type (License Expiration, Vehicle Registration, Drug Test, Appointment, Custom), set target date, choose multiple reminder intervals (1/3/7/14/30/60/90 days before), configure notification methods (in-app, SMS coming soon, push coming soon), toggle reminders on/off, view next alert dates, see active vs inactive reminders, edit or delete reminders → All data persists using KV storage for reliability
 - **Success criteria**: Driver can instantly access any official TLC system with one click from categorized resource directory, finds needed TLC services through search or category filtering, creates and tracks all TLC compliance appointments in one place with confirmation numbers and locations, sets up automated reminders for critical deadlines with multiple advance notice intervals, receives timely alerts before expirations to avoid penalties, manages appointment and reminder schedules efficiently without external tools, reduces missed deadlines and compliance violations through proactive notifications, maintains continuous earning eligibility by staying compliant with TLC requirements, and has confidence that all TLC-related tasks and deadlines are centrally organized and monitored
 
+### NY DMV Hub
+
+- **Functionality**: Centralized access portal to all official NY State Department of Motor Vehicles services with three main sections: Service Directory (configuration-driven catalog of official DMV portals organized by 7 categories: Driver License, Vehicle Registration, Titles, ID Services, Violations & Points, Payments, Appointments), DMV Appointments Tracker (manage personal and vehicle credential appointments with date, location, confirmation, and notes), and DMV Reminders System (automated alerts for driver license and vehicle registration expirations with configurable notification windows)
+- **Purpose**: Prevent missed DMV deadlines and reduce downtime caused by expired credentials by providing one-stop access to driver license renewal/replacement/status, vehicle registration/title services, address changes, Real ID/Enhanced ID info, traffic violations/points/tickets, DMV payment portals, and appointment scheduling, while helping drivers stay organized with appointment tracking and automated deadline reminders to maintain legal eligibility to earn
+- **Trigger**: Navigate to DMV tab in main navigation
+- **Progression**: Open DMV tab → View hub dashboard showing upcoming DMV appointments count, active DMV reminders count, and quick stats → Switch between three sections via tabs → Service Directory: Browse 20+ official DMV services organized by 7 categories (Driver License, Vehicle Registration, Titles, ID Services, Violations & Points, Payments, Appointments), search by keyword or category, view featured quick-access links (License Renewal, Registration Renewal, Real ID, Address Change), click any service to open official DMV portal in new tab with external link indicator → DMV Appointments: Add DMV appointments by entering custom appointment details (title, date, time, location, confirmation number, DMV service link, notes), select appointment type (License Service, Registration Service, Title Service, ID Service, Road Test, Inspection, Other), view upcoming appointments with countdown badges showing days until appointment, edit or delete appointments, see past appointment history, track system-defined recurring needs (license renewal cycles) → DMV Reminders: Create compliance reminders by selecting credential type (Driver License Expiration, Vehicle Registration Expiration, Inspection Due, Points Review, Custom DMV Task), set target date, choose reminder intervals (30/14/7/1 days before), configure notification preferences, toggle reminders on/off, view next alert dates, see active vs inactive reminders, edit or delete reminders → All data persists using KV storage for reliability
+- **Success criteria**: Driver can instantly access any official NY DMV service with one click from categorized directory opening in new tab, finds needed DMV services through search or category filtering without code changes due to configuration-driven links, creates and tracks all DMV appointments in one place with dates and confirmation numbers, sets up automated reminders for driver license and vehicle registration expirations with multiple advance notice intervals (30/14/7/1 days), receives timely alerts before credentials expire to avoid penalties and downtime, manages DMV appointment and reminder schedules efficiently without external calendars, reduces missed DMV deadlines through proactive notifications, maintains continuous legal eligibility to earn by staying compliant with NY State DMV requirements, understands where official DMV appointments are scheduled (external DMV portal), and has confidence that all DMV-related tasks and deadlines are centrally organized and monitored alongside TLC compliance
+
 ### AI Driver Assistant (Database-Powered)
 
 - **Functionality**: Floating AI chat assistant that provides personalized advice powered by REAL-TIME NYC TLC Open Data APIs - fetches up to 3,000 recent HVFH trip records and 300+ base aggregate records to calculate live market statistics (average driver pay, tips, platform trips-per-driver) then uses this intelligence to answer driver questions with actual database numbers
@@ -176,11 +184,11 @@ This is a multi-view application with document tracking, deadline management, sh
 
 ### Tabbed Navigation
 
-- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views with persistent tab state
+- **Functionality**: Switch between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, NYC TLC, DMV, Contact, and Settings views with persistent tab state
 - **Purpose**: Organize distinct driver needs into focused, purpose-built interfaces
 - **Trigger**: Click tab buttons in header
 - **Progression**: User clicks tab → View switches → State persists → Returns to last used tab on app reload
-- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, rideshare platform information, delivery platform information, trip income calculator, driver communication, and location settings
+- **Success criteria**: Driver can seamlessly navigate between compliance tracking, earnings optimization, ride comparison, rideshare platform information, delivery platform information, trip income calculator, driver communication, TLC compliance hub, DMV credential management, TLC contact, and location settings
 
 ### The Chatroom
 
@@ -577,6 +585,39 @@ Here's some content about multi-apping tips...
 - **NYC TLC Bases DBA Display**: Shows DBA name separately if different from base name
 - **NYC TLC Bases App Affiliation**: Prominently displays app company affiliation (Uber/Lyft/Via) with briefcase icon
 - **NYC TLC Bases Info Card**: Educational card explains what TLC bases are and their role in FHV dispatch
+- **DMV Services Search**: Real-time filtering as user types, searches across service name, description, and category
+- **DMV Services Category Filter**: Dropdown filters services by 7 categories plus "All Services" option
+- **DMV Services External Links**: All service links open in new tab with external link indicator icon
+- **DMV Services Featured Section**: Quick access to 4 most commonly used services displayed prominently
+- **DMV Services Empty Search**: Show message when search/filter yields no results with helpful guidance
+- **DMV Services Card Hover**: Hover state with border color change and shadow for clear interactivity feedback
+- **DMV Appointments Initial Load**: Display empty state encouraging driver to add first appointment after scheduling through DMV
+- **DMV Appointments Past/Upcoming Split**: Automatically separate appointments into upcoming and past sections based on date
+- **DMV Appointments Countdown**: Show days until appointment with color-coded badges (urgent if ≤7 days)
+- **DMV Appointments Today/Tomorrow**: Special labels for appointments happening today or tomorrow
+- **DMV Appointments Scrollable Past**: Past appointments displayed in scrollable area to prevent overwhelming the view
+- **DMV Appointments Edit**: Click edit button to modify appointment details in modal dialog
+- **DMV Appointments Delete**: Click delete button to remove appointment with immediate toast confirmation
+- **DMV Appointments Optional Fields**: Handle optional fields gracefully (time, location, confirmation, URL, notes)
+- **DMV Appointments External Links**: Service URL opens in new tab if provided
+- **DMV Appointments Form Validation**: Require title and date before allowing save, show error toast if missing
+- **DMV Appointments Persistence**: All appointments persist in KV storage across sessions
+- **DMV Reminders Initial Load**: Display empty state encouraging driver to set up credential expiration reminders
+- **DMV Reminders Enabled/Disabled State**: Visual distinction with opacity for disabled reminders
+- **DMV Reminders Toggle**: Switch control immediately enables/disables reminder with toast feedback
+- **DMV Reminders Days Remaining**: Calculate and display days until target date with color-coded messaging
+- **DMV Reminders Overdue**: Show overdue status in destructive red if target date has passed
+- **DMV Reminders Next Alert**: Display which reminder interval will trigger next based on days remaining
+- **DMV Reminders Interval Badges**: Show all configured intervals as small outline badges (e.g., 7d, 30d)
+- **DMV Reminders Multi-Interval Selection**: Checkbox list allows selecting multiple reminder intervals (1/3/7/14/30/60/90 days)
+- **DMV Reminders Form Validation**: Require title, target date, and at least one interval before allowing save
+- **DMV Reminders Edit**: Click edit button to modify reminder configuration in modal dialog
+- **DMV Reminders Delete**: Click delete button to remove reminder with immediate toast confirmation
+- **DMV Reminders Persistence**: All reminders persist in KV storage with enabled state across sessions
+- **DMV Hub Stats**: Dashboard shows count of upcoming appointments, active reminders, and total available services
+- **DMV Hub Tab Navigation**: Three tabs (Services/Appointments/Reminders) with clear labels and icons
+- **DMV Hub Service Categories**: Services organized by Driver License, Vehicle Registration, Titles, ID Services, Violations & Points, Payments, Appointments
+- **DMV Hub Configuration**: Service directory is configuration-driven allowing updates without code changes
 
 ## Design Direction
 
@@ -631,19 +672,21 @@ Animations should provide clear feedback for status changes and guide attention 
 ## Component Selection
 
 - **Components**:
-  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, and Settings views; Secondary navigation for Chart vs Map view in Location Heatmap, Chat vs Fellow Drivers in Chatroom, delivery type filtering (All/Food/Grocery/Package), and TLC Bases filtering (All/Black-Car/Livery)
+  - **Tabs**: Primary navigation between License Manager, Earnings Optimizer, Ride Comparison, Ride Share Apps, Delivery Platforms, Trip Calculator, Chatroom, NYC TLC, DMV, Contact, and Settings views; Secondary navigation for Chart vs Map view in Location Heatmap, Chat vs Fellow Drivers in Chatroom, delivery type filtering (All/Food/Grocery/Package), TLC Bases filtering (All/Black-Car/Livery), TLC Hub sections (Resources/Appointments/Reminders), and DMV Hub sections (Services/Appointments/Reminders)
   - **OpenFreeMap**: Interactive map component using Leaflet with OpenFreeMap tiles (Liberty style, <https://tiles.openfreemap.org/styles/liberty/{z}/{x}/{y}.png>) and Leaflet.markercluster for geographic visualization of earnings locations and traffic patterns. Automatically clusters markers when displaying large datasets (100+ locations) with color-coded cluster size indicators (small: 1-20, medium: 21-100, large: 100+). Free, open-source tiles via Cloudflare CDN with no API keys or rate limits. Repository configured as git remote `openfreemap` tracking <https://github.com/telleriacarolina/openfreemap> - fetch updates with `git fetch openfreemap`. See integration guide for tile style options (Liberty/Bright/Positron), self-hosting, performance optimization, and development workflows. Alternative styles: Bright (clean/professional), Positron (minimal/data overlays).
-  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, calculator results, and TLC base information
-  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages, base type badges (Black-Car, Livery)
-  - **Dialog**: Modal for adding/editing license, documents, shift information, and individual rides
-  - **Button**: Primary actions (yellow accent), secondary (outline), icon buttons for quick actions, and refresh buttons for API data
-  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, pay amounts, calculator inputs, and search fields
-  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other), document types, rideshare platforms, medical providers in calculator, and base type filters
-  - **Textarea**: Notes fields for documents, shifts, and rides
+  - **Card**: Primary container for license info, document groups, shift entries, ride entries, stat displays, platform details, calculator results, TLC base information, TLC resources, TLC appointments, TLC reminders, DMV services, DMV appointments, and DMV reminders
+  - **Badge**: Status indicators (Current, Expiring, Expired) with color variants, efficiency ratings, platform badges, fee percentages, base type badges (Black-Car, Livery), appointment countdown badges, reminder interval badges, service category badges
+  - **Dialog**: Modal for adding/editing license, documents, shift information, individual rides, TLC appointments, TLC reminders, DMV appointments, and DMV reminders
+  - **Button**: Primary actions (yellow accent), secondary (outline), icon buttons for quick actions, refresh buttons for API data, and external link buttons for DMV/TLC services
+  - **Input**: Text fields for license numbers, document names, earnings amounts, shift details, ride locations, distances, times, pay amounts, calculator inputs, search fields, appointment details, reminder settings, and confirmation numbers
+  - **Select**: Dropdown for platform selection (Uber, Lyft, Via, Curb, Revel, Juno, Other), document types, rideshare platforms, medical providers in calculator, base type filters, appointment types, reminder types, and DMV service categories
+  - **Textarea**: Notes fields for documents, shifts, rides, appointments, and reminders
   - **Alert**: Prominent warnings for expired items and insights callouts for earnings opportunities
   - **Progress**: Visual bars showing relative earnings performance between platforms and ride comparisons
   - **Separator**: Dividers between document groups, shift groups, and calculator sections
-  - **Scroll Area**: For long lists of documents, shifts, rides, TLC bases, and scrollable content areas on mobile
+  - **Scroll Area**: For long lists of documents, shifts, rides, TLC bases, TLC appointments, TLC reminders, DMV services, DMV appointments, DMV reminders, and scrollable content areas on mobile
+  - **Switch**: Toggle controls for reminder enable/disable states in both TLC and DMV reminders
+  - **Checkbox**: Multi-select for reminder intervals in TLC and DMV reminder configuration
 
 - **Customizations**:
   - Custom colored borders on Cards based on status (green/orange/red for compliance, gradient for earnings)
@@ -793,6 +836,34 @@ Animations should provide clear feedback for status changes and guide attention 
   - TLC Bases info card explaining what TLC bases are with buildings icon
   - TLC Bases success toast notification showing count of loaded bases
   - TLC Bases last update timestamp display
+  - DMV Hub header card with gradient background (primary/accent) and dashboard statistics
+  - DMV service cards with icon, name, description, category badge, and external link indicator
+  - DMV featured services section with 2-column grid of most common services
+  - DMV service search input with magnifying glass icon for real-time filtering
+  - DMV service category dropdown with 8 options (All Services + 7 categories)
+  - DMV service hover state with primary border and shadow transition
+  - DMV service icon mapping (license/registration/title/id/violations/payment/appointment) with primary color
+  - DMV appointment cards with calendar icon, countdown badges, and date/time/location display
+  - DMV appointment upcoming section showing future appointments with days-until badges
+  - DMV appointment past section in scrollable area with reduced opacity
+  - DMV appointment countdown badges color-coded (primary for normal, default for urgent ≤7 days)
+  - DMV appointment type badges (License Service, Registration Service, etc.) with secondary variant
+  - DMV appointment confirmation number display with monospace font
+  - DMV appointment service URL as clickable link with external icon
+  - DMV appointment edit/delete buttons with icon labels in button group
+  - DMV appointment form with date/time pickers, text inputs, select dropdowns, and textarea
+  - DMV appointment empty state with calendar icon and encouraging message
+  - DMV reminder cards with bell icon, enable/disable switch, and interval badges
+  - DMV reminder enabled/disabled visual state (60% opacity when disabled)
+  - DMV reminder countdown display showing days remaining with color coding
+  - DMV reminder overdue state in destructive red text
+  - DMV reminder next alert display in success green showing upcoming notification
+  - DMV reminder interval badges as outline variant showing all configured intervals (1d, 7d, 30d, etc.)
+  - DMV reminder type badges (Driver License Expiration, etc.) with secondary variant
+  - DMV reminder edit/delete buttons with icon labels in button group
+  - DMV reminder form with checkbox list for multi-interval selection
+  - DMV reminder empty state with bell icon and encouraging message
+  - DMV scrollable areas (500px for services list, 600px for reminders list, 200px for past appointments)
 
 - **States**:
   - Buttons: Solid yellow accent for primary, subtle hover lift, pressed state with slight scale
@@ -864,6 +935,8 @@ Animations should provide clear feedback for status changes and guide attention 
   - Phone: Contact information, base phone numbers
   - MagnifyingGlass: Search functionality, filter TLC bases
   - ListBullets: List counts, data summaries
+  - CarSimple: DMV tab, vehicle services, vehicle credentials
+  - CreditCard: ID services, Real ID, Enhanced ID
 
 - **Spacing**:
   - Page padding: px-6 py-8 (mobile), px-8 py-12 (desktop)
@@ -875,7 +948,7 @@ Animations should provide clear feedback for status changes and guide attention 
 
 - **Mobile**:
   - Single column layout for all cards on mobile (<768px)
-  - Tabs span full width with clear touch targets, 8-column grid on larger screens wrapping as needed
+  - Tabs span full width with clear touch targets, 10-column grid on larger screens wrapping as needed
   - Stat grid collapses to 2 columns on mobile
   - Platform cards stack in single column on mobile
   - Delivery platform cards stack in single column on mobile, 2-column grid on desktop

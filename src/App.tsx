@@ -13,7 +13,8 @@ import { DeliveryPlatforms } from '@/components/DeliveryPlatforms'
 import { PackageDeliveryWork } from '@/components/PackageDeliveryWork'
 import { ContactTLC } from '@/components/ContactTLC'
 import { NYCTLCHub } from '@/components/NYCTLCHub'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings } from '@phosphor-icons/react'
+import { NYDMVHub } from '@/components/NYDMVHub'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -46,7 +47,7 @@ function App() {
             </header>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="grid w-full grid-cols-9 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+              <TabsList className="grid w-full grid-cols-10 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -74,6 +75,10 @@ function App() {
               <TabsTrigger value="nyctlc" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Buildings size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">NYC TLC</span>
+              </TabsTrigger>
+              <TabsTrigger value="dmv" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <CarSimple size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">DMV</span>
               </TabsTrigger>
               <TabsTrigger value="contact" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Phone size={16} weight="fill" className="flex-shrink-0" />
@@ -128,6 +133,9 @@ function App() {
             </TabsContent>
             <TabsContent value="nyctlc" className="space-y-4">
               <NYCTLCHub />
+            </TabsContent>
+            <TabsContent value="dmv" className="space-y-4">
+              <NYDMVHub />
             </TabsContent>
             <TabsContent value="contact" className="space-y-4">
               <ContactTLC />
