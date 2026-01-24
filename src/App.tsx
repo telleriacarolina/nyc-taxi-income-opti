@@ -11,7 +11,8 @@ import { CurrentLocationRouter } from '@/components/CurrentLocationRouter'
 import { LocationSettings } from '@/components/LocationSettings'
 import { DeliveryPlatforms } from '@/components/DeliveryPlatforms'
 import { PackageDeliveryWork } from '@/components/PackageDeliveryWork'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear } from '@phosphor-icons/react'
+import { ContactTLC } from '@/components/ContactTLC'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
             </header>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="grid w-full grid-cols-7 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+              <TabsList className="grid w-full grid-cols-8 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -68,6 +69,10 @@ function App() {
               <TabsTrigger value="chatroom" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <ChatCircleDots size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Chat</span>
+              </TabsTrigger>
+              <TabsTrigger value="contact" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <Phone size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Contact</span>
               </TabsTrigger>
               <TabsTrigger value="settings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Gear size={16} weight="fill" className="flex-shrink-0" />
@@ -115,6 +120,9 @@ function App() {
             </TabsContent>
             <TabsContent value="chatroom" className="space-y-4">
               <Chatroom />
+            </TabsContent>
+            <TabsContent value="contact" className="space-y-4">
+              <ContactTLC />
             </TabsContent>
             <TabsContent value="settings" className="space-y-4">
               <LocationSettings />
