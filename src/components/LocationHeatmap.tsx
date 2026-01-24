@@ -82,7 +82,6 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   const [mapStyle, setMapStyle] = useKV<MapStyle>('map-style', 'liberty')
   const [showHeatmap, setShowHeatmap] = useKV<boolean>('location-heatmap-enabled', true)
   const [showTerrain, setShowTerrain] = useKV<boolean>('location-terrain-enabled', false)
-  const [showTerrain, setShowTerrain] = useKV<boolean>('location-terrain-enabled', false)
 
   const handleClearDateRange = () => {
     setDateRange({ from: undefined, to: undefined })
