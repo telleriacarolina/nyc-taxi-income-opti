@@ -14,18 +14,7 @@
         "fetch:openfreemap": "git fetch openfreemap && echo '✅ OpenFreeMap updates fetched'",
         "check:openfreemap": "git fetch openfreemap && git log HEAD..openfreemap/main --oneline && git rev-list HEAD..openfreemap/main --count | xargs -I {} echo 'New commits: {}'",
         "compare:openfreemap": "git fetch openfreemap && git diff --stat main openfreemap/main",
-        "review:openfreemap": "git fetch openfreemap && git log openfreemap/main --oneline --graph -20 --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr)%Creset'",
-        "docker:dev": "docker compose up dev",
-        "docker:dev:build": "docker compose up --build dev",
-        "docker:prod": "docker compose up -d prod",
-        "docker:prod:build": "docker compose up -d --build prod",
-        "docker:build": "docker build -t nyc-taxi-optimizer .",
-        "docker:build:dev": "docker build -f Dockerfile.dev -t nyc-taxi-optimizer:dev .",
-        "docker:stop": "docker compose down",
-        "docker:clean": "docker compose down -v && docker rmi nyc-taxi-optimizer nyc-taxi-optimizer:dev 2>/dev/null || true",
-        "docker:logs": "docker compose logs -f",
-        "docker:restart": "docker compose restart",
-        "docker:check": "chmod +x docker-check.sh && ./docker-check.sh"
+        "review:openfreemap": "git fetch openfreemap && git log openfreemap/main --oneline --graph -20 --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr)%Creset'"
     },
     "dependencies": {
         "@github/spark": ">=0.43.1 <1",
