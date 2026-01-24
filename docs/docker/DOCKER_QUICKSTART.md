@@ -57,4 +57,4 @@ They won't conflict because they use different ports!
 
 ---
 
-**Questions?** Check [DOCKER.md](DOCKER.md) for full documentation.
+**Questions?** Check [DOCKER.md](./DOCKER.md) for full documentation.

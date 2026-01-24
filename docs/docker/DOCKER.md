@@ -14,7 +14,7 @@ This project includes Docker configurations for both development and production 
 ### Option 1: Run from Host Machine (Recommended)
 Open a terminal on your host machine and navigate to the project directory:
 ```bash
-cd /path/to/spark-template
+cd /path/to/nyc-taxi-income-opti
 npm run docker:dev
 ```
 
@@ -37,10 +37,10 @@ Then rebuild your dev container.
 
 ```bash
 # Start the development server
-docker-compose up dev
+docker compose up dev
 
 # Or run in detached mode
-docker-compose up -d dev
+docker compose up -d dev
 ```
 
 Access the app at: http://localhost:5173
@@ -49,7 +49,7 @@ Access the app at: http://localhost:5173
 
 ```bash
 # Build and start the production container
-docker-compose up -d prod
+docker compose up -d prod
 ```
 
 Access the app at: http://localhost:8080
@@ -146,16 +146,16 @@ The production container includes health checks:
 lsof -i :5173  # or :8080
 
 # Stop the specific container
-docker-compose stop dev  # or prod
+docker compose stop dev  # or prod
 ```
 
 ### Container won't start
 ```bash
 # Check logs
-docker-compose logs dev
+docker compose logs dev
 
 # Rebuild from scratch
-docker-compose build --no-cache dev
+docker compose build --no-cache dev
 ```
 
 ### Volume permission issues
