@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Development service with hot-reload
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nyc-taxi-optimizer-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_APP_NAME=NYC Taxi Income Optimizer
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network
+
+  # Production service
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nyc-taxi-optimizer-prod
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  app-network:
+    driver: bridge

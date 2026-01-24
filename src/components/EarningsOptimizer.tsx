@@ -27,6 +27,7 @@ import { WeeklyScheduleComparison } from './WeeklyScheduleComparison'
 import { DailyGoalDialog } from './DailyGoalDialog'
 import { TimeHeatmap } from './TimeHeatmap'
 import { HourlyProfitability } from './HourlyProfitability'
+import { YearOverYearComparison } from './YearOverYearComparison'
 import { Progress } from '@/components/ui/progress'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { exportToCSV, exportInsightsToPDF, exportInsightsAsJSON } from '@/lib/report-export'
@@ -386,6 +387,8 @@ export function EarningsOptimizer() {
       <ProfitabilityRatios />
 
       <HourlyProfitability />
+
+      <YearOverYearComparison />
 
       <TimeHeatmap />
 
