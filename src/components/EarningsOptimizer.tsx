@@ -10,6 +10,7 @@ import { ShiftCard } from './ShiftCard'
 import { EarningsInsights } from './EarningsInsights'
 import { PlatformComparison } from './PlatformComparison'
 import { CrossPlatformComparison } from './CrossPlatformComparison'
+import { ProfitabilityRatios } from './ProfitabilityRatios'
 import { Insights } from './Insights'
 import { AIInsights } from './AIInsights'
 import { LocationInsightComparison } from './LocationInsightComparison'
@@ -380,6 +381,8 @@ export function EarningsOptimizer() {
       <Insights />
 
       <CrossPlatformComparison />
+
+      <ProfitabilityRatios />
 
       <TimeHeatmap />
 
