@@ -101,6 +101,14 @@ This is a multi-view application with document tracking, deadline management, sh
 - **Progression**: Component loads → Generates realistic current weather based on current season (temperature, feels-like temp, precipitation, wind, visibility) → Displays current weather card with condition icon and temperature → Shows precipitation, wind speed, and visibility metrics → Calculates demand impact multiplier based on conditions (+25-40% for rain/snow, -10-15% for extreme heat, stable for mild weather) → Weather Impacts tab: Driver clicks refresh → AI generates 5 different weather scenario analyses (Heavy Rain, Snow Storm, Extreme Heat, Clear & Mild, Fog) → Each scenario shows demand change percentage, earnings impact per hour, fare multiplier (e.g., 1.3x for snow), ride volume change description, and 3 specific actionable tips for drivers → Seasonal Patterns tab: Driver selects season (Spring/Summer/Fall/Winter) → Displays seasonal overview card with month range, demand multiplier, average temperature, precipitation, and wind speed → Shows top weather conditions for selected season as badges → Provides seasonal earnings strategy specific to that time of year → All data refreshable on demand
 - **Success criteria**: Driver sees current weather conditions with demand impact estimate, understands how 5 different weather scenarios affect earnings with specific dollar-per-hour impacts and fare multipliers, receives 3 actionable driver tips for each weather condition (e.g., "Position near transit hubs during heavy rain", "Focus on airport runs during snow"), can explore seasonal patterns for all four seasons with historical averages and demand multipliers (winter 1.35x, fall 1.15x, spring 1.1x, summer 0.95x), learns seasonal strategies for maximizing earnings (e.g., winter: focus on severe weather days and late-night shifts, summer: target evening entertainment districts), and makes informed decisions about working specific shifts based on weather forecasts and historical patterns showing which conditions drive highest demand
 
+### Historical Weather Pattern Analysis
+
+- **Functionality**: Comprehensive analysis tool that examines historical earning patterns across different weather conditions, showing which weather types produce the best earnings with detailed breakdowns by month, day of week, and top performing days ranked by earnings
+- **Purpose**: Enable drivers to identify their most profitable weather conditions based on actual historical performance, understand seasonal earnings patterns across different weather types, and strategically plan their work schedule to maximize earnings by working during high-demand weather conditions
+- **Trigger**: Automatically displayed on Earnings Optimizer tab below Weather Overlay, AI-powered pattern generation triggered on demand
+- **Progression**: Component loads → Driver clicks "Generate" button → AI analyzes historical patterns and generates 6 weather pattern categories (Heavy Rain, Snow Storm, Clear & Mild, Extreme Heat, Light Rain, Fog/Overcast) → Each pattern displays comprehensive metrics: average daily earnings, average hourly rate, total days tracked, best/worst day of week performance, earnings range (min-max), demand multiplier, 3 specific driver strategies, and monthly breakdown showing performance across 4-6 months → Summary cards highlight best weather type for earnings (highest avg daily) and lowest earning weather type with comparison → Filter tabs allow viewing all weather or filtering by Rain/Snow/Clear → Weather Pattern Analysis section shows detailed cards for each weather type with color-coded intensity bars for monthly performance → Top Earning Days section displays ranked list of top 10 best earning days filtered by selected weather type, showing date, day of week, earnings, hourly rate, trips, with top 3 highlighted with special colors → All data persists across sessions for long-term tracking
+- **Success criteria**: Driver can generate comprehensive historical weather pattern analysis with 6 distinct weather categories, see average daily earnings and hourly rates for each weather type ranging from $180-$450, understand which days of the week perform best in each weather condition, view earnings ranges showing volatility and consistency, receive 3 actionable strategies specific to each weather type, analyze monthly performance trends showing which months had the best/worst earnings for each weather, filter analysis by weather type (all/rain/snow/clear) to focus on specific conditions, view top 10 best earning days ranked and filtered by weather type with full financial details, compare best vs worst weather conditions side-by-side in summary cards showing demand multipliers and average earnings, and make strategic decisions about which weather conditions to prioritize for working based on proven historical earning patterns
+
 
 ### Optimal Positioning Map
 
@@ -402,6 +410,29 @@ Here's some content about multi-apping tips...
 - **Weather Tabs**: Two-tab interface switches between Weather Impacts (scenario analysis) and Seasonal Patterns (yearly overview)
 - **Temperature Display**: Shows actual temperature and "feels like" temperature with appropriate icon (thermometer hot/cold/sun)
 - **Precipitation Percentage**: Displays 0-100% precipitation chance with appropriate styling
+- **Historical Weather Patterns Initial Load**: Component displays empty state with generate button on first mount
+- **Historical Weather Patterns Generation**: Driver clicks Generate → AI analyzes historical patterns → Returns 6 weather categories with comprehensive metrics and top 10 earning days
+- **Historical Weather Patterns Loading**: Display loading state with spinner and "Analyzing..." message in button during AI generation
+- **Historical Weather Patterns Generation Fails**: Show graceful error message with toast notification, maintain previous data if exists, allow retry
+- **No Historical Weather Data**: Show empty state with call-to-action encouraging driver to generate analysis
+- **Weather Pattern Cards**: Each of 6 weather types displays in detailed card with icon, metrics grid, day performance badges, strategy tips, and monthly performance bars
+- **Weather Type Filter Tabs**: Four tabs (All Weather, Rain, Snow, Clear) filter both pattern cards and top days list
+- **Filtered Weather Patterns**: When filter applied, show only matching weather patterns and top earning days
+- **Best/Worst Weather Summary**: Two summary cards at top compare highest vs lowest earning weather types with key metrics
+- **Weather Pattern Icons**: Dynamic weather-specific icons (CloudRain, CloudSnow, Sun, ThermometerHot, Wind) displayed prominently
+- **Monthly Performance Bars**: Progress bars show relative earnings performance across 4-6 months for each weather type
+- **Top Earning Days Ranking**: Displays up to 10 best days ranked by earnings with position badges (gold/blue/accent for top 3)
+- **Top Day Cards**: Each day shows ranking number, day of week, weather type badge, date, earnings, hourly rate, and trip count
+- **Weather Type Badge**: Small badge on each top day showing which weather pattern it represents
+- **Empty Top Days**: If no days match selected weather filter, shows appropriate empty state
+- **Weather Pattern Persistence**: All generated weather pattern data persists in KV storage across sessions
+- **Weather Pattern Refresh**: Clicking refresh regenerates new AI analysis with updated insights
+- **Demand Multiplier Display**: Shows multiplier value (0.85x to 1.45x) indicating demand impact for each weather type
+- **Earnings Range Display**: Min-max earnings range shows volatility and consistency for each weather type
+- **Best/Worst Day Performance**: Each weather pattern identifies which days of week perform best and worst in those conditions
+- **Driver Strategy Tips**: 3 bullet points per weather type with specific actionable advice for maximizing earnings
+- **Weather Pattern Colors**: Success green for best weather, warning orange for lowest, primary blue accents throughout
+- **Monthly Breakdown Progress**: Visual progress bars scaled relative to max earnings show performance trends
 - **Optimal Positioning Initial Load**: Automatically generates hot zones based on current time on component mount
 - **Optimal Positioning Time Period Change**: Refreshes hot zone data when driver selects different time period
 - **Optimal Positioning Refresh**: Manually refresh hot zones with refresh button, animated spinner during AI generation
@@ -637,6 +668,20 @@ Animations should provide clear feedback for status changes and guide attention 
   - Seasonal strategy card with gradient success background and detailed paragraph guidance
   - Weather impacts/seasonal patterns tabs for switching between analysis views
   - Weather refresh button updates both current conditions and AI-powered impact scenarios
+  - Historical weather pattern card with gradient background (primary/accent/success mix) and calendar icon
+  - Weather pattern analysis cards with left border (primary), weather-specific icons, and detailed metrics grid
+  - Best weather summary card with success green border and background tint, trend up icon
+  - Worst weather summary card with warning orange border and background tint, trend down icon
+  - Weather filter tabs (All Weather/Rain/Snow/Clear) for filtering patterns and top days
+  - Weather pattern metrics grid showing avg daily earnings (primary color), avg hourly rate, earnings range
+  - Day performance section with success/muted badges for best/worst days of week
+  - Driver strategies section with lightbulb icon and bullet list with accent-colored bullets
+  - Monthly performance section with progress bars scaled to max earnings
+  - Top earning days ranked list with numbered circular badges (success/primary/accent for top 3, muted for 4+)
+  - Top day cards with weather type badge, earnings in success green, and trip/hourly details
+  - Demand multiplier badges with outline style and color-coded text
+  - Weather pattern card headers with large weather icons (32px) in primary color
+  - Hover states on top day cards with muted background transition
   - Traffic alerts card with Bell icon and notification settings
   - Alert notification toggle switches for 4 alert types (traffic/hotspot/incident/opportunity)
   - Toggle switches with descriptive labels and icons showing alert categories

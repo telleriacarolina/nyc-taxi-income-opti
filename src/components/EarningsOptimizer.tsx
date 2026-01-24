@@ -19,6 +19,7 @@ import { TrafficPatternComparison } from './TrafficPatternComparison'
 import { TrafficAlerts } from './TrafficAlerts'
 import { WeatherOverlay } from './WeatherOverlay'
 import { WeatherRouteRecommendations } from './WeatherRouteRecommendations'
+import { HistoricalWeatherPatterns } from './HistoricalWeatherPatterns'
 import { LocationHeatmap } from './LocationHeatmap'
 import { MultiRangeHeatmap } from './MultiRangeHeatmap'
 import { LocationHistoryHeatmap } from './LocationHistoryHeatmap'
@@ -411,6 +412,8 @@ export function EarningsOptimizer() {
       <TrafficOverlay />
 
       <WeatherOverlay />
+
+      <HistoricalWeatherPatterns />
 
       <WeatherRouteRecommendations />
 
