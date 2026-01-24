@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Phone, Envelope, MapPin, Clock, ArrowSquareOut } from '@phosphor-icons/react'
+import { Phone, Envelope, MapPin, Clock, ArrowSquareOut, Globe } from '@phosphor-icons/react'
 
 export function ContactTLC() {
-  const officialLink = 'https://www.nyc.gov/site/tlc/about/contact-tlc.page'
+  const tlcLink = 'https://www.nyc.gov/site/tlc/about/contact-tlc.page'
+  const dmvLink = 'https://dmv.ny.gov/contact-us'
 
-  const contactMethods = [
+  const tlcContactMethods = [
     {
       icon: Phone,
       title: '311',
@@ -32,6 +33,33 @@ export function ContactTLC() {
     },
   ]
 
+  const dmvContactMethods = [
+    {
+      icon: Phone,
+      title: 'DMV Phone',
+      description: '1-518-486-9786',
+      detail: 'Mon-Fri, 8:00 AM - 4:00 PM',
+    },
+    {
+      icon: Phone,
+      title: 'DMV Customer Service',
+      description: '1-518-402-2100',
+      detail: 'General inquiries',
+    },
+    {
+      icon: Globe,
+      title: 'Online Services',
+      description: 'dmv.ny.gov',
+      detail: 'Renewals, replacements, records',
+    },
+    {
+      icon: MapPin,
+      title: 'NYC Offices',
+      description: 'Multiple locations throughout NYC',
+      detail: 'Check website for addresses',
+    },
+  ]
+
   return (
     <div className="space-y-4">
       <Card>
@@ -43,7 +71,7 @@ export function ContactTLC() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button
-            onClick={() => window.open(officialLink, '_blank')}
+            onClick={() => window.open(tlcLink, '_blank')}
             className="w-full h-12 text-[clamp(0.8rem,2.4vw,0.95rem)] gap-2"
           >
             <ArrowSquareOut size={20} weight="bold" />
@@ -51,7 +79,7 @@ export function ContactTLC() {
           </Button>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            {contactMethods.map((method, index) => {
+            {tlcContactMethods.map((method, index) => {
               const Icon = method.icon
               return (
                 <Card key={index} className="border-muted">
@@ -83,7 +111,7 @@ export function ContactTLC() {
           <Card className="border-primary/20 bg-primary/5">
             <CardContent className="p-4">
               <h3 className="font-semibold text-[clamp(0.85rem,2.6vw,1rem)] mb-2">
-                Common Services
+                Common TLC Services
               </h3>
               <ul className="space-y-2 text-[clamp(0.75rem,2.4vw,0.875rem)]">
                 <li className="flex items-start gap-2">
@@ -101,6 +129,80 @@ export function ContactTLC() {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">•</span>
                   <span className="line-clamp-2">DMV medical and drug testing information</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-[clamp(1rem,3vw,1.25rem)]">Contact NY DMV</CardTitle>
+          <CardDescription className="text-[clamp(0.75rem,2.4vw,0.9rem)]">
+            Get help with driver licenses, vehicle registration, and DMV services
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button
+            onClick={() => window.open(dmvLink, '_blank')}
+            className="w-full h-12 text-[clamp(0.8rem,2.4vw,0.95rem)] gap-2"
+          >
+            <ArrowSquareOut size={20} weight="bold" />
+            Visit Official DMV Contact Page
+          </Button>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {dmvContactMethods.map((method, index) => {
+              const Icon = method.icon
+              return (
+                <Card key={index} className="border-muted">
+                  <CardContent className="p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success/10">
+                        <Icon size={18} weight="fill" className="text-success" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-[clamp(0.85rem,2.6vw,1rem)] line-clamp-1">
+                          {method.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="space-y-1 pl-11">
+                      <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] line-clamp-2">
+                        {method.description}
+                      </p>
+                      <p className="text-muted-foreground text-[clamp(0.7rem,2.2vw,0.8rem)] line-clamp-1">
+                        {method.detail}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          <Card className="border-success/20 bg-success/5">
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-[clamp(0.85rem,2.6vw,1rem)] mb-2">
+                Common DMV Services
+              </h3>
+              <ul className="space-y-2 text-[clamp(0.75rem,2.4vw,0.875rem)]">
+                <li className="flex items-start gap-2">
+                  <span className="text-success mt-0.5">•</span>
+                  <span className="line-clamp-2">Driver license renewal, replacement, and status</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-success mt-0.5">•</span>
+                  <span className="line-clamp-2">Vehicle registration and title services</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-success mt-0.5">•</span>
+                  <span className="line-clamp-2">Real ID and Enhanced ID information</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-success mt-0.5">•</span>
+                  <span className="line-clamp-2">Traffic violations and ticket payments</span>
                 </li>
               </ul>
             </CardContent>
