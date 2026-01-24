@@ -81,6 +81,8 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
   const [viewMode, setViewMode] = useState<'chart' | 'map'>('chart')
   const [mapStyle, setMapStyle] = useKV<MapStyle>('map-style', 'liberty')
   const [showHeatmap, setShowHeatmap] = useKV<boolean>('location-heatmap-enabled', true)
+  const [showTerrain, setShowTerrain] = useKV<boolean>('location-terrain-enabled', false)
+  const [showTerrain, setShowTerrain] = useKV<boolean>('location-terrain-enabled', false)
 
   const handleClearDateRange = () => {
     setDateRange({ from: undefined, to: undefined })
@@ -711,27 +713,55 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
 
         <TabsContent value="map" className="space-y-4">
           <div className="bg-card rounded-lg border shadow-sm p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <Fire size={20} weight="fill" className={cn(
-                  "transition-colors",
-                  showHeatmap ? "text-warning" : "text-muted-foreground"
-                )} />
-                <div>
-                  <Label htmlFor="heatmap-toggle" className="text-[clamp(0.8rem,2.4vw,0.9rem)] font-semibold cursor-pointer">
-                    Earnings Heatmap Overlay
-                  </Label>
-                  <p className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mt-0.5">
-                    Visualize earning intensity by zone
-                  </p>
+            <div className="space-y-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <svg width="20" height="20" viewBox="0 0 20 20" className={cn(
+                    "transition-colors",
+                    showTerrain ? "text-emerald-600" : "text-muted-foreground"
+                  )} fill="currentColor">
+                    <path d="M2 15l4-4 4 4 8-8v11H2z" opacity="0.7"/>
+                    <path d="M2 10l4-4 4 4 8-8" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                  <div>
+                    <Label htmlFor="terrain-toggle" className="text-[clamp(0.8rem,2.4vw,0.9rem)] font-semibold cursor-pointer">
+                      Terrain Hillshade
+                    </Label>
+                    <p className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mt-0.5">
+                      Show elevation and topography
+                    </p>
+                  </div>
                 </div>
+                <Switch
+                  id="terrain-toggle"
+                  checked={showTerrain}
+                  onCheckedChange={setShowTerrain}
+                  className="data-[state=checked]:bg-emerald-600"
+                />
               </div>
-              <Switch
-                id="heatmap-toggle"
-                checked={showHeatmap}
-                onCheckedChange={setShowHeatmap}
-                className="data-[state=checked]:bg-warning"
-              />
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Fire size={20} weight="fill" className={cn(
+                    "transition-colors",
+                    showHeatmap ? "text-warning" : "text-muted-foreground"
+                  )} />
+                  <div>
+                    <Label htmlFor="heatmap-toggle" className="text-[clamp(0.8rem,2.4vw,0.9rem)] font-semibold cursor-pointer">
+                      Earnings Heatmap Overlay
+                    </Label>
+                    <p className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground mt-0.5">
+                      Visualize earning intensity by zone
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  id="heatmap-toggle"
+                  checked={showHeatmap}
+                  onCheckedChange={setShowHeatmap}
+                  className="data-[state=checked]:bg-warning"
+                />
+              </div>
             </div>
 
             <div className="bg-gradient-to-r from-blue-500/20 via-green-500/20 via-yellow-500/20 to-red-500/20 rounded-lg p-3 mb-4">
@@ -908,6 +938,8 @@ export function LocationHeatmap({ shifts }: LocationHeatmapProps) {
               markers={showHeatmap ? [] : mapMarkers}
               heatmapPoints={heatmapPoints}
               enableHeatmap={showHeatmap}
+              enableTerrain={showTerrain}
+              terrainOpacity={0.5}
               heatmapOptions={{
                 radius: 40,
                 blur: 30,

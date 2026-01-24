@@ -16,12 +16,16 @@ const defaultTheme = {
   container: {
     center: true,
     padding: "2rem",
+    screens: {
+      "2xl": "1400px",
+    },
   },
   extend: {
     screens: {
       coarse: { raw: "(pointer: coarse)" },
       fine: { raw: "(pointer: fine)" },
       pwa: { raw: "(display-mode: standalone)" },
+      xs: "475px",
     },
     colors: {
       neutral: {
@@ -91,6 +95,26 @@ const defaultTheme = {
         overlay: "var(--color-bg-overlay)",
       },
       "focus-ring": "var(--color-focus-ring)",
+      // Earnings & zone-specific colors
+      earnings: {
+        low: "rgb(59 130 246)", // blue-500
+        medium: "rgb(34 197 94)", // green-500
+        high: "rgb(234 179 8)", // yellow-500
+        excellent: "rgb(239 68 68)", // red-500
+      },
+      zone: {
+        manhattan: "rgb(99 102 241)", // indigo-500
+        brooklyn: "rgb(168 85 247)", // purple-500
+        queens: "rgb(236 72 153)", // pink-500
+        bronx: "rgb(251 146 60)", // orange-500
+        staten: "rgb(14 165 233)", // sky-500
+      },
+      platform: {
+        uber: "rgb(0 0 0)",
+        lyft: "rgb(255 0 132)",
+        via: "rgb(0 174 239)",
+        juno: "rgb(80 227 194)",
+      },
     },
     borderRadius: {
       sm: "var(--radius-sm)",
@@ -99,6 +123,64 @@ const defaultTheme = {
       xl: "var(--radius-xl)",
       "2xl": "var(--radius-2xl)",
       full: "var(--radius-full)",
+    },
+    keyframes: {
+      "slide-in-right": {
+        "0%": { transform: "translateX(100%)", opacity: "0" },
+        "100%": { transform: "translateX(0)", opacity: "1" },
+      },
+      "slide-in-left": {
+        "0%": { transform: "translateX(-100%)", opacity: "0" },
+        "100%": { transform: "translateX(0)", opacity: "1" },
+      },
+      "slide-in-up": {
+        "0%": { transform: "translateY(100%)", opacity: "0" },
+        "100%": { transform: "translateY(0)", opacity: "1" },
+      },
+      pulse: {
+        "0%, 100%": { opacity: "1" },
+        "50%": { opacity: "0.5" },
+      },
+      "marker-bounce": {
+        "0%, 100%": { transform: "translateY(0)" },
+        "50%": { transform: "translateY(-10px)" },
+      },
+    },
+    animation: {
+      "slide-in-right": "slide-in-right 0.3s ease-out",
+      "slide-in-left": "slide-in-left 0.3s ease-out",
+      "slide-in-up": "slide-in-up 0.3s ease-out",
+      pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      "marker-bounce": "marker-bounce 1s ease-in-out infinite",
+    },
+    fontFamily: {
+      sans: [
+        "var(--font-sans)",
+        "system-ui",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        '"Segoe UI"',
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+      ],
+      mono: [
+        "var(--font-mono)",
+        "ui-monospace",
+        "SFMono-Regular",
+        "Menlo",
+        "Monaco",
+        "Consolas",
+        '"Liberation Mono"',
+        '"Courier New"',
+        "monospace",
+      ],
+    },
+    boxShadow: {
+      map: "0 2px 8px rgba(0, 0, 0, 0.15)",
+      "map-marker": "0 4px 6px rgba(0, 0, 0, 0.1)",
+      "earnings-card": "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
     },
   },
   spacing: {
@@ -137,12 +219,64 @@ const defaultTheme = {
     72: "var(--size-72)",
     80: "var(--size-80)",
     96: "var(--size-96)",
+    128: "var(--size-128)",
   },
   darkMode: ["selector", '[data-appearance="dark"]'],
 }
 
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx}",
+  ],
+  safelist: [
+    // Map marker colors
+    "bg-earnings-low",
+    "bg-earnings-medium",
+    "bg-earnings-high",
+    "bg-earnings-excellent",
+    // Zone colors
+    "text-zone-manhattan",
+    "text-zone-brooklyn",
+    "text-zone-queens",
+    "text-zone-bronx",
+    "text-zone-staten",
+    // Platform colors
+    "bg-platform-uber",
+    "bg-platform-lyft",
+    "bg-platform-via",
+    "bg-platform-juno",
+    // Animation classes
+    "animate-marker-bounce",
+    "animate-pulse",
+  ],
   theme: { ...defaultTheme, ...theme },
-  plugins: [],
+  plugins: [
+    // Custom plugin for map-specific utilities
+    function ({ addUtilities }) {
+      addUtilities({
+        ".map-marker": {
+          "@apply shadow-map-marker cursor-pointer transition-transform hover:scale-110": {},
+        },
+        ".earnings-card": {
+          "@apply shadow-earnings-card rounded-lg border": {},
+        },
+        ".text-balance": {
+          "text-wrap": "balance",
+        },
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+        ".glass": {
+          "@apply bg-white/80 backdrop-blur-sm dark:bg-neutral-9/80": {},
+        },
+      });
+    },
+  ],
 };
