@@ -26,19 +26,25 @@ export function calculateStats(shifts: Shift[]): EarningsStats {
   const netEarnings = totalEarnings - totalExpenses
 
   const hourlyPatterns = getHourlyPatterns(shifts)
-  const bestHourPattern = hourlyPatterns.reduce((best, curr) => 
-    curr.averageRate > best.averageRate ? curr : best
-  , hourlyPatterns[0])
+  const bestHourPattern = hourlyPatterns.length > 0 
+    ? hourlyPatterns.reduce((best, curr) => 
+        curr.averageRate > best.averageRate ? curr : best
+      , hourlyPatterns[0])
+    : null
 
   const dailyPatterns = getDailyPatterns(shifts)
-  const bestDayPattern = dailyPatterns.reduce((best, curr) => 
-    curr.averageRate > best.averageRate ? curr : best
-  , dailyPatterns[0])
+  const bestDayPattern = dailyPatterns.length > 0
+    ? dailyPatterns.reduce((best, curr) => 
+        curr.averageRate > best.averageRate ? curr : best
+      , dailyPatterns[0])
+    : null
 
   const platformStats = getPlatformStats(shifts)
-  const topPlatformStat = platformStats.reduce((best, curr) => 
-    curr.earnings > best.earnings ? curr : best
-  , platformStats[0])
+  const topPlatformStat = platformStats.length > 0
+    ? platformStats.reduce((best, curr) => 
+        curr.earnings > best.earnings ? curr : best
+      , platformStats[0])
+    : null
 
   return {
     totalEarnings,

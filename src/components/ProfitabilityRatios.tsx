@@ -248,6 +248,7 @@ export function ProfitabilityRatios() {
 
   const getBestPerformer = (metric: keyof ProfitabilityMetrics) => {
     if (profitabilityMetrics.length === 0) return null
+    if (profitabilityMetrics.length === 1) return profitabilityMetrics[0]
     return profitabilityMetrics.reduce((best, current) => 
       (current[metric] as number) > (best[metric] as number) ? current : best
     )
@@ -290,9 +291,11 @@ export function ProfitabilityRatios() {
 
   const bestMargin = getBestPerformer('profitMargin')
   const bestROI = getBestPerformer('roi')
-  const mostEfficient = profitabilityMetrics.reduce((best, current) => 
-    current.expenseRatio < best.expenseRatio ? current : best
-  )
+  const mostEfficient = profitabilityMetrics.length > 0 
+    ? profitabilityMetrics.reduce((best, current) => 
+        current.expenseRatio < best.expenseRatio ? current : best
+      )
+    : null
 
   return (
     <div className="space-y-4">
@@ -392,7 +395,7 @@ export function ProfitabilityRatios() {
               {formatCurrency(totalMetrics.expenses)}
             </div>
             <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-success mt-0.5">
-              {mostEfficient.type} most efficient
+              {mostEfficient ? `${mostEfficient.type} most efficient` : 'Track expenses'}
             </div>
           </Card>
         </div>

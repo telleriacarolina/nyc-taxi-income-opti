@@ -129,14 +129,14 @@ Return as JSON: {
     if (!weatherPatterns || weatherPatterns.length === 0) return null
     return weatherPatterns.reduce((best, current) => 
       current.avgEarnings > best.avgEarnings ? current : best
-    )
+    , weatherPatterns[0])
   }
 
   const getWorstWeatherType = () => {
     if (!weatherPatterns || weatherPatterns.length === 0) return null
     return weatherPatterns.reduce((worst, current) => 
       current.avgEarnings < worst.avgEarnings ? current : worst
-    )
+    , weatherPatterns[0])
   }
 
   const bestWeather = getBestWeatherType()

@@ -198,14 +198,14 @@ export function WeeklyScheduleComparison() {
     if (weeklyPatterns.length === 0) return null
     return weeklyPatterns.reduce((best, current) => 
       current.totalEarnings > best.totalEarnings ? current : best
-    )
+    , weeklyPatterns[0])
   }, [weeklyPatterns])
 
   const bestDayPattern = useMemo(() => {
     if (dayPerformance.length === 0) return null
     return dayPerformance.reduce((best, current) => 
       current.avgEarnings > best.avgEarnings ? current : best
-    )
+    , dayPerformance[0])
   }, [dayPerformance])
 
   const weekdayVsWeekend = useMemo(() => {

@@ -264,10 +264,10 @@ export function HourlyProfitability() {
           const eveningShifts = hourlyData.slice(17, 22).filter(d => d.earnings > 0)
           const nightShifts = [...hourlyData.slice(22, 24), ...hourlyData.slice(0, 5)].filter(d => d.earnings > 0)
 
-          const morningAvg = morningShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / (morningShifts.length || 1)
-          const afternoonAvg = afternoonShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / (afternoonShifts.length || 1)
-          const eveningAvg = eveningShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / (eveningShifts.length || 1)
-          const nightAvg = nightShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / (nightShifts.length || 1)
+          const morningAvg = morningShifts.length > 0 ? morningShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / morningShifts.length : 0
+          const afternoonAvg = afternoonShifts.length > 0 ? afternoonShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / afternoonShifts.length : 0
+          const eveningAvg = eveningShifts.length > 0 ? eveningShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / eveningShifts.length : 0
+          const nightAvg = nightShifts.length > 0 ? nightShifts.reduce((sum, d) => sum + d.earningsPerHour, 0) / nightShifts.length : 0
 
           const dayParts = [
             { label: 'Morning', hours: '5-12', avg: morningAvg, icon: '🌅', active: morningShifts.length > 0 },
