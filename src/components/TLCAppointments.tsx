@@ -19,7 +19,8 @@ import {
   PencilSimple,
   ArrowSquareOut,
   CheckCircle,
-  WarningCircle
+  WarningCircle,
+  DownloadSimple
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format, parseISO, isPast, isFuture, differenceInDays } from 'date-fns'
@@ -49,6 +50,88 @@ const appointmentTypes = [
   { value: 'base-registration', label: 'Base Registration', icon: '📋' },
   { value: 'other', label: 'Other TLC Service', icon: '📌' }
 ]
+
+const generateTLCCalendarEvent = (appointment: TLCAppointment): string => {
+  const formatICalDate = (date: string, time?: string): string => {
+    const dateObj = new Date(date)
+    if (time) {
+      const [hours, minutes] = time.split(':')
+      dateObj.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+    } else {
+      dateObj.setHours(9, 0, 0, 0)
+    }
+    return dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+  }
+
+  const startDateTime = formatICalDate(appointment.date, appointment.time)
+  const endDate = new Date(appointment.date)
+  if (appointment.time) {
+    const [hours, minutes] = appointment.time.split(':')
+    endDate.setHours(parseInt(hours) + 1, parseInt(minutes), 0, 0)
+  } else {
+    endDate.setHours(10, 0, 0, 0)
+  }
+  const endDateTime = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+
+  const escapeText = (text: string): string => {
+    return text.replace(/[,;\\]/g, '\\$&').replace(/\n/g, '\\n')
+  }
+
+  const typeInfo = appointmentTypes.find(t => t.value === appointment.type)
+  let description = `TLC Appointment - ${typeInfo?.label || appointment.type}`
+  if (appointment.confirmationNumber) {
+    description += `\\nConfirmation: ${appointment.confirmationNumber}`
+  }
+  if (appointment.notes) {
+    description += `\\n\\n${escapeText(appointment.notes)}`
+  }
+  if (appointment.resourceUrl) {
+    description += `\\n\\nResource URL: ${appointment.resourceUrl}`
+  }
+  if (appointment.isRecurring) {
+    description += `\\n\\nRecurring: ${appointment.recurringInterval}`
+  }
+
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//TLC Driver Hub//TLC Appointments//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${appointment.id}@tlcdriverhub.app`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+    `DTSTART:${startDateTime}`,
+    `DTEND:${endDateTime}`,
+    `SUMMARY:${escapeText(appointment.title)}`,
+    `DESCRIPTION:${description}`,
+    appointment.location ? `LOCATION:${escapeText(appointment.location)}` : '',
+    'STATUS:CONFIRMED',
+    'SEQUENCE:0',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT24H',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:TLC Appointment Reminder',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].filter(line => line !== '').join('\r\n')
+
+  return icsContent
+}
+
+const downloadTLCCalendarEvent = (appointment: TLCAppointment): void => {
+  const icsContent = generateTLCCalendarEvent(appointment)
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `tlc-${appointment.title.toLowerCase().replace(/\s+/g, '-')}-${appointment.date}.ics`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
 
 export function TLCAppointments() {
   const [appointments, setAppointments] = useKV<TLCAppointment[]>('tlc-appointments', [])
@@ -283,6 +366,18 @@ export function TLCAppointments() {
                         )}
 
                         <div className="flex gap-2 flex-wrap">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              downloadTLCCalendarEvent(appointment)
+                              toast.success('Calendar event downloaded')
+                            }}
+                            className="h-7 gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]"
+                          >
+                            <DownloadSimple size={12} weight="bold" />
+                            Export
+                          </Button>
                           {appointment.resourceUrl && (
                             <Button
                               size="sm"

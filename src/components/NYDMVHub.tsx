@@ -20,7 +20,8 @@ import {
   Clock,
   Plus,
   Trash,
-  PencilSimple
+  PencilSimple,
+  DownloadSimple
 } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -318,6 +319,84 @@ const getDaysUntil = (dateString: string): number => {
   target.setHours(0, 0, 0, 0)
   const diffTime = target.getTime() - today.getTime()
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
+
+const generateICalendarEvent = (appointment: DMVAppointment): string => {
+  const formatICalDate = (date: string, time?: string): string => {
+    const dateObj = new Date(date)
+    if (time) {
+      const [hours, minutes] = time.split(':')
+      dateObj.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+    } else {
+      dateObj.setHours(9, 0, 0, 0)
+    }
+    return dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+  }
+
+  const startDateTime = formatICalDate(appointment.date, appointment.time)
+  const endDate = new Date(appointment.date)
+  if (appointment.time) {
+    const [hours, minutes] = appointment.time.split(':')
+    endDate.setHours(parseInt(hours) + 1, parseInt(minutes), 0, 0)
+  } else {
+    endDate.setHours(10, 0, 0, 0)
+  }
+  const endDateTime = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+
+  const escapeText = (text: string): string => {
+    return text.replace(/[,;\\]/g, '\\$&').replace(/\n/g, '\\n')
+  }
+
+  let description = `DMV Appointment - ${appointment.type}`
+  if (appointment.confirmationNumber) {
+    description += `\\nConfirmation: ${appointment.confirmationNumber}`
+  }
+  if (appointment.notes) {
+    description += `\\n\\n${escapeText(appointment.notes)}`
+  }
+  if (appointment.serviceUrl) {
+    description += `\\n\\nService URL: ${appointment.serviceUrl}`
+  }
+
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//TLC Driver Hub//DMV Appointments//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${appointment.id}@tlcdriverhub.app`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+    `DTSTART:${startDateTime}`,
+    `DTEND:${endDateTime}`,
+    `SUMMARY:${escapeText(appointment.title)}`,
+    `DESCRIPTION:${description}`,
+    appointment.location ? `LOCATION:${escapeText(appointment.location)}` : '',
+    'STATUS:CONFIRMED',
+    'SEQUENCE:0',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT24H',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:DMV Appointment Reminder',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].filter(line => line !== '').join('\r\n')
+
+  return icsContent
+}
+
+const downloadCalendarEvent = (appointment: DMVAppointment): void => {
+  const icsContent = generateICalendarEvent(appointment)
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `dmv-${appointment.title.toLowerCase().replace(/\s+/g, '-')}-${appointment.date}.ics`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 
 export function NYDMVHub() {
@@ -848,6 +927,11 @@ function AppointmentCard({
   const dateObj = new Date(appointment.date)
   const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
+  const handleExportCalendar = () => {
+    downloadCalendarEvent(appointment)
+    toast.success('Calendar event downloaded')
+  }
+
   return (
     <Card className={isPast ? 'opacity-60' : ''}>
       <CardContent className="flex items-start gap-4 p-4">
@@ -907,7 +991,11 @@ function AppointmentCard({
             )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={handleExportCalendar}>
+              <DownloadSimple size={14} weight="bold" />
+              Export to Calendar
+            </Button>
             <Button size="sm" variant="outline" onClick={() => onEdit(appointment)}>
               <PencilSimple size={14} />
               Edit
