@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
+import { CalendarSync } from '@/components/CalendarSync'
 
 interface DMVService {
   id: string
@@ -558,10 +559,11 @@ export function NYDMVHub() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="services">Service Directory</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="services">Services</TabsTrigger>
           <TabsTrigger value="appointments">Appointments</TabsTrigger>
           <TabsTrigger value="reminders">Reminders</TabsTrigger>
+          <TabsTrigger value="calendar">Sync</TabsTrigger>
         </TabsList>
 
         <TabsContent value="services" className="space-y-4">
@@ -906,6 +908,10 @@ export function NYDMVHub() {
               </DialogContent>
             </Dialog>
           )}
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-4">
+          <CalendarSync />
         </TabsContent>
       </Tabs>
     </div>

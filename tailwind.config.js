@@ -22,10 +22,15 @@ const defaultTheme = {
   },
   extend: {
     screens: {
+      // NYC TLC App responsive breakpoints
       coarse: { raw: "(pointer: coarse)" },
       fine: { raw: "(pointer: fine)" },
       pwa: { raw: "(display-mode: standalone)" },
-      xs: "475px",
+      xs: "475px", // Small phones
+      sm: "640px", // Large phones
+      md: "768px", // Tablets
+      lg: "1024px", // Small desktops
+      xl: "1280px", // Large desktops
     },
     colors: {
       neutral: {

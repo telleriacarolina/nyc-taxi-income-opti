@@ -23,6 +23,7 @@ import {
 import { TLCResourceDirectory } from '@/components/TLCResourceDirectory'
 import { TLCAppointments } from '@/components/TLCAppointments'
 import { TLCReminders } from '@/components/TLCReminders'
+import { CalendarSync } from '@/components/CalendarSync'
 
 export function NYCTLCHub() {
   const [activeSection, setActiveSection] = useState<string>('resources')
@@ -92,12 +93,12 @@ export function NYCTLCHub() {
       </Card>
 
       <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3 h-10 rounded-lg border bg-card/70">
-          <TabsTrigger value="resources" className="gap-1.5 text-[clamp(0.7rem,2.2vw,0.8rem)]">
+        <TabsList className="grid w-full grid-cols-4 h-10 rounded-lg border bg-card/70">
+          <TabsTrigger value="resources" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
             <LinkIcon size={16} weight="fill" />
             <span className="truncate">Resources</span>
           </TabsTrigger>
-          <TabsTrigger value="appointments" className="gap-1.5 text-[clamp(0.7rem,2.2vw,0.8rem)]">
+          <TabsTrigger value="appointments" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
             <CalendarBlank size={16} weight="fill" />
             <span className="truncate">Appointments</span>
             {upcomingAppointments > 0 && (
@@ -106,7 +107,7 @@ export function NYCTLCHub() {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="reminders" className="gap-1.5 text-[clamp(0.7rem,2.2vw,0.8rem)]">
+          <TabsTrigger value="reminders" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
             <Bell size={16} weight="fill" />
             <span className="truncate">Reminders</span>
             {activeReminders > 0 && (
@@ -114,6 +115,10 @@ export function NYCTLCHub() {
                 {activeReminders}
               </Badge>
             )}
+          </TabsTrigger>
+          <TabsTrigger value="calendar" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
+            <CalendarBlank size={16} weight="fill" />
+            <span className="truncate">Sync</span>
           </TabsTrigger>
         </TabsList>
 
@@ -127,6 +132,10 @@ export function NYCTLCHub() {
 
         <TabsContent value="reminders" className="space-y-4">
           <TLCReminders />
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-4">
+          <CalendarSync />
         </TabsContent>
       </Tabs>
     </div>
