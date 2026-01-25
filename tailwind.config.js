@@ -13,13 +13,6 @@ try {
   console.error('failed to parse custom styles', err)
 }
 const defaultTheme = {
-  container: {
-    center: true,
-    padding: "2rem",
-    screens: {
-      "2xl": "1400px",
-    },
-  },
   extend: {
     screens: {
       // NYC TLC App responsive breakpoints
@@ -258,7 +251,27 @@ export default {
     "animate-pulse",
   ],
   theme: { ...defaultTheme, ...theme },
+  corePlugins: {
+    container: false, // Disable default container to avoid issues with custom media queries
+  },
   plugins: [
+    // Custom container plugin that only uses pixel-based breakpoints
+    function ({ addComponents }) {
+      addComponents({
+        '.container': {
+          width: '100%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          paddingLeft: '2rem',
+          paddingRight: '2rem',
+          '@media (min-width: 640px)': { maxWidth: '640px' },
+          '@media (min-width: 768px)': { maxWidth: '768px' },
+          '@media (min-width: 1024px)': { maxWidth: '1024px' },
+          '@media (min-width: 1280px)': { maxWidth: '1280px' },
+          '@media (min-width: 1536px)': { maxWidth: '1536px' },
+        },
+      });
+    },
     // Custom plugin for map-specific utilities
     function ({ addUtilities }) {
       addUtilities({
