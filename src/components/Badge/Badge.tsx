@@ -1,5 +1,5 @@
 import React from 'react';
-import './Badge.css';
+import '../components.css';
 import { colors } from '../../theme/colors';
 
 type BadgeVariant = 'primary' | 'accent' | 'success' | 'warning' | 'destructive' | 'secondary';

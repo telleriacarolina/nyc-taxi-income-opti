@@ -1,5 +1,5 @@
 import React from 'react';
-import './Button.css';
+import '../components.css';
 import { colors } from '../../theme/colors';
 
 type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'destructive';

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Typography.css';
+import '../components.css';
 
 type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'mono';
 
@@ -15,7 +15,7 @@ export const Typography: React.FC<TypographyProps> = ({
   className = '' 
 }) => {
   const isMono = variant === 'mono';
-  const Tag = (isMono ? 'p' : variant) as keyof JSX.IntrinsicElements;
+  const Tag = (isMono ? 'p' : variant) as React.ElementType;
   const classes = `${variant} ${className}`.trim();
   
   return <Tag className={classes}>{children}</Tag>;

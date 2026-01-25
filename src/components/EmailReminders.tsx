@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
   EnvelopeSimple,
   Bell,
@@ -17,7 +18,9 @@ import {
   PencilSimple,
   CalendarBlank,
   WarningCircle,
-  EnvelopeOpen
+  EnvelopeOpen,
+  DownloadSimple,
+  FileText
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format, parseISO, differenceInDays } from 'date-fns'
@@ -150,6 +153,54 @@ export function EmailReminders() {
 
   const totalScheduled = (scheduledReminders || []).filter(r => !r.sent).length
 
+  const handleExportHistory = () => {
+    if (sentReminders.length === 0) {
+      toast.error('No email history to export')
+      return
+    }
+
+    const csvHeaders = [
+      'Date Sent',
+      'Appointment Type',
+      'Appointment Title',
+      'Appointment Date',
+      'Email Address',
+      'Reminder Days Before',
+      'Status'
+    ]
+
+    const csvRows = sentReminders.map(reminder => [
+      reminder.sentAt ? format(parseISO(reminder.sentAt), 'yyyy-MM-dd HH:mm:ss') : format(parseISO(reminder.scheduledDate), 'yyyy-MM-dd'),
+      reminder.appointmentType.toUpperCase(),
+      `"${reminder.appointmentTitle.replace(/"/g, '""')}"`,
+      format(parseISO(reminder.appointmentDate), 'yyyy-MM-dd'),
+      reminder.email,
+      reminder.reminderDays.toString(),
+      'Delivered'
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `email-reminder-history-${format(new Date(), 'yyyy-MM-dd')}.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success('Email history exported', {
+      description: `${sentReminders.length} reminder${sentReminders.length !== 1 ? 's' : ''} exported to CSV`
+    })
+  }
+
   return (
     <div className="space-y-4">
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/10">
@@ -280,6 +331,29 @@ export function EmailReminders() {
             </div>
           )}
 
+          {emailConfig && sentReminders.length > 0 && (
+            <Alert className="border-success/20 bg-success/5">
+              <FileText size={16} className="text-success" />
+              <AlertDescription>
+                <div className="space-y-2">
+                  <p className="font-medium text-success">Email History Available</p>
+                  <p className="text-xs text-muted-foreground">
+                    You have {sentReminders.length} sent reminder{sentReminders.length !== 1 ? 's' : ''} in your history. Export them as a CSV file for your records, tax documentation, or compliance tracking.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleExportHistory}
+                    className="h-7 gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)] border-success/30 hover:bg-success/10"
+                  >
+                    <DownloadSimple size={12} weight="bold" />
+                    Export {sentReminders.length} Record{sentReminders.length !== 1 ? 's' : ''} to CSV
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {!emailConfig && (
             <div className="rounded-lg border-dashed border-2 bg-muted/20 p-6 text-center space-y-3">
               <EnvelopeSimple size={40} weight="duotone" className="mx-auto text-muted-foreground" />
@@ -355,10 +429,21 @@ export function EmailReminders() {
       {emailConfig && sentReminders.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-[clamp(0.9rem,2.6vw,1.05rem)] flex items-center gap-2">
-              <CheckCircle size={18} weight="fill" className="text-success" />
-              Recent Sent Reminders
-            </CardTitle>
+            <div className="flex items-start justify-between gap-4">
+              <CardTitle className="text-[clamp(0.9rem,2.6vw,1.05rem)] flex items-center gap-2">
+                <CheckCircle size={18} weight="fill" className="text-success" />
+                Recent Sent Reminders
+              </CardTitle>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleExportHistory}
+                className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)] flex-shrink-0"
+              >
+                <DownloadSimple size={12} weight="bold" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

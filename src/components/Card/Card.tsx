@@ -1,5 +1,5 @@
 import React from 'react';
-import './Card.css';
+import '../components.css';
 import { colors } from '../../theme/colors';
 
 interface CardProps {
