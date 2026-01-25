@@ -1,7 +1,37 @@
 {
-    "name": "spark-template",
+    "name": "nyc-tlc-driver-hub",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0",
+    "description": "NYC TLC Driver Management Hub - Comprehensive license tracking, earnings optimization, and data-driven insights for NYC TLC drivers",
+    "author": "Carolina Telleria",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/telleriacarolina/nyc-taxi-income-opti"
+    },
+    "homepage": "https://github.com/telleriacarolina/nyc-taxi-income-opti#readme",
+    "keywords": [
+        "nyc-tlc",
+        "taxi-driver",
+        "earnings-optimization",
+        "license-management",
+        "rideshare",
+        "driver-analytics",
+        "for-hire-vehicle",
+        "fhv",
+        "tlc-compliance",
+        "gig-economy",
+        "uber-driver",
+        "lyft-driver",
+        "route-optimization",
+        "shift-tracking",
+        "income-tracker",
+        "nyc-taxi",
+        "driver-hub",
+        "earnings-insights",
+        "ai-powered",
+        "data-analytics"
+    ],
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -18,7 +48,7 @@
         "check:openfreemap": "git fetch openfreemap && git log HEAD..openfreemap/main --oneline && git rev-list HEAD..openfreemap/main --count | xargs -I {} echo 'New commits: {}'",
         "compare:openfreemap": "git fetch openfreemap && git diff --stat main openfreemap/main",
         "review:openfreemap": "git fetch openfreemap && git log openfreemap/main --oneline --graph -20 --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr)%Creset'",
-        "sonar:scan": "SONAR_TOKEN=squ_6241673fd76f79869c9dc0b1bc61e7bd89e99d6f sonar-scanner",
+        "sonar:scan": "SONAR_TOKEN=8d0d4b21e1b18abaf8ceee38688d23552606f978 sonar-scanner",
         "sonar:analyze": "npm run test:coverage && npm run sonar:scan",
         "sonar:diagnose": "chmod +x scripts/diagnose-sonar.sh && ./scripts/diagnose-sonar.sh",
         "sonar:install": "npm install --save-dev sonarqube-scanner @vitest/coverage-v8 vitest @testing-library/react @testing-library/jest-dom jsdom",
@@ -130,5 +160,12 @@
         "packages": [
             "packages/*"
         ]
+    },
+    "bugs": {
+        "url": "https://github.com/telleriacarolina/nyc-taxi-income-opti/issues"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=9.0.0"
     }
 }
