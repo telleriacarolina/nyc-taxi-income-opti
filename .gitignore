@@ -1,5 +1,29 @@
+# =============================================================================
+# NYC TLC Driver Management Hub - Git Ignore Configuration
+# =============================================================================
+# Project: nyc-tlc-driver-hub
+# Repository: https://github.com/telleriacarolina/nyc-taxi-income-opti
+# Description: Comprehensive driver management and earnings optimization tool
+# =============================================================================
+
+# Dependencies
+node_modules/
+packages/
+
+# Build outputs
+dist/
+dist-ssr/
+*-dist/
+build/
+
+# Development
+*.local
+.cache/
+.vite/
+.vercel/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,31 +31,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*-dist
-*.local
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Environment files (may contain secrets)
+# Environment files (contain API keys, secrets)
 .env
 .env.local
 .env.*.local
 .env.production
 .env.development
+.env.test
 
-# Sensitive data and secrets
+# Sensitive data (TLC license info, driver data - NEVER COMMIT)
 **/secrets/
 **/keys/
 **/*.pem
@@ -39,40 +54,48 @@ dist-ssr
 **/*.cert
 **/*.p12
 **/*.pfx
-
-# Build artifacts
-**/agent-eval-report*
-packages
-pids
-.file-manifest
-.devcontainer/
-
-.spark-workbench-id
-
-# SonarQube
-.sonar/
-.scannerwork/
-sonar-report.html
-
-# Security scan reports
-**/security-report*
-**/vulnerability-report*
-**/audit-report*
-
-# Personal data exports (should not be committed)
 **/data-export*
 **/*-backup.json
 **/*-export.json
 
-# Test coverage with sensitive paths
-coverage/
-.nyc_output/
+# SonarQube analysis
+.sonar/
+.scannerwork/
+sonar-report.html
 
-# OS-specific files that may contain metadata
+# Security reports
+**/security-report*
+**/vulnerability-report*
+**/audit-report*
+
+# Build artifacts
+**/agent-eval-report*
+pids/
+.file-manifest
+.spark-workbench-id
+
+# Editor & IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.template.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.idea/workspace.xml
+
+# OS-specific
 .DS_Store
 Thumbs.db
 desktop.ini
+*.swp
+*~
 
-# IDE files that may contain local config
-.vscode/settings.json
-.idea/workspace.xml
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Optional: Local development containers
+.devcontainer/
