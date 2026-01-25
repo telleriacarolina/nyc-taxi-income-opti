@@ -968,3 +968,172 @@ Animations should provide clear feedback for status changes and guide attention 
   - Bottom sheet dialog variant for forms on mobile
   - Sticky tab navigation at top
   - Collapsible sections to reduce scroll length
+
+## Security & Privacy Architecture
+
+### Core Security Principles
+
+**Privacy-First Design:**
+- All data stored locally on user's device (browser IndexedDB via Spark KV)
+- No cloud sync or remote data storage
+- No external servers storing personal information
+- Complete user control over data (view, export, delete)
+
+**Data Minimization:**
+- Collect only data necessary for compliance tracking and earnings optimization
+- Never collect: passenger details, precise GPS history, payment cards, SSN, biometric data
+- Optional features: GPS for route generation (temporary, never stored), location names (neighborhood only)
+
+**Encryption & Security:**
+- Browser-level encryption at rest (IndexedDB)
+- HTTPS for all external API calls (NYC Open Data, OpenFreeMap tiles)
+- Input validation and sanitization on all user inputs
+- XSS protection via React framework
+- License numbers masked in UI display
+- No API keys or secrets in code (public APIs only)
+
+### Security Controls
+
+**Input Validation:**
+- Earnings: 0-$10,000 daily cap, numeric validation
+- Dates: Range validation (2020-present +10 years), format validation
+- License numbers: Character sanitization, length limits (5-20 chars)
+- Phone numbers: 10-digit US format validation
+- Text inputs: HTML tag removal, XSS prevention
+- Distances/durations: Reasonable limits (500 miles, 24 hours)
+
+**Data Masking:**
+- License numbers: Display last 4 digits only (TLC-****1234)
+- Phone numbers: Display last 4 digits only ((***) ***-1234)
+- Email addresses: Mask local part (**@domain.com)
+
+**API Security:**
+- NYC Open Data APIs: Read-only public data, no authentication
+- Rate limiting: Respect 1000 requests/hour limits
+- Timeout protection: 10-second timeout on all API calls
+- Error handling: Graceful degradation when APIs unavailable
+- Spark LLM API: Anonymized statistics only, no PII in prompts
+
+**GPS Location Privacy:**
+- Current location: Obtained with explicit permission, used in-memory only, never stored
+- Start locations: User-entered neighborhood names (not coordinates)
+- No location tracking or history persistence
+- Complete opt-out available
+
+### User Data Rights (GDPR/CCPA Compliant)
+
+**Right to Access:**
+- Export all data as JSON (complete snapshot)
+- Export shifts/rides as CSV (for tax records)
+- Export heatmap data for analysis
+
+**Right to Rectification:**
+- All data editable via UI
+- Instant updates
+- No approval required
+
+**Right to Erasure:**
+- Delete individual items (shifts, rides, documents)
+- Delete all data with "Clear All Data" button
+- Immediate and irreversible deletion
+
+**Right to Data Portability:**
+- JSON format (complete data)
+- CSV format (tabular data for Excel/Google Sheets)
+- Standard formats for accounting software
+
+**Right to Object:**
+- Disable GPS/location features
+- Opt-out of SMS/email notifications
+- Disable AI insights
+- Enhanced privacy mode (additional masking)
+
+### Security Documentation
+
+**Available Documentation:**
+- `/docs/SECURITY_ARCHITECTURE.md` - Complete security model, threat analysis, controls
+- `/docs/PRIVACY_POLICY.md` - Data collection, usage, user rights, GDPR/CCPA compliance
+- `/SECURITY.md` - Vulnerability reporting, security policy, best practices
+- `/.env.example` - Environment configuration template (no secrets)
+- `/Dockerfile.production` - Security-hardened container configuration
+
+**Security Contact:**
+- Email: security@[your-domain].com
+- Privacy: privacy@[your-domain].com
+- Response time: 48 hours for security issues
+
+### Threat Model
+
+**Mitigated Threats:**
+- ✅ XSS attacks: React auto-escaping, input sanitization
+- ✅ Data theft via malware: Browser sandbox, HTTPS only
+- ✅ License exposure: Display masking, no external transmission
+- ✅ GPS tracking: No persistence, user permission required
+- ✅ Phishing: HTTPS enforcement, subdomain verification
+
+**Out-of-Scope (Architecture Constraints):**
+- ❌ Server-side vulnerabilities (no server)
+- ❌ Database breaches (no remote database)
+- ❌ Account takeover (no authentication system)
+- ❌ Session hijacking (no sessions)
+- ❌ SQL injection (no SQL database)
+- ❌ CSRF (no server-side state)
+
+### Deployment Security
+
+**Production Requirements:**
+- HTTPS enforced (TLS 1.3+)
+- Security headers: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- Content Security Policy: Restrict script sources, allow trusted domains only
+- Permissions Policy: Limit geolocation and notifications to self
+- Container security: Non-root user, read-only filesystem, capability dropping
+
+**Best Practices for Users:**
+- Enable device encryption (iOS default, Android Settings → Security)
+- Use strong device passcode or biometric lock
+- Keep browser and OS updated
+- Be cautious with browser extensions
+- Enable Find My Device for remote wipe
+- Change TLC account passwords if device lost/stolen
+
+### Compliance & Audit
+
+**GDPR Compliance:**
+- Data processing: Legitimate interest and consent
+- User rights: Access, rectification, erasure, portability, objection
+- Data protection: Encryption at rest, secure transmission
+- Privacy by design: Minimal data collection, user controls
+
+**CCPA Compliance:**
+- Right to know: Privacy policy disclosure
+- Right to delete: Data deletion functionality
+- No data sales: Never sell or share personal information
+- Non-discrimination: No penalties for exercising rights
+
+**Data Retention:**
+- User-controlled: Data persists until manually deleted
+- Recommended: 7 years for tax records (shifts/rides)
+- Automatic cleanup: 90 days for chat messages (planned)
+
+### Security Roadmap
+
+**Phase 1 (✅ Current):**
+- Input validation and sanitization
+- Browser-level encryption
+- GPS privacy (no storage)
+- License number masking
+- Privacy policy and data export
+
+**Phase 2 (🔄 Planned):**
+- CSP headers in production
+- Comprehensive security audit
+- Automated dependency scanning
+- Enhanced privacy mode
+- Security logging
+
+**Phase 3 (📋 Future):**
+- Multi-user authentication (if cloud features)
+- Role-based access control (Driver, Admin, Support)
+- E2E encryption for chat (if cloud-synced)
+- Two-factor authentication
+- Penetration testing
