@@ -16,6 +16,7 @@ import { NYCTLCHub } from '@/components/NYCTLCHub'
 import { NYDMVHub } from '@/components/NYDMVHub'
 import { NotificationPermissions } from '@/components/NotificationPermissions'
 import { NotificationHistory } from '@/components/NotificationHistory'
+import { PrivacyDataManagement } from '@/components/PrivacyDataManagement'
 import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { useEffect } from 'react'
@@ -149,6 +150,7 @@ function App() {
               <ContactTLC />
             </TabsContent>
             <TabsContent value="settings" className="space-y-4">
+              <PrivacyDataManagement />
               <NotificationPermissions />
               <NotificationHistory />
               <LocationSettings />

@@ -24,8 +24,23 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment files (may contain secrets)
 .env
 .env.local
+.env.*.local
+.env.production
+.env.development
+
+# Sensitive data and secrets
+**/secrets/
+**/keys/
+**/*.pem
+**/*.key
+**/*.cert
+**/*.p12
+**/*.pfx
+
+# Build artifacts
 **/agent-eval-report*
 packages
 pids
@@ -38,3 +53,26 @@ pids
 .sonar/
 .scannerwork/
 sonar-report.html
+
+# Security scan reports
+**/security-report*
+**/vulnerability-report*
+**/audit-report*
+
+# Personal data exports (should not be committed)
+**/data-export*
+**/*-backup.json
+**/*-export.json
+
+# Test coverage with sensitive paths
+coverage/
+.nyc_output/
+
+# OS-specific files that may contain metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files that may contain local config
+.vscode/settings.json
+.idea/workspace.xml
