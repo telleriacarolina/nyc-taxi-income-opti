@@ -20,7 +20,9 @@ import {
   CalendarBlank,
   WarningCircle,
   ChatCircleDots,
-  BellRinging
+  BellRinging,
+  DownloadSimple,
+  FileText
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { format, parseISO, differenceInDays } from 'date-fns'
@@ -255,6 +257,54 @@ export function SMSReminders() {
     new Date(b.sentAt || b.scheduledDate).getTime() - new Date(a.sentAt || a.scheduledDate).getTime()
   )
 
+  const handleExportHistory = () => {
+    if (sentReminders.length === 0) {
+      toast.error('No SMS history to export')
+      return
+    }
+
+    const csvHeaders = [
+      'Date Sent',
+      'Appointment Type',
+      'Appointment Title',
+      'Appointment Date',
+      'Phone Number',
+      'Reminder Days Before',
+      'Message'
+    ]
+
+    const csvRows = sentReminders.map(reminder => [
+      reminder.sentAt ? format(parseISO(reminder.sentAt), 'yyyy-MM-dd HH:mm:ss') : format(parseISO(reminder.scheduledDate), 'yyyy-MM-dd'),
+      reminder.appointmentType.toUpperCase(),
+      reminder.appointmentTitle,
+      format(parseISO(reminder.appointmentDate), 'yyyy-MM-dd'),
+      reminder.phoneNumber,
+      reminder.reminderDays.toString(),
+      `"${reminder.message.replace(/"/g, '""')}"`
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `sms-reminder-history-${format(new Date(), 'yyyy-MM-dd')}.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success('SMS history exported', {
+      description: `${sentReminders.length} reminder${sentReminders.length !== 1 ? 's' : ''} exported to CSV`
+    })
+  }
+
   return (
     <div className="space-y-6">
       <Card className="border-primary/20">
@@ -334,6 +384,29 @@ export function SMSReminders() {
                 </AlertDescription>
               </Alert>
 
+              {sentReminders.length > 0 && (
+                <Alert className="border-success/20 bg-success/5">
+                  <FileText size={16} className="text-success" />
+                  <AlertDescription>
+                    <div className="space-y-2">
+                      <p className="font-medium text-success">SMS History Available</p>
+                      <p className="text-xs text-muted-foreground">
+                        You have {sentReminders.length} sent reminder{sentReminders.length !== 1 ? 's' : ''} in your history. Export them as a CSV file for your records, tax documentation, or compliance tracking.
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleExportHistory}
+                        className="h-7 gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)] border-success/30 hover:bg-success/10"
+                      >
+                        <DownloadSimple size={12} weight="bold" />
+                        Export {sentReminders.length} Record{sentReminders.length !== 1 ? 's' : ''} to CSV
+                      </Button>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <div className="flex items-center justify-between pt-2">
                 <div>
                   <p className="font-medium">Scheduled SMS Reminders</p>
@@ -341,13 +414,26 @@ export function SMSReminders() {
                     {upcomingReminders.length} upcoming, {sentReminders.length} sent
                   </p>
                 </div>
-                <Button 
-                  onClick={() => setShowScheduleDialog(true)}
-                  disabled={!smsConfig.enabled || allAppointments.length === 0}
-                >
-                  <Plus size={16} weight="bold" />
-                  Schedule SMS
-                </Button>
+                <div className="flex gap-2">
+                  {sentReminders.length > 0 && (
+                    <Button 
+                      onClick={handleExportHistory}
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                    >
+                      <FileText size={16} weight="fill" />
+                      <span className="hidden sm:inline">Export</span>
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={() => setShowScheduleDialog(true)}
+                    disabled={!smsConfig.enabled || allAppointments.length === 0}
+                  >
+                    <Plus size={16} weight="bold" />
+                    Schedule SMS
+                  </Button>
+                </div>
               </div>
 
               {upcomingReminders.length === 0 && sentReminders.length === 0 ? (
@@ -421,7 +507,18 @@ export function SMSReminders() {
 
                     {sentReminders.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-muted-foreground">Sent</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium text-muted-foreground">Sent</p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleExportHistory}
+                            className="h-7 gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]"
+                          >
+                            <DownloadSimple size={12} weight="bold" />
+                            Export History
+                          </Button>
+                        </div>
                         {sentReminders.map(reminder => (
                           <Card key={reminder.id} className="opacity-60">
                             <CardContent className="p-4">
