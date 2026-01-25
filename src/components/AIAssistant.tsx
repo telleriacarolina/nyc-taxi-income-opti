@@ -131,7 +131,7 @@ export function AIAssistant() {
         }
       }
 
-      const promptText = `You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business using REAL NYC TLC DATABASE INTELLIGENCE.
+      const prompt = spark.llmPrompt`You are an AI assistant for NYC TLC drivers helping them optimize their rideshare business using REAL NYC TLC DATABASE INTELLIGENCE.
 
 ${marketIntel}
 
@@ -161,7 +161,7 @@ Driver's question: ${userMessage.content}
 
 **CRITICAL**: Use the REAL DATABASE STATS above when answering. Reference actual numbers from the market intel. Provide helpful, actionable advice specific to NYC TLC drivers. Be concise (2-3 paragraphs max). Focus on practical tips about earnings optimization, compliance, multi-apping strategies, shift planning, or leveraging database patterns.`
 
-      const response = await spark.llm(promptText, 'gpt-4o-mini')
+      const response = await spark.llm(prompt, 'gpt-4o-mini')
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

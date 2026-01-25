@@ -947,7 +947,7 @@ export function Chatroom() {
                 />
                 <Button 
                   onClick={sendMessage} 
-                  disabled={!messageInput.trim() && attachments.length === 0 || isRecording}
+                  disabled={(!messageInput.trim() && attachments.length === 0) || isRecording}
                   className="gap-2"
                 >
                   <PaperPlaneRight size={18} weight="fill" />
@@ -1181,7 +1181,7 @@ export function Chatroom() {
                   />
                   <Button 
                     onClick={() => sendDirectMessage(activeDM)} 
-                    disabled={!messageInput.trim() && attachments.length === 0 || isRecording}
+                    disabled={(!messageInput.trim() && attachments.length === 0) || isRecording}
                     className="gap-2"
                   >
                     <PaperPlaneRight size={18} weight="fill" />
