@@ -4,12 +4,13 @@
 
 ### 1. ✅ Design System Configuration
 
-**Colors Updated** (NYC TLC Professional Theme):
-- 🔵 **Primary**: Deep Blue `oklch(0.35 0.08 250)` - Authority & trust
-- 🟡 **Accent**: Vibrant Yellow `oklch(0.85 0.15 90)` - NYC Taxi yellow for CTAs
+**Colors Updated** (Red & Burgundy Theme):
+- 🔴 **Background**: Deep Burgundy `oklch(0.25 0.10 25)` - Rich dark base
+- 🍷 **Primary**: Rich Burgundy `oklch(0.40 0.14 20)` - Primary actions
+- 🌸 **Accent**: Rose Pink `oklch(0.75 0.15 15)` - Eye-catching CTAs
 - 🟢 **Success**: Green for current/valid items
-- 🟠 **Warning**: Orange for expiring items (< 30 days)
-- 🔴 **Destructive**: Red for expired items
+- 🟠 **Warning**: Orange-Red for expiring items (< 30 days)
+- 🔴 **Destructive**: Vivid Red for expired items
 
 **Typography Updated**:
 - **Primary Font**: Space Grotesk (geometric, professional)
@@ -65,7 +66,7 @@
 ```
 📄 docs/TICKET_001_COMPLETE.md - Implementation summary
 📄 docs/GITHUB_PROJECT_BOARD.md - Project management guide
-📄 design-system-test.html - Visual design system test page
+📄 red-burgundy-test.html - Visual design system test page
 📄 docs/README_SUMMARY.md - This file
 ```
 
@@ -80,7 +81,7 @@
 # Start dev server if not running
 npm run dev
 
-# Visit: http://localhost:5173/design-system-test.html
+# Visit: http://localhost:5173/red-burgundy-test.html
 ```
 
 **Option B**: Use the Simple Browser (already opened)
@@ -181,7 +182,7 @@ All documentation in `docs/` folder:
 5. **README_SUMMARY.md** - This overview
 
 Plus:
-- **design-system-test.html** - Visual test page for design system
+- **red-burgundy-test.html** - Visual test page for red/burgundy design system
 
 ---
 
@@ -242,9 +243,9 @@ Plus:
 
 ## What's Different from Standard Setup?
 
-### NYC TLC-Specific Customizations:
+### Design Customizations:
 
-1. **Color Palette**: Official-feeling blue + NYC taxi yellow
+1. **Color Palette**: Elegant red/burgundy with rose pink accents
 2. **Typography**: Space Grotesk (professional, geometric)
 3. **Status System**: 3-tier (green/orange/red) for compliance
 4. **Mobile-First**: Emphasis on driver's mobile use
@@ -272,7 +273,7 @@ npm run preview          # Preview production build
 ### Design System:
 ```bash
 # View test page
-open http://localhost:5173/design-system-test.html
+open http://localhost:5173/red-burgundy-test.html
 
 # Install components
 npx shadcn-ui@latest add [component-name]

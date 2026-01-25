@@ -1,6 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Phone, Envelope, MapPin, Clock, ArrowSquareOut, Globe, CalendarBlank } from '@phosphor-icons/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Phone, Envelope, MapPin, Clock, ArrowSquareOut, Globe, CalendarBlank, ChatCircleDots } from '@phosphor-icons/react'
+import { SMSReminders } from '@/components/SMSReminders'
+import { EmailReminders } from '@/components/EmailReminders'
 
 export function ContactTLC() {
   const tlcLink = 'https://www.nyc.gov/site/tlc/about/contact-tlc.page'
@@ -62,13 +65,30 @@ export function ContactTLC() {
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-[clamp(1rem,3vw,1.25rem)]">Contact NYC TLC</CardTitle>
-          <CardDescription className="text-[clamp(0.75rem,2.4vw,0.9rem)]">
-            Get help with licenses, complaints, and TLC services
-          </CardDescription>
-        </CardHeader>
+      <Tabs defaultValue="contact" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="contact" className="gap-1.5">
+            <Phone size={16} weight="fill" />
+            <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Contact Info</span>
+          </TabsTrigger>
+          <TabsTrigger value="sms" className="gap-1.5">
+            <ChatCircleDots size={16} weight="fill" />
+            <span className="text-[clamp(0.7rem,2vw,0.85rem)]">SMS Reminders</span>
+          </TabsTrigger>
+          <TabsTrigger value="email" className="gap-1.5">
+            <Envelope size={16} weight="fill" />
+            <span className="text-[clamp(0.7rem,2vw,0.85rem)]">Email Reminders</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="contact" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-[clamp(1rem,3vw,1.25rem)]">Contact NYC TLC</CardTitle>
+              <CardDescription className="text-[clamp(0.75rem,2.4vw,0.9rem)]">
+                Get help with licenses, complaints, and TLC services
+              </CardDescription>
+            </CardHeader>
         <CardContent className="space-y-4">
           <Button
             onClick={() => window.open(tlcLink, '_blank')}
@@ -252,6 +272,16 @@ export function ContactTLC() {
           </Card>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="sms" className="space-y-4">
+          <SMSReminders />
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-4">
+          <EmailReminders />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

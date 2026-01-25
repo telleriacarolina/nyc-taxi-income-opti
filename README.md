@@ -16,13 +16,54 @@ Designed with performance, scalability, and data transparency in mind.
 
 ---
 
+## 🎨 Recent Updates
+
+### Design System (January 2026)
+- **Color Theme**: Migrated to elegant **Red & Burgundy** color palette
+  - Deep burgundy backgrounds (`oklch(0.25 0.10 25)`)
+  - Rose pink accents (`oklch(0.75 0.15 15)`)
+  - Rich burgundy primary colors
+  - Maintains WCAG AA accessibility standards
+- **Typography**: Space Grotesk + JetBrains Mono from Google Fonts
+- **Test Page**: `red-burgundy-test.html` for visual verification
+
+### Development Environment
+- **Dotfiles Integration**: Full development environment configuration
+  - Oh My Zsh with plugins (autosuggestions, syntax highlighting, completions)
+  - Vim/Neovim with vim-plug
+  - Tmux with TPM (plugin manager)
+  - Git configuration with local overrides
+- **Setup Scripts**:
+  - `setup-dotfiles.sh` - Clone and install dotfiles from GitHub
+  - `configure-all.sh` - Complete automated configuration
+  - `setup-git-and-zsh.sh` - Quick Git/Zsh setup helper
+
+### Configuration Files Created
+- `~/.zshrc.local` - Local shell customizations
+- `~/.gitconfig.local` - Personal Git settings
+- `~/.vimrc.local` - Vim preferences
+- `~/.tmux.conf.local` - Tmux configuration
+
+---
+
 ## 📚 Project Documentation
 
+### Development & Setup
+- 🎨 [Design System Test](red-burgundy-test.html) - Visual color palette and typography reference
+- 🔧 [Feature Priorities](docs/FEATURE_PRIORITIES.md) - 5-phase development roadmap
+- 📋 [Phase 1 Tickets](docs/PHASE_1_TICKETS.md) - MVP implementation tickets (22 detailed tasks)
+- 🗂️ [GitHub Project Board Guide](docs/GITHUB_PROJECT_BOARD.md) - Project management setup
+- 📝 [Ticket #001 Complete](docs/TICKET_001_COMPLETE.md) - Design system implementation summary
+- 📖 [README Summary](docs/README_SUMMARY.md) - Quick reference for current progress
+
+### Docker & Containers
 - 🐳 [Docker Quick Start](docs/docker/DOCKER_QUICKSTART.md) - Get started with Docker fast
 - 🐳 [Docker Guide](docs/docker/DOCKER.md) - Complete Docker setup and usage
 - 🐳 [Dev Container Guide](docs/docker/DOCKER_DEVCONTAINER_GUIDE.md) - Run Docker from dev containers
 - 🐳 [Rebuild Checklist](docs/docker/REBUILD_REQUIRED.md) - Steps after enabling Docker-in-Docker
-- 📖 [OpenFreeMap Integration Guide](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
+
+### Integration & Configuration
+- 📖 [OpenFreeMap Integration](.github/OPENFREEMAP.md) - Git remote setup, workflows, and troubleshooting
 - 📋 [Product Requirements Document (PRD)](PRD.md) - Full feature specifications and roadmap
 - 🐍 [Python Setup Guide](docs/PYTHON_SETUP.md) - uv toolchain and data processing
 - 🔒 [Security Guide](docs/SECURITY.md) - Security best practices and guidelines
