@@ -33,6 +33,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
 import { CalendarSync } from '@/components/CalendarSync'
+import { EmailReminders } from '@/components/EmailReminders'
 
 interface DMVService {
   id: string
@@ -559,10 +560,11 @@ export function NYDMVHub() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="services">Services</TabsTrigger>
           <TabsTrigger value="appointments">Appointments</TabsTrigger>
           <TabsTrigger value="reminders">Reminders</TabsTrigger>
+          <TabsTrigger value="email">Email</TabsTrigger>
           <TabsTrigger value="calendar">Sync</TabsTrigger>
         </TabsList>
 
@@ -908,6 +910,10 @@ export function NYDMVHub() {
               </DialogContent>
             </Dialog>
           )}
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-4">
+          <EmailReminders />
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-4">

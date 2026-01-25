@@ -24,6 +24,7 @@ import { TLCResourceDirectory } from '@/components/TLCResourceDirectory'
 import { TLCAppointments } from '@/components/TLCAppointments'
 import { TLCReminders } from '@/components/TLCReminders'
 import { CalendarSync } from '@/components/CalendarSync'
+import { EmailReminders } from '@/components/EmailReminders'
 
 export function NYCTLCHub() {
   const [activeSection, setActiveSection] = useState<string>('resources')
@@ -93,7 +94,7 @@ export function NYCTLCHub() {
       </Card>
 
       <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 h-10 rounded-lg border bg-card/70">
+        <TabsList className="grid w-full grid-cols-5 h-10 rounded-lg border bg-card/70">
           <TabsTrigger value="resources" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
             <LinkIcon size={16} weight="fill" />
             <span className="truncate">Resources</span>
@@ -116,6 +117,10 @@ export function NYCTLCHub() {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="email" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
+            <Bell size={16} weight="fill" />
+            <span className="truncate">Email</span>
+          </TabsTrigger>
           <TabsTrigger value="calendar" className="gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)]">
             <CalendarBlank size={16} weight="fill" />
             <span className="truncate">Sync</span>
@@ -132,6 +137,10 @@ export function NYCTLCHub() {
 
         <TabsContent value="reminders" className="space-y-4">
           <TLCReminders />
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-4">
+          <EmailReminders />
         </TabsContent>
 
         <TabsContent value="calendar" className="space-y-4">
