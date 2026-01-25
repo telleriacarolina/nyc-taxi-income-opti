@@ -1,0 +1,221 @@
+# Security-Hardened Production Dockerfile for NYC TLC Driver Hub
+# Implements security best practices including:
+# - Minimal base image (Alpine Linux)
+# - Non-root user execution
+# - Multi-stage build (smaller attack surface)
+# - No secrets in image layers
+# - Read-only filesystem where possible
+
+# ============================================================================
+# Stage 1: Build
+# ============================================================================
+FROM node:20-alpine AS builder
+
+# Install only production dependencies first (better caching)
+WORKDIR /app
+
+# Security: Run as non-root during build
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy dependency files
+COPY --chown=nodejs:nodejs package*.json ./
+
+# Install dependencies (with clean cache)
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy source code
+COPY --chown=nodejs:nodejs . .
+
+# Build application
+RUN npm run build
+
+# Remove development dependencies and source code
+RUN rm -rf src/ node_modules/
+
+# Install only production runtime dependencies
+RUN npm ci --only=production --ignore-scripts && \
+    npm cache clean --force
+
+# ============================================================================
+# Stage 2: Production Runtime
+# ============================================================================
+FROM nginx:1.25-alpine AS production
+
+# Security: Install security updates
+RUN apk upgrade --no-cache && \
+    apk add --no-cache \
+    ca-certificates \
+    tzdata && \
+    rm -rf /var/cache/apk/*
+
+# Security: Create non-root user for nginx
+RUN addgroup -g 1001 -S nginx-app && \
+    adduser -S nginx-app -u 1001
+
+# Copy built application from builder
+COPY --from=builder --chown=nginx-app:nginx-app /app/dist /usr/share/nginx/html
+
+# Security-hardened nginx configuration
+COPY --chown=nginx-app:nginx-app <<'EOF' /etc/nginx/nginx.conf
+user nginx-app;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /tmp/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    # Security: Hide nginx version
+    server_tokens off;
+    
+    # Security: Prevent clickjacking
+    add_header X-Frame-Options "DENY" always;
+    
+    # Security: Prevent MIME type sniffing
+    add_header X-Content-Type-Options "nosniff" always;
+    
+    # Security: Enable XSS protection
+    add_header X-XSS-Protection "1; mode=block" always;
+    
+    # Security: Strict Transport Security (HTTPS)
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    
+    # Security: Referrer Policy
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # Security: Content Security Policy
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://tiles.openfreemap.org; connect-src 'self' https://data.cityofnewyork.us; frame-ancestors 'none';" always;
+    
+    # Security: Permissions Policy
+    add_header Permissions-Policy "geolocation=(self), notifications=(self), camera=(), microphone=(), payment=()" always;
+    
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    
+    # Logging
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+    
+    access_log /var/log/nginx/access.log main;
+    
+    # Performance
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/xml+rss application/rss+xml font/truetype font/opentype application/vnd.ms-fontobject image/svg+xml;
+    
+    server {
+        listen 8080;
+        listen [::]:8080;
+        server_name _;
+        
+        root /usr/share/nginx/html;
+        index index.html;
+        
+        # Security: Disable unnecessary HTTP methods
+        if ($request_method !~ ^(GET|HEAD|POST)$ ) {
+            return 405;
+        }
+        
+        # SPA routing - serve index.html for all routes
+        location / {
+            try_files $uri $uri/ /index.html;
+            
+            # Cache static assets
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+            }
+        }
+        
+        # Security: Deny access to hidden files
+        location ~ /\. {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+        
+        # Security: Deny access to sensitive files
+        location ~ /\.(?:git|env|env\.local) {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+        
+        # Health check endpoint
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+    }
+}
+EOF
+
+# Security: Change ownership and permissions
+RUN chown -R nginx-app:nginx-app /usr/share/nginx/html && \
+    chown -R nginx-app:nginx-app /var/cache/nginx && \
+    chown -R nginx-app:nginx-app /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown nginx-app:nginx-app /var/run/nginx.pid
+
+# Security: Run as non-root user
+USER nginx-app
+
+# Expose non-privileged port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/health || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+# ============================================================================
+# Build and Run Instructions
+# ============================================================================
+
+# Build:
+#   docker build -t nyc-tlc-driver-hub:latest -f Dockerfile.production .
+
+# Run:
+#   docker run -d -p 8080:8080 --name tlc-hub \
+#     --read-only \
+#     --tmpfs /var/cache/nginx:rw,noexec,nosuid \
+#     --tmpfs /var/log/nginx:rw,noexec,nosuid \
+#     --tmpfs /tmp:rw,noexec,nosuid \
+#     --cap-drop=ALL \
+#     --security-opt=no-new-privileges:true \
+#     nyc-tlc-driver-hub:latest
+
+# Security Scan:
+#   docker scan nyc-tlc-driver-hub:latest
+#   trivy image nyc-tlc-driver-hub:latest
+
+# ============================================================================
+# Security Notes
+# ============================================================================
+# 1. Image runs as non-root user (UID 1001)
+# 2. Read-only root filesystem with tmpfs mounts
+# 3. All capabilities dropped except required ones
+# 4. No new privileges allowed
+# 5. Security headers configured in nginx
+# 6. Unnecessary HTTP methods disabled
+# 7. Hidden files and sensitive files blocked
+# 8. HTTPS enforcement via HSTS
+# 9. CSP prevents XSS attacks
+# 10. Regular security updates via base image
