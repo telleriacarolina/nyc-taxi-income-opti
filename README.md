@@ -25,7 +25,16 @@ Designed with performance, scalability, and data transparency in mind.
   - Rich burgundy primary colors
   - Maintains WCAG AA accessibility standards
 - **Typography**: Space Grotesk + JetBrains Mono from Google Fonts
+- **Components**: React component library (Button, Badge, Card, Typography, ColorSwatch)
 - **Test Page**: `red-burgundy-test.html` for visual verification
+
+### Code Quality & Security (January 2026)
+- **SonarQube MCP Integration**: Plan for automated code quality and security analysis
+  - Real-time code analysis during development
+  - Security vulnerability detection and remediation
+  - Automated quality gates in CI/CD
+  - Code snippet analysis in agent context
+  - See [Integration Plan](docs/SONARQUBE_MCP_INTEGRATION_PLAN.md) and [Quick Start](docs/SONARQUBE_QUICKSTART.md)
 
 ### Development Environment
 - **Dotfiles Integration**: Full development environment configuration
@@ -55,6 +64,10 @@ Designed with performance, scalability, and data transparency in mind.
 - 🗂️ [GitHub Project Board Guide](docs/GITHUB_PROJECT_BOARD.md) - Project management setup
 - 📝 [Ticket #001 Complete](docs/TICKET_001_COMPLETE.md) - Design system implementation summary
 - 📖 [README Summary](docs/README_SUMMARY.md) - Quick reference for current progress
+
+### Code Quality & Security
+- 🔍 [SonarQube MCP Integration Plan](docs/SONARQUBE_MCP_INTEGRATION_PLAN.md) - Complete setup and configuration guide
+- ⚡ [SonarQube Quick Start](docs/SONARQUBE_QUICKSTART.md) - 30-minute setup guide
 
 ### Docker & Containers
 - 🐳 [Docker Quick Start](docs/docker/DOCKER_QUICKSTART.md) - Get started with Docker fast

@@ -46,13 +46,33 @@ interface ScheduledEmailReminder {
   sentAt?: string
 }
 
+interface CustomEmailReminder {
+  id: string
+  title: string
+  targetDate: string
+  email: string
+  scheduledDate: string
+  message?: string
+  sent: boolean
+  sentAt?: string
+  createdAt: string
+}
+
 export function EmailReminders() {
   const [emailConfig, setEmailConfig] = useKV<EmailReminderConfig | null>('email-reminder-config', null)
   const [scheduledReminders, setScheduledReminders] = useKV<ScheduledEmailReminder[]>('scheduled-email-reminders', [])
+  const [customReminders, setCustomReminders] = useKV<CustomEmailReminder[]>('custom-email-reminders', [])
   const [tlcAppointments] = useKV<any[]>('tlc-appointments', [])
   const [dmvAppointments] = useKV<any[]>('dmv-appointments', [])
   const [isSetupOpen, setIsSetupOpen] = useState(false)
+  const [isCustomReminderOpen, setIsCustomReminderOpen] = useState(false)
   const [emailInput, setEmailInput] = useState('')
+  const [customReminderForm, setCustomReminderForm] = useState({
+    title: '',
+    targetDate: '',
+    scheduledDate: '',
+    message: ''
+  })
 
   const allAppointments = [
     ...(tlcAppointments || []).map(apt => ({ ...apt, type: 'tlc' as const })),
@@ -141,47 +161,118 @@ export function EmailReminders() {
     toast.success('Email verified')
   }
 
+  const handleScheduleCustomReminder = () => {
+    if (!emailConfig?.email) {
+      toast.error('Please configure email first')
+      return
+    }
+
+    if (!customReminderForm.title || !customReminderForm.targetDate || !customReminderForm.scheduledDate) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    const targetDate = new Date(customReminderForm.targetDate)
+    const scheduleDate = new Date(customReminderForm.scheduledDate)
+    
+    if (scheduleDate > targetDate) {
+      toast.error('Scheduled date must be before or on target date')
+      return
+    }
+
+    const newReminder: CustomEmailReminder = {
+      id: `custom-${Date.now()}`,
+      title: customReminderForm.title,
+      targetDate: customReminderForm.targetDate,
+      email: emailConfig.email,
+      scheduledDate: customReminderForm.scheduledDate,
+      message: customReminderForm.message,
+      sent: false,
+      createdAt: new Date().toISOString()
+    }
+
+    setCustomReminders(current => [...(current || []), newReminder])
+    setIsCustomReminderOpen(false)
+    setCustomReminderForm({
+      title: '',
+      targetDate: '',
+      scheduledDate: '',
+      message: ''
+    })
+    
+    toast.success('Custom email reminder scheduled', {
+      description: `Will send on ${format(parseISO(customReminderForm.scheduledDate), 'MMM d, yyyy')}`
+    })
+  }
+
+  const handleDeleteCustomReminder = (id: string) => {
+    setCustomReminders(current => (current || []).filter(r => r.id !== id))
+    toast.success('Custom reminder deleted')
+  }
+
   const upcomingReminders = (scheduledReminders || [])
     .filter(r => !r.sent && differenceInDays(parseISO(r.scheduledDate), new Date()) >= 0)
     .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
     .slice(0, 10)
+
+  const upcomingCustomReminders = (customReminders || [])
+    .filter(r => !r.sent && differenceInDays(parseISO(r.scheduledDate), new Date()) >= 0)
+    .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
 
   const sentReminders = (scheduledReminders || [])
     .filter(r => r.sent)
     .sort((a, b) => new Date(b.sentAt || b.scheduledDate).getTime() - new Date(a.sentAt || a.scheduledDate).getTime())
     .slice(0, 5)
 
-  const totalScheduled = (scheduledReminders || []).filter(r => !r.sent).length
+  const sentCustomReminders = (customReminders || [])
+    .filter(r => r.sent)
+    .sort((a, b) => new Date(b.sentAt || b.scheduledDate).getTime() - new Date(a.sentAt || a.scheduledDate).getTime())
+
+  const totalScheduled = (scheduledReminders || []).filter(r => !r.sent).length + (customReminders || []).filter(r => !r.sent).length
+  const totalSent = sentReminders.length + sentCustomReminders.length
 
   const handleExportHistory = () => {
-    if (sentReminders.length === 0) {
+    const allSentReminders = [...sentReminders, ...sentCustomReminders]
+    
+    if (allSentReminders.length === 0) {
       toast.error('No email history to export')
       return
     }
 
     const csvHeaders = [
       'Date Sent',
-      'Appointment Type',
-      'Appointment Title',
-      'Appointment Date',
+      'Type',
+      'Title',
+      'Target Date',
       'Email Address',
-      'Reminder Days Before',
+      'Details',
       'Status'
     ]
 
-    const csvRows = sentReminders.map(reminder => [
+    const appointmentRows = sentReminders.map(reminder => [
       reminder.sentAt ? format(parseISO(reminder.sentAt), 'yyyy-MM-dd HH:mm:ss') : format(parseISO(reminder.scheduledDate), 'yyyy-MM-dd'),
       reminder.appointmentType.toUpperCase(),
       `"${reminder.appointmentTitle.replace(/"/g, '""')}"`,
       format(parseISO(reminder.appointmentDate), 'yyyy-MM-dd'),
       reminder.email,
-      reminder.reminderDays.toString(),
+      `${reminder.reminderDays} days before`,
+      'Delivered'
+    ])
+
+    const customRows = sentCustomReminders.map(reminder => [
+      reminder.sentAt ? format(parseISO(reminder.sentAt), 'yyyy-MM-dd HH:mm:ss') : format(parseISO(reminder.scheduledDate), 'yyyy-MM-dd'),
+      'CUSTOM',
+      `"${reminder.title.replace(/"/g, '""')}"`,
+      format(parseISO(reminder.targetDate), 'yyyy-MM-dd'),
+      reminder.email,
+      reminder.message ? `"${reminder.message.replace(/"/g, '""')}"` : '-',
       'Delivered'
     ])
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvRows.map(row => row.join(','))
+      ...appointmentRows.map(row => row.join(',')),
+      ...customRows.map(row => row.join(','))
     ].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
@@ -197,7 +288,7 @@ export function EmailReminders() {
     document.body.removeChild(link)
     
     toast.success('Email history exported', {
-      description: `${sentReminders.length} reminder${sentReminders.length !== 1 ? 's' : ''} exported to CSV`
+      description: `${allSentReminders.length} reminder${allSentReminders.length !== 1 ? 's' : ''} exported to CSV`
     })
   }
 
@@ -215,12 +306,24 @@ export function EmailReminders() {
                 Get appointment reminders delivered to your inbox
               </CardDescription>
             </div>
-            {!emailConfig && (
-              <Button onClick={() => setIsSetupOpen(true)} className="gap-2 flex-shrink-0">
-                <Plus size={18} weight="bold" />
-                <span className="hidden sm:inline">Setup</span>
-              </Button>
-            )}
+            <div className="flex gap-2 flex-shrink-0">
+              {emailConfig && (
+                <Button 
+                  onClick={() => setIsCustomReminderOpen(true)} 
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <CalendarBlank size={18} weight="bold" />
+                  <span className="hidden sm:inline">Schedule Date</span>
+                </Button>
+              )}
+              {!emailConfig && (
+                <Button onClick={() => setIsSetupOpen(true)} className="gap-2">
+                  <Plus size={18} weight="bold" />
+                  <span className="hidden sm:inline">Setup</span>
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -235,7 +338,7 @@ export function EmailReminders() {
             </div>
             <div className="rounded-lg border bg-card p-3 space-y-1">
               <div className="text-[clamp(1.25rem,3.5vw,1.75rem)] font-bold text-success">
-                {sentReminders.length}
+                {totalSent}
               </div>
               <div className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground line-clamp-1">
                 Sent
@@ -331,14 +434,14 @@ export function EmailReminders() {
             </div>
           )}
 
-          {emailConfig && sentReminders.length > 0 && (
+          {emailConfig && totalSent > 0 && (
             <Alert className="border-success/20 bg-success/5">
               <FileText size={16} className="text-success" />
               <AlertDescription>
                 <div className="space-y-2">
                   <p className="font-medium text-success">Email History Available</p>
                   <p className="text-xs text-muted-foreground">
-                    You have {sentReminders.length} sent reminder{sentReminders.length !== 1 ? 's' : ''} in your history. Export them as a CSV file for your records, tax documentation, or compliance tracking.
+                    You have {totalSent} sent reminder{totalSent !== 1 ? 's' : ''} in your history. Export them as a CSV file for your records, tax documentation, or compliance tracking.
                   </p>
                   <Button
                     size="sm"
@@ -347,7 +450,7 @@ export function EmailReminders() {
                     className="h-7 gap-1.5 text-[clamp(0.65rem,2vw,0.75rem)] border-success/30 hover:bg-success/10"
                   >
                     <DownloadSimple size={12} weight="bold" />
-                    Export {sentReminders.length} Record{sentReminders.length !== 1 ? 's' : ''} to CSV
+                    Export {totalSent} Record{totalSent !== 1 ? 's' : ''} to CSV
                   </Button>
                 </div>
               </AlertDescription>
@@ -426,7 +529,77 @@ export function EmailReminders() {
         </Card>
       )}
 
-      {emailConfig && sentReminders.length > 0 && (
+      {emailConfig && upcomingCustomReminders.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-[clamp(0.9rem,2.6vw,1.05rem)] flex items-center gap-2">
+              <CalendarBlank size={18} weight="fill" className="text-accent" />
+              Custom Email Reminders
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {upcomingCustomReminders.map(reminder => {
+                const daysUntil = differenceInDays(parseISO(reminder.scheduledDate), new Date())
+                const targetDays = differenceInDays(parseISO(reminder.targetDate), new Date())
+                
+                return (
+                  <div 
+                    key={reminder.id}
+                    className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-accent/5"
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="rounded-full bg-accent/10 p-2 flex-shrink-0">
+                        <CalendarBlank size={16} weight="fill" className="text-accent" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-1">
+                          {reminder.title}
+                        </p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)]">
+                            Target: {format(parseISO(reminder.targetDate), 'MMM d, yyyy')}
+                          </p>
+                          {targetDays >= 0 && (
+                            <Badge variant="outline" className="text-[10px] h-4">
+                              {targetDays}d away
+                            </Badge>
+                          )}
+                        </div>
+                        {reminder.message && (
+                          <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)] line-clamp-1 mt-1">
+                            "{reminder.message}"
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="text-right">
+                        <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] font-medium">
+                          {format(parseISO(reminder.scheduledDate), 'MMM d')}
+                        </p>
+                        <p className="text-[clamp(0.65rem,2vw,0.75rem)] text-muted-foreground">
+                          {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil}d`}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeleteCustomReminder(reminder.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Trash size={14} weight="bold" className="text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {emailConfig && totalSent > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
@@ -459,6 +632,29 @@ export function EmailReminders() {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-1">
                         {reminder.appointmentTitle}
+                      </p>
+                      <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)]">
+                        Sent {reminder.sentAt ? format(parseISO(reminder.sentAt), 'MMM d, yyyy') : 'recently'}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] h-5 text-success flex-shrink-0">
+                    Delivered
+                  </Badge>
+                </div>
+              ))}
+              {sentCustomReminders.map(reminder => (
+                <div 
+                  key={reminder.id}
+                  className="flex items-center justify-between gap-3 p-3 rounded-lg border bg-accent/5"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="rounded-full bg-accent/10 p-2 flex-shrink-0">
+                      <CalendarBlank size={16} weight="fill" className="text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-[clamp(0.75rem,2.4vw,0.85rem)] line-clamp-1">
+                        {reminder.title}
                       </p>
                       <p className="text-muted-foreground text-[clamp(0.65rem,2vw,0.75rem)]">
                         Sent {reminder.sentAt ? format(parseISO(reminder.sentAt), 'MMM d, yyyy') : 'recently'}
@@ -543,6 +739,102 @@ export function EmailReminders() {
             <Button onClick={handleSetupEmail} className="gap-2">
               <CheckCircle size={16} weight="bold" />
               {emailConfig ? 'Update Email' : 'Enable Reminders'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCustomReminderOpen} onOpenChange={setIsCustomReminderOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[clamp(0.95rem,2.8vw,1.15rem)]">
+              Schedule Email Reminder
+            </DialogTitle>
+            <DialogDescription className="text-[clamp(0.75rem,2.4vw,0.85rem)]">
+              Set up an email reminder for any specific date
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reminder-title" className="text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                Reminder Title *
+              </Label>
+              <Input
+                id="reminder-title"
+                placeholder="e.g., Car Insurance Renewal"
+                value={customReminderForm.title}
+                onChange={(e) => setCustomReminderForm(prev => ({ ...prev, title: e.target.value }))}
+                className="h-10"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="target-date" className="text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                Target Date *
+              </Label>
+              <Input
+                id="target-date"
+                type="date"
+                value={customReminderForm.targetDate}
+                onChange={(e) => setCustomReminderForm(prev => ({ ...prev, targetDate: e.target.value }))}
+                className="h-10"
+              />
+              <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground">
+                The date of the event or deadline
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="scheduled-date" className="text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                Send Email On *
+              </Label>
+              <Input
+                id="scheduled-date"
+                type="date"
+                value={customReminderForm.scheduledDate}
+                onChange={(e) => setCustomReminderForm(prev => ({ ...prev, scheduledDate: e.target.value }))}
+                className="h-10"
+              />
+              <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground">
+                When to send the email reminder
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="message" className="text-[clamp(0.75rem,2.4vw,0.85rem)]">
+                Custom Message (Optional)
+              </Label>
+              <Textarea
+                id="message"
+                placeholder="Add any additional notes for this reminder..."
+                value={customReminderForm.message}
+                onChange={(e) => setCustomReminderForm(prev => ({ ...prev, message: e.target.value }))}
+                rows={3}
+                className="resize-none"
+              />
+            </div>
+
+            <div className="rounded-lg border border-accent/30 bg-accent/5 p-3">
+              <p className="text-[clamp(0.7rem,2.2vw,0.8rem)] text-muted-foreground leading-snug">
+                <strong className="text-foreground">Tip:</strong> Schedule the email a few days before your target date to give yourself time to prepare. Email reminders will be sent to {emailConfig?.email}.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsCustomReminderOpen(false)
+                setCustomReminderForm({ title: '', targetDate: '', scheduledDate: '', message: '' })
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleScheduleCustomReminder} className="gap-2">
+              <CheckCircle size={16} weight="bold" />
+              Schedule Reminder
             </Button>
           </DialogFooter>
         </DialogContent>
