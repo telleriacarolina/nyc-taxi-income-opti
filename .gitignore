@@ -25,6 +25,7 @@ dist-ssr
 *.sw?
 
 .env
+.env.local
 **/agent-eval-report*
 packages
 pids
@@ -32,3 +33,8 @@ pids
 .devcontainer/
 
 .spark-workbench-id
+
+# SonarQube
+.sonar/
+.scannerwork/
+sonar-report.html

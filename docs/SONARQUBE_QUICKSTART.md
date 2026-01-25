@@ -68,6 +68,9 @@ In `package.json`, add to scripts:
 ### Step 5: Run First Scan (5 minutes)
 
 ```bash
+# Navigate to project directory
+cd /workspaces/spark-template
+
 # Build project first
 npm run build
 
@@ -88,6 +91,8 @@ In `README.md`, add:
 ```
 
 ## 🎯 Quick Commands
+
+**Important:** Run all commands from `/workspaces/spark-template` directory
 
 ```bash
 # Full analysis

@@ -14,11 +14,19 @@ import { PackageDeliveryWork } from '@/components/PackageDeliveryWork'
 import { ContactTLC } from '@/components/ContactTLC'
 import { NYCTLCHub } from '@/components/NYCTLCHub'
 import { NYDMVHub } from '@/components/NYDMVHub'
+import { NotificationPermissions } from '@/components/NotificationPermissions'
+import { NotificationHistory } from '@/components/NotificationHistory'
 import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
+import { useEffect } from 'react'
+import { initNotificationService } from '@/lib/notificationService'
 
 function App() {
   const [activeTab, setActiveTab] = useKV<string>('active-tab', 'license')
+
+  useEffect(() => {
+    initNotificationService()
+  }, [])
 
   return (
     <>
@@ -141,6 +149,8 @@ function App() {
               <ContactTLC />
             </TabsContent>
             <TabsContent value="settings" className="space-y-4">
+              <NotificationPermissions />
+              <NotificationHistory />
               <LocationSettings />
             </TabsContent>
           </Tabs>
