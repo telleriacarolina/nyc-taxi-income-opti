@@ -127,49 +127,49 @@ export function NotificationPermissions() {
   }
 
   const updatePhoneNumber = (phone: string) => {
-    setSettings((current) => ({ ...current, phoneNumber: phone }))
+    setSettings((current) => current ? { ...current, phoneNumber: phone } : current!)
   }
 
   const updateEmail = (email: string) => {
-    setSettings((current) => ({ ...current, email }))
+    setSettings((current) => current ? { ...current, email } : current!)
   }
 
   const toggleSMS = (enabled: boolean) => {
-    if (enabled && !settings.phoneNumber) {
+    if (enabled && !settings?.phoneNumber) {
       toast.error('Please enter a phone number first')
       return
     }
-    setSettings((current) => ({ ...current, smsEnabled: enabled }))
+    setSettings((current) => current ? { ...current, smsEnabled: enabled } : current!)
     toast.success(enabled ? 'SMS reminders enabled' : 'SMS reminders disabled')
   }
 
   const toggleEmail = (enabled: boolean) => {
-    if (enabled && !settings.email) {
+    if (enabled && !settings?.email) {
       toast.error('Please enter an email address first')
       return
     }
-    setSettings((current) => ({ ...current, emailEnabled: enabled }))
+    setSettings((current) => current ? { ...current, emailEnabled: enabled } : current!)
     toast.success(enabled ? 'Email reminders enabled' : 'Email reminders disabled')
   }
 
   const toggleReminderInterval = (interval: keyof NotificationSettings['reminderIntervals'], enabled: boolean) => {
-    setSettings((current) => ({
+    setSettings((current) => current ? ({
       ...current,
       reminderIntervals: {
         ...current.reminderIntervals,
         [interval]: enabled,
       },
-    }))
+    }) : current!)
   }
 
   const toggleNotificationType = (type: keyof NotificationSettings['notificationTypes'], enabled: boolean) => {
-    setSettings((current) => ({
+    setSettings((current) => current ? ({
       ...current,
       notificationTypes: {
         ...current.notificationTypes,
         [type]: enabled,
       },
-    }))
+    }) : current!)
   }
 
   const getPermissionStatusIcon = () => {
@@ -240,9 +240,9 @@ export function NotificationPermissions() {
                 {pushPermission === 'granted' ? (
                   <>
                     <Switch
-                      checked={settings.pushEnabled}
+                      checked={settings?.pushEnabled || false}
                       onCheckedChange={(checked) =>
-                        setSettings((current) => ({ ...current, pushEnabled: checked }))
+                        setSettings((current) => current ? ({ ...current, pushEnabled: checked }) : current!)
                       }
                     />
                     <Button
@@ -279,7 +279,7 @@ export function NotificationPermissions() {
                       id="phone-number"
                       type="tel"
                       placeholder="(555) 123-4567"
-                      value={settings.phoneNumber}
+                      value={settings?.phoneNumber || ''}
                       onChange={(e) => updatePhoneNumber(e.target.value)}
                       className="max-w-xs"
                     />
@@ -287,9 +287,9 @@ export function NotificationPermissions() {
                 </div>
               </div>
               <Switch
-                checked={settings.smsEnabled}
+                checked={settings?.smsEnabled || false}
                 onCheckedChange={toggleSMS}
-                disabled={!settings.phoneNumber}
+                disabled={!settings?.phoneNumber}
               />
             </div>
 
@@ -306,7 +306,7 @@ export function NotificationPermissions() {
                       id="email"
                       type="email"
                       placeholder="driver@example.com"
-                      value={settings.email}
+                      value={settings?.email || ''}
                       onChange={(e) => updateEmail(e.target.value)}
                       className="max-w-xs"
                     />
@@ -314,9 +314,9 @@ export function NotificationPermissions() {
                 </div>
               </div>
               <Switch
-                checked={settings.emailEnabled}
+                checked={settings?.emailEnabled || false}
                 onCheckedChange={toggleEmail}
-                disabled={!settings.email}
+                disabled={!settings?.email}
               />
             </div>
           </div>
@@ -335,7 +335,7 @@ export function NotificationPermissions() {
             <Label htmlFor="days-30" className="cursor-pointer">30 days before</Label>
             <Switch
               id="days-30"
-              checked={settings.reminderIntervals.days30}
+              checked={settings?.reminderIntervals.days30 || false}
               onCheckedChange={(checked) => toggleReminderInterval('days30', checked)}
             />
           </div>
@@ -343,7 +343,7 @@ export function NotificationPermissions() {
             <Label htmlFor="days-14" className="cursor-pointer">14 days before</Label>
             <Switch
               id="days-14"
-              checked={settings.reminderIntervals.days14}
+              checked={settings?.reminderIntervals.days14 || false}
               onCheckedChange={(checked) => toggleReminderInterval('days14', checked)}
             />
           </div>
@@ -351,7 +351,7 @@ export function NotificationPermissions() {
             <Label htmlFor="days-7" className="cursor-pointer">7 days before</Label>
             <Switch
               id="days-7"
-              checked={settings.reminderIntervals.days7}
+              checked={settings?.reminderIntervals.days7 || false}
               onCheckedChange={(checked) => toggleReminderInterval('days7', checked)}
             />
           </div>
@@ -359,7 +359,7 @@ export function NotificationPermissions() {
             <Label htmlFor="days-1" className="cursor-pointer">1 day before</Label>
             <Switch
               id="days-1"
-              checked={settings.reminderIntervals.days1}
+              checked={settings?.reminderIntervals.days1 || false}
               onCheckedChange={(checked) => toggleReminderInterval('days1', checked)}
             />
           </div>
@@ -378,7 +378,7 @@ export function NotificationPermissions() {
             <Label htmlFor="license-exp" className="cursor-pointer">TLC License Expiration</Label>
             <Switch
               id="license-exp"
-              checked={settings.notificationTypes.licenseExpiration}
+              checked={settings?.notificationTypes.licenseExpiration || false}
               onCheckedChange={(checked) => toggleNotificationType('licenseExpiration', checked)}
             />
           </div>
@@ -386,7 +386,7 @@ export function NotificationPermissions() {
             <Label htmlFor="appointments" className="cursor-pointer">Appointment Reminders</Label>
             <Switch
               id="appointments"
-              checked={settings.notificationTypes.appointmentReminders}
+              checked={settings?.notificationTypes.appointmentReminders || false}
               onCheckedChange={(checked) => toggleNotificationType('appointmentReminders', checked)}
             />
           </div>
@@ -394,7 +394,7 @@ export function NotificationPermissions() {
             <Label htmlFor="vehicle-reg" className="cursor-pointer">Vehicle Registration</Label>
             <Switch
               id="vehicle-reg"
-              checked={settings.notificationTypes.vehicleRegistration}
+              checked={settings?.notificationTypes.vehicleRegistration || false}
               onCheckedChange={(checked) => toggleNotificationType('vehicleRegistration', checked)}
             />
           </div>
@@ -402,7 +402,7 @@ export function NotificationPermissions() {
             <Label htmlFor="compliance" className="cursor-pointer">Compliance Deadlines</Label>
             <Switch
               id="compliance"
-              checked={settings.notificationTypes.complianceDeadlines}
+              checked={settings?.notificationTypes.complianceDeadlines || false}
               onCheckedChange={(checked) => toggleNotificationType('complianceDeadlines', checked)}
             />
           </div>
@@ -410,7 +410,7 @@ export function NotificationPermissions() {
             <Label htmlFor="earnings" className="cursor-pointer">Earnings Alerts</Label>
             <Switch
               id="earnings"
-              checked={settings.notificationTypes.earningsAlerts}
+              checked={settings?.notificationTypes.earningsAlerts || false}
               onCheckedChange={(checked) => toggleNotificationType('earningsAlerts', checked)}
             />
           </div>
@@ -418,7 +418,7 @@ export function NotificationPermissions() {
             <Label htmlFor="traffic" className="cursor-pointer">Traffic Alerts</Label>
             <Switch
               id="traffic"
-              checked={settings.notificationTypes.trafficAlerts}
+              checked={settings?.notificationTypes.trafficAlerts || false}
               onCheckedChange={(checked) => toggleNotificationType('trafficAlerts', checked)}
             />
           </div>

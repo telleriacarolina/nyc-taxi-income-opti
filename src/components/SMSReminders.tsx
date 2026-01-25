@@ -89,6 +89,7 @@ export function SMSReminders() {
     today.setHours(0, 0, 0, 0)
 
     setScheduledReminders((current) => {
+      if (!current) return []
       let updated = false
       const newReminders = current.map(reminder => {
         if (reminder.sent) return reminder
@@ -178,8 +179,8 @@ export function SMSReminders() {
     }
 
     const allAppointments = [
-      ...tlcAppointments.map(a => ({ ...a, type: 'tlc' as const })),
-      ...dmvAppointments.map(a => ({ ...a, type: 'dmv' as const }))
+      ...(tlcAppointments || []).map(a => ({ ...a, type: 'tlc' as const })),
+      ...(dmvAppointments || []).map(a => ({ ...a, type: 'dmv' as const }))
     ]
 
     const appointment = allAppointments.find(a => a.id === scheduleFormData.appointmentId)
@@ -205,7 +206,7 @@ export function SMSReminders() {
       message
     }
 
-    setScheduledReminders((current) => [...current, newReminder])
+    setScheduledReminders((current) => [...(current || []), newReminder])
     setShowScheduleDialog(false)
     setScheduleFormData({
       appointmentId: '',
@@ -220,7 +221,7 @@ export function SMSReminders() {
   }
 
   const handleDeleteReminder = (id: string) => {
-    setScheduledReminders((current) => current.filter(r => r.id !== id))
+    setScheduledReminders((current) => (current || []).filter(r => r.id !== id))
     toast.success('SMS reminder deleted')
   }
 
@@ -242,18 +243,18 @@ export function SMSReminders() {
   }
 
   const allAppointments = [
-    ...tlcAppointments.map(a => ({ ...a, type: 'tlc' as const })),
-    ...dmvAppointments.map(a => ({ ...a, type: 'dmv' as const }))
+    ...(tlcAppointments || []).map(a => ({ ...a, type: 'tlc' as const })),
+    ...(dmvAppointments || []).map(a => ({ ...a, type: 'dmv' as const }))
   ].filter(a => {
     const appointmentDate = new Date(a.date)
     return appointmentDate >= new Date()
   }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-  const upcomingReminders = scheduledReminders.filter(r => !r.sent).sort((a, b) => 
+  const upcomingReminders = (scheduledReminders || []).filter(r => !r.sent).sort((a, b) => 
     new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime()
   )
 
-  const sentReminders = scheduledReminders.filter(r => r.sent).sort((a, b) => 
+  const sentReminders = (scheduledReminders || []).filter(r => r.sent).sort((a, b) => 
     new Date(b.sentAt || b.scheduledDate).getTime() - new Date(a.sentAt || a.scheduledDate).getTime()
   )
 
