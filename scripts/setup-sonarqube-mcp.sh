@@ -14,7 +14,15 @@ echo ""
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
+
+# Check if in correct directory
+if [ "$(pwd)" != "/workspaces/spark-template" ]; then
+    echo -e "${RED}✗ Error: Must be run from /workspaces/spark-template${NC}"
+    echo "Run: cd /workspaces/spark-template && npm run sonar:setup"
+    exit 1
+fi
 
 # Check if already cloned
 if [ -d "/workspaces/sonarqube-mcp-server" ]; then
@@ -29,6 +37,21 @@ else
     cd sonarqube-mcp-server
 fi
 
+# Check if it's a Node.js project
+if [ ! -f "package.json" ]; then
+    echo -e "${YELLOW}⚠ Warning: No package.json found in repository${NC}"
+    echo -e "${YELLOW}This may not be a Node.js project${NC}"
+    echo -e "${YELLOW}Skipping npm installation steps${NC}"
+    echo ""
+    echo -e "${BLUE}→ Installing sonarqube-scanner in project...${NC}"
+    cd /workspaces/spark-template
+    npm install --save-dev sonarqube-scanner
+    echo ""
+    echo -e "${GREEN}✓ Setup complete (scanner only)${NC}"
+    echo "You can use 'npm run sonar:scan' to analyze your project"
+    exit 0
+fi
+
 # Install dependencies
 echo ""
 echo -e "${BLUE}→ Installing dependencies...${NC}"
@@ -37,7 +60,11 @@ npm install
 # Build the project
 echo ""
 echo -e "${BLUE}→ Building the project...${NC}"
-npm run build
+if npm run build 2>/dev/null; then
+    echo -e "${GREEN}✓ Build successful${NC}"
+else
+    echo -e "${YELLOW}⚠ Build failed or no build script${NC}"
+fi
 
 # Link globally
 echo ""

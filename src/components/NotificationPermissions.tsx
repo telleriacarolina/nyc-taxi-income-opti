@@ -74,7 +74,7 @@ export function NotificationPermissions() {
     }
 
     if (Notification.permission === 'granted') {
-      setSettings((current) => ({ ...current, pushEnabled: true }))
+      setSettings((current) => current ? { ...current, pushEnabled: true } : current!)
       toast.success('Push notifications are already enabled')
       return
     }
@@ -85,7 +85,7 @@ export function NotificationPermissions() {
       setPushPermission(permission as NotificationPermissionStatus)
 
       if (permission === 'granted') {
-        setSettings((current) => ({ ...current, pushEnabled: true }))
+        setSettings((current) => current ? { ...current, pushEnabled: true } : current!)
         toast.success('Push notifications enabled successfully')
         
         new Notification('NYC TLC Driver Hub', {
@@ -93,7 +93,7 @@ export function NotificationPermissions() {
           icon: '/icon-192.png',
         })
       } else {
-        setSettings((current) => ({ ...current, pushEnabled: false }))
+        setSettings((current) => current ? { ...current, pushEnabled: false } : current!)
         toast.error('Push notification permission denied')
       }
     } catch (error) {
@@ -104,7 +104,7 @@ export function NotificationPermissions() {
   }
 
   const disablePushNotifications = () => {
-    setSettings((current) => ({ ...current, pushEnabled: false }))
+    setSettings((current) => current ? { ...current, pushEnabled: false } : current!)
     toast.info('Push notifications disabled. You can re-enable them in browser settings.')
   }
 
