@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Phone, Envelope, MapPin, Clock, ArrowSquareOut, Globe } from '@phosphor-icons/react'
+import { Phone, Envelope, MapPin, Clock, ArrowSquareOut, Globe, CalendarBlank } from '@phosphor-icons/react'
 
 export function ContactTLC() {
   const tlcLink = 'https://www.nyc.gov/site/tlc/about/contact-tlc.page'
@@ -205,6 +205,49 @@ export function ContactTLC() {
                   <span className="line-clamp-2">Traffic violations and ticket payments</span>
                 </li>
               </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <CalendarBlank size={20} weight="fill" className="text-primary" />
+                <h3 className="font-semibold text-[clamp(0.85rem,2.6vw,1rem)]">
+                  Schedule DMV Appointments
+                </h3>
+              </div>
+              <p className="text-[clamp(0.75rem,2.4vw,0.875rem)] text-muted-foreground">
+                Book appointments online to save time at DMV offices
+              </p>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => window.open('https://dmv.ny.gov/offices/make-reservation-dmv-office', '_blank')}
+                  className="w-full gap-2 text-[clamp(0.75rem,2.4vw,0.875rem)]"
+                  variant="default"
+                >
+                  <CalendarBlank size={18} weight="bold" />
+                  Schedule Office Visit
+                  <ArrowSquareOut size={16} />
+                </Button>
+                <Button
+                  onClick={() => window.open('https://dmv.ny.gov/schedule-road-test', '_blank')}
+                  className="w-full gap-2 text-[clamp(0.75rem,2.4vw,0.875rem)]"
+                  variant="outline"
+                >
+                  <CalendarBlank size={18} weight="bold" />
+                  Schedule Road Test
+                  <ArrowSquareOut size={16} />
+                </Button>
+                <Button
+                  onClick={() => window.open('https://dmv.ny.gov/offices', '_blank')}
+                  className="w-full gap-2 text-[clamp(0.75rem,2.4vw,0.875rem)]"
+                  variant="outline"
+                >
+                  <MapPin size={18} weight="bold" />
+                  Find DMV Offices
+                  <ArrowSquareOut size={16} />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </CardContent>

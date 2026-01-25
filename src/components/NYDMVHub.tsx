@@ -195,17 +195,34 @@ const DMV_SERVICES: DMVService[] = [
   {
     id: 'dmv-appointments',
     name: 'Schedule DMV Appointment',
-    description: 'Book an appointment at a DMV office',
+    description: 'Book an appointment at a DMV office for license, registration, or ID services',
+    category: 'Appointments',
+    url: 'https://dmv.ny.gov/offices/make-reservation-dmv-office',
+    icon: 'appointment',
+    featured: true
+  },
+  {
+    id: 'find-office',
+    name: 'Find DMV Office',
+    description: 'Locate DMV offices near you and check current wait times',
     category: 'Appointments',
     url: 'https://dmv.ny.gov/offices',
     icon: 'appointment'
   },
   {
-    id: 'find-office',
-    name: 'Find DMV Office',
-    description: 'Locate DMV offices and check wait times',
+    id: 'road-test-appointment',
+    name: 'Schedule Road Test',
+    description: 'Book your driving skills test appointment',
     category: 'Appointments',
-    url: 'https://dmv.ny.gov/offices',
+    url: 'https://dmv.ny.gov/schedule-road-test',
+    icon: 'appointment'
+  },
+  {
+    id: 'reschedule-appointment',
+    name: 'Manage Existing Appointment',
+    description: 'Reschedule or cancel your DMV appointment',
+    category: 'Appointments',
+    url: 'https://dmv.ny.gov/offices/make-reservation-dmv-office',
     icon: 'appointment'
   },
   {
@@ -469,6 +486,77 @@ export function NYDMVHub() {
         </TabsList>
 
         <TabsContent value="services" className="space-y-4">
+          <Card className="border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CalendarBlank size={24} weight="fill" className="text-primary" />
+                Schedule DMV Appointments
+              </CardTitle>
+              <CardDescription>
+                Book appointments online to avoid long wait times at DMV offices
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid gap-3 md:grid-cols-2">
+                <a
+                  href="https://dmv.ny.gov/offices/make-reservation-dmv-office"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group"
+                >
+                  <Card className="border-primary/30 transition-all hover:border-primary hover:shadow-lg">
+                    <CardContent className="flex items-center gap-3 p-4">
+                      <div className="rounded-full bg-primary/15 p-2.5">
+                        <CalendarBlank size={22} weight="fill" className="text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold group-hover:text-primary">Schedule Office Visit</div>
+                        <div className="text-sm text-muted-foreground">License, registration, ID services</div>
+                      </div>
+                      <ArrowSquareOut size={20} weight="bold" className="text-muted-foreground group-hover:text-primary" />
+                    </CardContent>
+                  </Card>
+                </a>
+                <a
+                  href="https://dmv.ny.gov/schedule-road-test"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group"
+                >
+                  <Card className="border-primary/30 transition-all hover:border-primary hover:shadow-lg">
+                    <CardContent className="flex items-center gap-3 p-4">
+                      <div className="rounded-full bg-primary/15 p-2.5">
+                        <CarProfile size={22} weight="fill" className="text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold group-hover:text-primary">Schedule Road Test</div>
+                        <div className="text-sm text-muted-foreground">Book your driving skills test</div>
+                      </div>
+                      <ArrowSquareOut size={20} weight="bold" className="text-muted-foreground group-hover:text-primary" />
+                    </CardContent>
+                  </Card>
+                </a>
+              </div>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <div className="flex items-start gap-2 text-sm">
+                  <MapPin size={16} weight="fill" className="mt-0.5 text-primary" />
+                  <div>
+                    <span className="font-medium">Find your nearest office:</span>{' '}
+                    <a 
+                      href="https://dmv.ny.gov/offices" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      View all DMV locations
+                      <ArrowSquareOut size={12} className="ml-1 inline" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Quick Access</CardTitle>
@@ -579,13 +667,38 @@ export function NYDMVHub() {
                       Add Appointment
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>Add DMV Appointment</DialogTitle>
                       <DialogDescription>
                         Track appointments scheduled through official DMV portals
                       </DialogDescription>
                     </DialogHeader>
+                    <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+                      <div className="mb-2 font-medium">Need to schedule an appointment?</div>
+                      <div className="space-y-2">
+                        <a
+                          href="https://dmv.ny.gov/offices/make-reservation-dmv-office"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-primary hover:underline"
+                        >
+                          <CalendarBlank size={16} weight="fill" />
+                          Schedule Office Visit (License, Registration, ID)
+                          <ArrowSquareOut size={14} />
+                        </a>
+                        <a
+                          href="https://dmv.ny.gov/schedule-road-test"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-primary hover:underline"
+                        >
+                          <CarProfile size={16} weight="fill" />
+                          Schedule Road Test
+                          <ArrowSquareOut size={14} />
+                        </a>
+                      </div>
+                    </div>
                     <AppointmentForm onSubmit={handleAddAppointment} />
                   </DialogContent>
                 </Dialog>
