@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   sanitizeText,
   sanitizeNumericInput,
@@ -203,6 +203,10 @@ describe('validateDuration', () => {
 // ---------------------------------------------------------------------------
 
 describe('validateDate', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('accepts a valid date string', () => {
     expect(validateDate('2024-06-15').isValid).toBe(true)
   })
@@ -220,6 +224,8 @@ describe('validateDate', () => {
   })
 
   it('rejects dates more than 10 years in the future', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-01-01T00:00:00Z'))
     expect(validateDate('2040-01-01').isValid).toBe(false)
   })
 })
@@ -229,11 +235,19 @@ describe('validateDate', () => {
 // ---------------------------------------------------------------------------
 
 describe('validatePastDate', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('accepts a past date', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-01-01T00:00:00Z'))
     expect(validatePastDate('2023-01-01').isValid).toBe(true)
   })
 
   it('rejects a future date', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-01-01T00:00:00Z'))
     expect(validatePastDate('2030-01-01').isValid).toBe(false)
   })
 })
