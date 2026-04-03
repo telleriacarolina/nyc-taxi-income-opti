@@ -316,6 +316,15 @@ export function calcQBIDeduction(netProfit: number): number {
 
 /**
  * Core progressive-bracket tax calculator.
+ *
+ * Bracket ranges follow the IRS "over X" convention:
+ *   - `min` is exclusive: income must be strictly greater than `min` to enter the bracket.
+ *   - `max` is inclusive: income up to and including `max` is taxed at the bracket rate.
+ *
+ * Adjacent brackets sharing the same boundary value (e.g. max=43_000 and min=43_000) are
+ * unambiguous because the break condition `income <= bracket.min` causes a boundary-value
+ * income to be fully captured by the lower bracket and contribute $0 taxable amount to the
+ * upper bracket (Math.min(income, bracket.max) - bracket.min === 0).
  */
 function calcProgressiveTax(income: number, brackets: TaxBracket[]): number {
   let tax = 0
