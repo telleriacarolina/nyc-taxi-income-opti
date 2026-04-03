@@ -633,24 +633,35 @@ The design should evoke confidence, empowerment, and professionalism - like havi
 
 ## Color Selection
 
-A professional palette with strong status indicators inspired by official transportation signage and traffic signals.
+A sophisticated burgundy and gold palette inspired by premium NYC taxi service, combining deep wine tones with vibrant taxi yellow accents for a distinctive, professional appearance.
 
-- **Primary Color**: Deep Blue (oklch(0.35 0.08 250)) - Conveys authority, professionalism, and trustworthiness like official NYC TLC branding
+- **Primary Color**: Vibrant Taxi Yellow (oklch(0.85 0.15 90)) - The iconic NYC taxi yellow used for primary CTAs, important buttons, and focus states, creating instant visual recognition and urgency
 - **Secondary Colors**:
-  - Slate Gray (oklch(0.45 0.02 250)) for supporting elements and subtle backgrounds
-  - Light Blue (oklch(0.92 0.03 250)) for card backgrounds and secondary surfaces
-- **Accent Color**: Vibrant Yellow (oklch(0.85 0.15 90)) - Attention-grabbing for call-to-action buttons and important updates, inspired by NYC taxi yellow
+  - Deep Wine Burgundy (oklch(0.22 0.12 25)) for rich, sophisticated background
+  - Medium Burgundy (oklch(0.38 0.12 22)) for cards and elevated surfaces
+  - Rich Burgundy (oklch(0.30 0.13 22)) for secondary UI elements
+- **Accent Color**: Vibrant Rose Pink (oklch(0.72 0.18 15)) - Energetic rose pink for secondary CTAs, highlights, and interactive elements that complement the yellow primary
 - **Status Colors**:
-  - Success Green (oklch(0.65 0.15 145)) for current/valid documents
-  - Warning Orange (oklch(0.70 0.15 50)) for items expiring within 30 days
-  - Alert Red (oklch(0.60 0.20 25)) for expired items
+  - Success Green (oklch(0.68 0.17 145)) for valid documents, completed tasks, and positive states
+  - Warning Orange (oklch(0.70 0.20 45)) for items expiring within 30 days and caution states
+  - Alert Red (oklch(0.58 0.24 27)) for expired items, errors, and urgent attention
+- **Chart Colors** (8-color gradient palette):
+  - Chart 1: Taxi Yellow (oklch(0.85 0.15 90)) - Primary data series
+  - Chart 2: Rose Pink (oklch(0.72 0.18 15)) - Secondary series
+  - Chart 3: Coral Red (oklch(0.58 0.16 30)) - Tertiary series
+  - Chart 4: Success Green (oklch(0.68 0.17 145)) - Positive metrics
+  - Chart 5: Warning Orange (oklch(0.70 0.20 45)) - Caution metrics
+  - Chart 6: Deep Burgundy Red (oklch(0.50 0.20 22)) - Dark accent
+  - Chart 7: Warm Amber (oklch(0.62 0.15 60)) - Warm accent
+  - Chart 8: Light Gold (oklch(0.80 0.12 95)) - Light accent
 - **Foreground/Background Pairings**:
-  - Background (Light Blue #EEF2F6): Dark text oklch(0.25 0.02 250) - Ratio 9.2:1 ✓
-  - Primary (Deep Blue): White text oklch(0.98 0 0) - Ratio 8.5:1 ✓
-  - Accent (Vibrant Yellow #F5D547): Dark text oklch(0.25 0.02 250) - Ratio 12.1:1 ✓
-  - Success: White text oklch(0.98 0 0) - Ratio 4.6:1 ✓
-  - Warning: Dark text oklch(0.25 0.02 250) - Ratio 9.8:1 ✓
-  - Alert: White text oklch(0.98 0 0) - Ratio 5.2:1 ✓
+  - Background (Deep Wine Burgundy): Champagne Pink text oklch(0.94 0.03 15) - Ratio 12.8:1 ✓
+  - Card (Rich Burgundy): Soft Pink text oklch(0.92 0.04 15) - Ratio 10.2:1 ✓
+  - Primary (Taxi Yellow): Deep Burgundy text oklch(0.15 0.02 25) - Ratio 14.5:1 ✓
+  - Accent (Rose Pink): Deep Burgundy text oklch(0.12 0.02 25) - Ratio 11.3:1 ✓
+  - Success: Dark Green text oklch(0.12 0.02 145) - Ratio 9.8:1 ✓
+  - Warning: Dark text oklch(0.12 0.02 25) - Ratio 10.5:1 ✓
+  - Destructive: Light Pink text oklch(0.96 0.02 15) - Ratio 7.2:1 ✓
 
 ## Font Selection
 

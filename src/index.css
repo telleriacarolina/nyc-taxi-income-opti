@@ -8,47 +8,47 @@
 }
 
 :root {
-  /* Red & Burgundy Theme - Elegant Dark Reds to Bright Pinks */
+  /* NYC TLC Theme - Professional Dark Burgundy with Vibrant Accents */
   
-  /* Background & Surfaces - Deep Burgundy */
-  --background: oklch(0.25 0.10 25); /* Deep Burgundy background */
-  --foreground: oklch(0.92 0.04 15); /* Light Pink text */
+  /* Background & Surfaces - Deep Burgundy Foundation */
+  --background: oklch(0.22 0.12 25); /* Deep wine burgundy background */
+  --foreground: oklch(0.94 0.03 15); /* Soft champagne pink text */
 
-  --card: oklch(0.32 0.12 25); /* Burgundy cards */
-  --card-foreground: oklch(0.90 0.05 15); /* Soft pink text */
-  --popover: oklch(0.28 0.11 25); /* Dark burgundy popover */
-  --popover-foreground: oklch(0.92 0.04 15); /* Light pink */
+  --card: oklch(0.30 0.13 22); /* Rich burgundy cards */
+  --card-foreground: oklch(0.92 0.04 15); /* Soft pink text */
+  --popover: oklch(0.26 0.12 24); /* Dark burgundy popover */
+  --popover-foreground: oklch(0.94 0.03 15); /* Light pink */
 
-  /* Primary Color - Medium Burgundy */
-  --primary: oklch(0.40 0.14 20); /* Rich Burgundy */
-  --primary-foreground: oklch(0.95 0.03 15); /* Very light pink */
+  /* Primary Color - NYC Taxi Yellow */
+  --primary: oklch(0.85 0.15 90); /* Vibrant taxi yellow for CTAs */
+  --primary-foreground: oklch(0.15 0.02 25); /* Deep burgundy text on yellow */
   
-  /* Secondary Color - Dark Burgundy */
-  --secondary: oklch(0.35 0.10 25); /* Dark Burgundy */
-  --secondary-foreground: oklch(0.90 0.05 15); /* Soft pink */
+  /* Secondary Color - Medium Burgundy */
+  --secondary: oklch(0.38 0.12 22); /* Medium burgundy for supporting elements */
+  --secondary-foreground: oklch(0.92 0.05 15); /* Soft pink text */
   
   /* Muted backgrounds and text */
-  --muted: oklch(0.38 0.08 22); /* Muted burgundy */
-  --muted-foreground: oklch(0.70 0.06 18); /* Dusty rose text */
+  --muted: oklch(0.35 0.08 20); /* Muted burgundy */
+  --muted-foreground: oklch(0.68 0.07 18); /* Dusty rose text */
   
-  /* Accent Color - Bright Pink (Eye-catching CTAs) */
-  --accent: oklch(0.75 0.15 15); /* Rose Pink */
-  --accent-foreground: oklch(0.10 0.02 20); /* Near black */
+  /* Accent Color - Rose Pink (Secondary CTAs) */
+  --accent: oklch(0.72 0.18 15); /* Vibrant rose pink */
+  --accent-foreground: oklch(0.12 0.02 25); /* Deep burgundy */
   
   /* Destructive/Alert - Bright Red */
-  --destructive: oklch(0.55 0.22 25); /* Vivid Red */
-  --destructive-foreground: oklch(0.95 0.03 15); /* Light pink */
+  --destructive: oklch(0.58 0.24 27); /* Vivid alert red */
+  --destructive-foreground: oklch(0.96 0.02 15); /* Light pink */
 
-  /* Status Colors */
-  --success: oklch(0.65 0.15 145); /* Success Green */
-  --success-foreground: oklch(0.10 0.02 145); /* Dark green */
-  --warning: oklch(0.68 0.18 40); /* Orange-Red */
-  --warning-foreground: oklch(0.10 0.02 40); /* Dark text */
+  /* Status Colors - Enhanced Contrast */
+  --success: oklch(0.68 0.17 145); /* Vibrant success green */
+  --success-foreground: oklch(0.12 0.02 145); /* Dark green */
+  --warning: oklch(0.70 0.20 45); /* Bright warning orange */
+  --warning-foreground: oklch(0.12 0.02 25); /* Dark text */
 
-  /* Borders and inputs */
-  --border: oklch(0.45 0.10 20); /* Red-tinted border */
-  --input: oklch(0.38 0.10 22); /* Burgundy input */
-  --ring: oklch(0.75 0.15 15); /* Pink focus ring */
+  /* Borders and inputs - Enhanced Definition */
+  --border: oklch(0.42 0.11 22); /* Red-wine border */
+  --input: oklch(0.36 0.11 24); /* Burgundy input background */
+  --ring: oklch(0.85 0.15 90); /* Yellow focus ring (matches primary) */
 
   --radius: 0.5rem;
 
@@ -57,42 +57,32 @@
   --font-serif: 'Noto Serif', serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
-  --chart-1: oklch(0.55 0.18 20);
+  /* Chart Colors - Burgundy to Yellow Gradient */
+  --chart-1: oklch(0.85 0.15 90); /* Taxi yellow (primary) */
+  --chart-2: oklch(0.72 0.18 15); /* Rose pink (accent) */
+  --chart-3: oklch(0.58 0.16 30); /* Coral red */
+  --chart-4: oklch(0.68 0.17 145); /* Success green */
+  --chart-5: oklch(0.70 0.20 45); /* Warning orange */
+  --chart-6: oklch(0.50 0.20 22); /* Deep burgundy red */
+  --chart-7: oklch(0.62 0.15 60); /* Warm amber */
+  --chart-8: oklch(0.80 0.12 95); /* Light gold */
 
-  --chart-2: oklch(0.75 0.15 15);
+  /* Sidebar Colors */
+  --sidebar: oklch(0.28 0.12 24);
+  --sidebar-foreground: oklch(0.92 0.04 15);
+  --sidebar-primary: oklch(0.85 0.15 90);
+  --sidebar-primary-foreground: oklch(0.15 0.02 25);
+  --sidebar-accent: oklch(0.72 0.18 15);
+  --sidebar-accent-foreground: oklch(0.12 0.02 25);
+  --sidebar-border: oklch(0.42 0.11 22);
+  --sidebar-ring: oklch(0.85 0.15 90);
 
-  --chart-3: oklch(0.40 0.14 25);
-
-  --chart-4: oklch(0.65 0.12 18);
-
-  --chart-5: oklch(0.50 0.20 22);
-
-  --sidebar: oklch(0.30 0.10 25);
-
-  --sidebar-foreground: oklch(0.90 0.05 15);
-
-  --sidebar-primary: oklch(0.55 0.18 20);
-
-  --sidebar-primary-foreground: oklch(0.95 0.03 15);
-
-  --sidebar-accent: oklch(0.75 0.15 15);
-
-  --sidebar-accent-foreground: oklch(0.10 0.02 20);
-
-  --sidebar-border: oklch(0.45 0.10 20);
-
-  --sidebar-ring: oklch(0.75 0.15 15);
-
-  --shadow-color: oklch(0.10 0.005 240);
-
-  --shadow-opacity: 0.05;
-
-  --shadow-blur: 10px;
-
+  /* Shadow System */
+  --shadow-color: oklch(0.08 0.01 25);
+  --shadow-opacity: 0.08;
+  --shadow-blur: 12px;
   --shadow-spread: 0px;
-
   --shadow-offset-x: 0px;
-
   --shadow-offset-y: 4px;
 
   --spacing: 0.25rem;
@@ -124,6 +114,24 @@
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
 
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) * 1.5);
@@ -141,19 +149,19 @@ body {
 }
 
 .marker-cluster-small {
-  background-color: oklch(0.75 0.15 15 / 0.8);
+  background-color: oklch(0.72 0.18 15 / 0.8);
 }
 
 .marker-cluster-small div {
-  background-color: oklch(0.65 0.18 18 / 0.9);
+  background-color: oklch(0.85 0.15 90 / 0.9);
 }
 
 .marker-cluster-medium {
-  background-color: oklch(0.60 0.18 20 / 0.8);
+  background-color: oklch(0.58 0.16 30 / 0.8);
 }
 
 .marker-cluster-medium div {
-  background-color: oklch(0.50 0.20 22 / 0.9);
+  background-color: oklch(0.70 0.20 45 / 0.9);
 }
 
 .marker-cluster-large {
@@ -161,7 +169,7 @@ body {
 }
 
 .marker-cluster-large div {
-  background-color: oklch(0.40 0.22 25 / 0.9);
+  background-color: oklch(0.58 0.24 27 / 0.9);
 }
 
 .marker-cluster {
