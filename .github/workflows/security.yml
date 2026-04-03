@@ -1,15 +1,23 @@
+# Security Checks Workflow
+
+# List of event types that trigger this workflow
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
 permissions:
   contents: read
   pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Check out code
         uses: actions/checkout@v2
-      - name: Run tests
-        run: npm test
+      - name: Run security checks
+        run: npm run security-checks
