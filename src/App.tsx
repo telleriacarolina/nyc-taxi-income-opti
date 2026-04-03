@@ -17,7 +17,8 @@ import { NYDMVHub } from '@/components/NYDMVHub'
 import { NotificationPermissions } from '@/components/NotificationPermissions'
 import { NotificationHistory } from '@/components/NotificationHistory'
 import { PrivacyDataManagement } from '@/components/PrivacyDataManagement'
-import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple } from '@phosphor-icons/react'
+import { TaxFiling } from '@/components/TaxFiling'
+import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple, Receipt } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { useEffect } from 'react'
 import { initNotificationService } from '@/lib/notificationService'
@@ -56,7 +57,7 @@ function App() {
             </header>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="grid w-full grid-cols-10 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+              <TabsList className="grid w-full grid-cols-11 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
               <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">License</span>
@@ -96,6 +97,10 @@ function App() {
               <TabsTrigger value="settings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
                 <Gear size={16} weight="fill" className="flex-shrink-0" />
                 <span className="truncate">Settings</span>
+              </TabsTrigger>
+              <TabsTrigger value="tax" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
+                <Receipt size={16} weight="fill" className="flex-shrink-0" />
+                <span className="truncate">Tax</span>
               </TabsTrigger>
             </TabsList>
 
@@ -154,6 +159,9 @@ function App() {
               <NotificationPermissions />
               <NotificationHistory />
               <LocationSettings />
+            </TabsContent>
+            <TabsContent value="tax" className="space-y-4">
+              <TaxFiling />
             </TabsContent>
           </Tabs>
           </div>
