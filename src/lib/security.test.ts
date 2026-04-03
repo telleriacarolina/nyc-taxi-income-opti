@@ -243,11 +243,20 @@ describe('validatePastDate', () => {
 // ---------------------------------------------------------------------------
 
 describe('validateFutureDate', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('accepts a future date', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-01-01T00:00:00Z'))
+
     expect(validateFutureDate('2030-01-01').isValid).toBe(true)
   })
 
   it('rejects a past date', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-01-01T00:00:00Z'))
     expect(validateFutureDate('2021-01-01').isValid).toBe(false)
   })
 })
