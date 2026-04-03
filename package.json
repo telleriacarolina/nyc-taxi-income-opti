@@ -48,7 +48,7 @@
         "check:openfreemap": "git fetch openfreemap && git log HEAD..openfreemap/main --oneline && git rev-list HEAD..openfreemap/main --count | xargs -I {} echo 'New commits: {}'",
         "compare:openfreemap": "git fetch openfreemap && git diff --stat main openfreemap/main",
         "review:openfreemap": "git fetch openfreemap && git log openfreemap/main --oneline --graph -20 --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr)%Creset'",
-        "sonar:scan": "SONAR_TOKEN=8d0d4b21e1b18abaf8ceee38688d23552606f978 sonar-scanner",
+        "sonar:scan": "sonar-scanner",
         "sonar:analyze": "npm run test:coverage && npm run sonar:scan",
         "sonar:diagnose": "chmod +x scripts/diagnose-sonar.sh && ./scripts/diagnose-sonar.sh",
         "sonar:install": "npm install --save-dev sonarqube-scanner @vitest/coverage-v8 vitest @testing-library/react @testing-library/jest-dom jsdom",
