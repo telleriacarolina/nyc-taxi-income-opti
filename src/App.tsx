@@ -17,17 +17,27 @@ import { NYDMVHub } from '@/components/NYDMVHub'
 import { NotificationPermissions } from '@/components/NotificationPermissions'
 import { NotificationHistory } from '@/components/NotificationHistory'
 import { PrivacyDataManagement } from '@/components/PrivacyDataManagement'
+import { ThemeSelector } from '@/components/ThemeSelector'
 import { IdentificationCard, ChartBar, CarProfile, MapTrifold, Calculator, ChatCircleDots, Gear, Phone, Buildings, CarSimple } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { useEffect } from 'react'
 import { initNotificationService } from '@/lib/notificationService'
+import { applyTheme, getThemeByName } from '@/lib/themes'
 
 function App() {
   const [activeTab, setActiveTab] = useKV<string>('active-tab', 'license')
+  const [selectedTheme] = useKV<string>('app-theme', 'burgundy-taxi')
 
   useEffect(() => {
     initNotificationService()
   }, [])
+
+  useEffect(() => {
+    const theme = getThemeByName(selectedTheme || 'burgundy-taxi')
+    if (theme) {
+      applyTheme(theme)
+    }
+  }, [selectedTheme])
 
   return (
     <>
@@ -44,6 +54,9 @@ function App() {
                 <span className="px-2.5 py-1 rounded-full border bg-muted/80 text-foreground/80">Live NYC Ops</span>
                 <span className="px-2.5 py-1 rounded-full border bg-primary/10 text-primary">Driver Success</span>
                 <span className="px-2.5 py-1 rounded-full border bg-success/10 text-success">Compliance Ready</span>
+                <div className="ml-auto">
+                  <ThemeSelector />
+                </div>
               </div>
               <div className="flex flex-col gap-1">
                 <h1 className="font-bold tracking-tight leading-tight text-[clamp(1.35rem,3vw,1.7rem)]">
