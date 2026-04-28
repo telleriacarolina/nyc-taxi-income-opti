@@ -5,6 +5,7 @@ import { formatCurrency, formatHours } from '@/lib/earnings-utils'
 import { formatDate } from '@/lib/date-utils'
 import { PencilSimple, Trash, Clock, CurrencyDollar, Car, MapPin } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 interface ShiftCardProps {
   shift: Shift
@@ -27,17 +28,21 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
   const netEarnings = shift.earnings - (shift.expenses || 0)
 
   return (
-    <Card className="p-4 hover:shadow-md transition-all">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4 flex-1 min-w-0">
-          <div className="shrink-0">
-            <div className={cn(
-              'px-3 py-1.5 rounded-md font-semibold uppercase tracking-wide text-[clamp(0.625rem,1.8vw,0.7rem)]',
-              platformColors[shift.platform]
-            )}>
-              {shift.platform}
+    <motion.div
+      whileHover={{ scale: 1.01, y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+    >
+      <Card className="p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <div className="shrink-0">
+              <div className={cn(
+                'px-3 py-1.5 rounded-md font-semibold uppercase tracking-wide text-[clamp(0.625rem,1.8vw,0.7rem)]',
+                platformColors[shift.platform] || platformColors.other
+              )}>
+                {shift.platform}
+              </div>
             </div>
-          </div>
 
           <div className="flex-1 min-w-0 space-y-3">
             <div>
@@ -108,5 +113,6 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
         </div>
       </div>
     </Card>
+    </motion.div>
   )
 }

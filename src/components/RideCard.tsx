@@ -18,6 +18,7 @@ import {
   Leaf
 } from '@phosphor-icons/react'
 import { format } from 'date-fns'
+import { motion } from 'framer-motion'
 
 interface RideCardProps {
   ride: Ride
@@ -71,59 +72,63 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
   }
 
   return (
-    <Card className="p-4 hover:shadow-md transition-all group">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div 
-            className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-[clamp(0.7rem,2vw,0.8rem)]"
-            style={{ backgroundColor: PLATFORM_COLORS[ride.platform] }}
-          >
-            {ride.platform.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] capitalize line-clamp-1">{ride.platform}</span>
-              <Badge variant="outline" className="font-mono text-[clamp(0.625rem,1.8vw,0.7rem)]">
-                {format(new Date(ride.date + 'T' + ride.time), 'MMM d, h:mm a')}
-              </Badge>
-              {ride.vehicleType && (
-                <Badge variant="secondary" className="text-[clamp(0.625rem,1.8vw,0.7rem)] flex items-center gap-1">
-                  {getVehicleIcon()}
-                  {getVehicleLabel()}
+    <motion.div
+      whileHover={{ scale: 1.01, y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+    >
+      <Card className="p-4 group">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-[clamp(0.7rem,2vw,0.8rem)]"
+              style={{ backgroundColor: PLATFORM_COLORS[ride.platform] }}
+            >
+              {ride.platform.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-[clamp(0.9rem,2.8vw,1.1rem)] capitalize line-clamp-1">{ride.platform}</span>
+                <Badge variant="outline" className="font-mono text-[clamp(0.625rem,1.8vw,0.7rem)]">
+                  {format(new Date(ride.date + 'T' + ride.time), 'MMM d, h:mm a')}
                 </Badge>
-              )}
-            </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-              {Array.from({ length: efficiencyScore }).map((_, i) => (
-                <Star key={i} size={14} weight="fill" className="text-accent" />
-              ))}
-              {Array.from({ length: 5 - efficiencyScore }).map((_, i) => (
-                <Star key={i} size={14} weight="regular" className="text-muted-foreground" />
-              ))}
-              <span className="ml-1 text-[clamp(0.625rem,1.8vw,0.7rem)]">Efficiency</span>
+                {ride.vehicleType && (
+                  <Badge variant="secondary" className="text-[clamp(0.625rem,1.8vw,0.7rem)] flex items-center gap-1">
+                    {getVehicleIcon()}
+                    {getVehicleLabel()}
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                {Array.from({ length: efficiencyScore }).map((_, i) => (
+                  <Star key={i} size={14} weight="fill" className="text-accent" />
+                ))}
+                {Array.from({ length: 5 - efficiencyScore }).map((_, i) => (
+                  <Star key={i} size={14} weight="regular" className="text-muted-foreground" />
+                ))}
+                <span className="ml-1 text-[clamp(0.625rem,1.8vw,0.7rem)]">Efficiency</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(ride)}
-            className="h-9 w-9 p-0"
-          >
-            <PencilSimple size={18} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(ride.id)}
-            className="h-9 w-9 p-0 text-destructive hover:text-destructive"
-          >
-            <Trash size={18} />
-          </Button>
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(ride)}
+              className="h-9 w-9 p-0"
+            >
+              <PencilSimple size={18} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(ride.id)}
+              className="h-9 w-9 p-0 text-destructive hover:text-destructive"
+            >
+              <Trash size={18} />
+            </Button>
+          </div>
         </div>
-      </div>
 
       <div className="space-y-2.5 mb-3">
         <div className="flex items-start gap-2">
@@ -248,5 +253,6 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
         )}
       </div>
     </Card>
+    </motion.div>
   )
 }

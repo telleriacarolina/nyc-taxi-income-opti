@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge'
 import { IdentificationCard, PencilSimple } from '@phosphor-icons/react'
 import { getDocumentStatus, getDaysRemaining, formatDate } from '@/lib/date-utils'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 interface LicenseCardProps {
   license: TLCLicense | null
@@ -42,41 +43,46 @@ export function LicenseCard({ license, onEdit }: LicenseCardProps) {
   }[status]
 
   return (
-    <Card className={cn('p-4 border-l-4 transition-all hover:shadow-md', borderColorClass)}>
-      <div className="flex items-start justify-between mb-3 gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="rounded-lg bg-primary/10 p-3 flex-shrink-0">
-            <IdentificationCard size={32} className="text-primary" weight="fill" />
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+    >
+      <Card className={cn('p-4 border-l-4', borderColorClass)}>
+        <div className="flex items-start justify-between mb-3 gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="rounded-lg bg-primary/10 p-3 flex-shrink-0">
+              <IdentificationCard size={32} className="text-primary" weight="fill" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="font-semibold text-[clamp(1.25rem,3.5vw,1.5rem)] line-clamp-1">TLC License</h2>
+              <p className="text-muted-foreground uppercase tracking-wide font-mono font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">
+                {license.licenseNumber}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="font-semibold text-[clamp(1.25rem,3.5vw,1.5rem)] line-clamp-1">TLC License</h2>
-            <p className="text-muted-foreground uppercase tracking-wide font-mono font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">
-              {license.licenseNumber}
-            </p>
-          </div>
-        </div>
-        <Button onClick={onEdit} variant="outline" size="sm" className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)] flex-shrink-0">
-          <PencilSimple size={16} className="mr-1 flex-shrink-0" />
-          <span className="truncate">Edit</span>
-        </Button>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Status</span>
-          <StatusBadge status={status} daysRemaining={daysRemaining} />
-        </div>
-        
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Expiration Date</span>
-          <span className="font-mono font-semibold text-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] truncate">{formatDate(license.expirationDate)}</span>
+          <Button onClick={onEdit} variant="outline" size="sm" className="h-8 px-3 text-[clamp(0.7rem,2vw,0.8rem)] flex-shrink-0">
+            <PencilSimple size={16} className="mr-1 flex-shrink-0" />
+            <span className="truncate">Edit</span>
+          </Button>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Issue Date</span>
-          <span className="font-mono text-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] truncate">{formatDate(license.issueDate)}</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Status</span>
+            <StatusBadge status={status} daysRemaining={daysRemaining} />
+          </div>
+          
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Expiration Date</span>
+            <span className="font-mono font-semibold text-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] truncate">{formatDate(license.expirationDate)}</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-muted-foreground uppercase tracking-wide font-medium text-[clamp(0.65rem,2vw,0.75rem)] truncate">Issue Date</span>
+            <span className="font-mono text-foreground text-[clamp(0.75rem,2.4vw,0.875rem)] truncate">{formatDate(license.issueDate)}</span>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </motion.div>
   )
 }

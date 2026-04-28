@@ -23,6 +23,7 @@ import { Toaster } from 'sonner'
 import { useEffect } from 'react'
 import { initNotificationService } from '@/lib/notificationService'
 import { applyTheme, getThemeByName } from '@/lib/themes'
+import { motion, AnimatePresence } from 'framer-motion'
 
 function App() {
   const [activeTab, setActiveTab] = useKV<string>('active-tab', 'license')
@@ -119,62 +120,139 @@ function App() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="license" className="space-y-4">
-              <LicenseManager />
-            </TabsContent>
+            <AnimatePresence mode="wait">
+              <TabsContent value="license" className="space-y-4" key="license">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <LicenseManager />
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent value="earnings" className="space-y-4">
-              <EarningsOptimizer />
-            </TabsContent>
+              <TabsContent value="earnings" className="space-y-4" key="earnings">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <EarningsOptimizer />
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent value="rides" className="space-y-4">
-              <CurrentLocationRouter />
-              <RideComparison />
-            </TabsContent>
+              <TabsContent value="rides" className="space-y-4" key="rides">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <CurrentLocationRouter />
+                  <RideComparison />
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent value="apps" className="space-y-4">
-              <Tabs defaultValue="rideshare" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="rideshare">Rideshare</TabsTrigger>
-                  <TabsTrigger value="delivery">Delivery</TabsTrigger>
-                  <TabsTrigger value="packages">Packages</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="rideshare" className="space-y-4">
-                  <RideShareApps />
-                </TabsContent>
-                
-                <TabsContent value="delivery" className="space-y-4">
-                  <DeliveryPlatforms />
-                </TabsContent>
-                
-                <TabsContent value="packages" className="space-y-4">
-                  <PackageDeliveryWork />
-                </TabsContent>
-              </Tabs>
-            </TabsContent>
+              <TabsContent value="apps" className="space-y-4" key="apps">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <Tabs defaultValue="rideshare" className="space-y-4">
+                    <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="rideshare">Rideshare</TabsTrigger>
+                      <TabsTrigger value="delivery">Delivery</TabsTrigger>
+                      <TabsTrigger value="packages">Packages</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="rideshare" className="space-y-4">
+                      <RideShareApps />
+                    </TabsContent>
+                    
+                    <TabsContent value="delivery" className="space-y-4">
+                      <DeliveryPlatforms />
+                    </TabsContent>
+                    
+                    <TabsContent value="packages" className="space-y-4">
+                      <PackageDeliveryWork />
+                    </TabsContent>
+                  </Tabs>
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent value="calculator" className="space-y-4">
-              <TripCalculator />
-            </TabsContent>
-            <TabsContent value="chatroom" className="space-y-4">
-              <Chatroom />
-            </TabsContent>
-            <TabsContent value="nyctlc" className="space-y-4">
-              <NYCTLCHub />
-            </TabsContent>
-            <TabsContent value="dmv" className="space-y-4">
-              <NYDMVHub />
-            </TabsContent>
-            <TabsContent value="contact" className="space-y-4">
-              <ContactTLC />
-            </TabsContent>
-            <TabsContent value="settings" className="space-y-4">
-              <PrivacyDataManagement />
-              <NotificationPermissions />
-              <NotificationHistory />
-              <LocationSettings />
-            </TabsContent>
+              <TabsContent value="calculator" className="space-y-4" key="calculator">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <TripCalculator />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="chatroom" className="space-y-4" key="chatroom">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <Chatroom />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="nyctlc" className="space-y-4" key="nyctlc">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <NYCTLCHub />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="dmv" className="space-y-4" key="dmv">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <NYDMVHub />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="contact" className="space-y-4" key="contact">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <ContactTLC />
+                </motion.div>
+              </TabsContent>
+              
+              <TabsContent value="settings" className="space-y-4" key="settings">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <PrivacyDataManagement />
+                  <NotificationPermissions />
+                  <NotificationHistory />
+                  <LocationSettings />
+                </motion.div>
+              </TabsContent>
+            </AnimatePresence>
           </Tabs>
             </div>
           </div>
