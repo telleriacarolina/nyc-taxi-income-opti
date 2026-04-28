@@ -8,82 +8,82 @@
 }
 
 :root {
-  /* NYC TLC Theme - Professional Dark Burgundy with Vibrant Accents */
+  /* Modern NYC Driver Hub - Clean Professional Theme */
   
-  /* Background & Surfaces - Deep Burgundy Foundation */
-  --background: oklch(0.22 0.12 25); /* Deep wine burgundy background */
-  --foreground: oklch(0.94 0.03 15); /* Soft champagne pink text */
+  /* Background & Surfaces - Light & Airy */
+  --background: oklch(0.98 0.005 240); /* Soft off-white background */
+  --foreground: oklch(0.15 0.02 240); /* Deep charcoal text */
 
-  --card: oklch(0.30 0.13 22); /* Rich burgundy cards */
-  --card-foreground: oklch(0.92 0.04 15); /* Soft pink text */
-  --popover: oklch(0.26 0.12 24); /* Dark burgundy popover */
-  --popover-foreground: oklch(0.94 0.03 15); /* Light pink */
+  --card: oklch(1 0 0); /* Pure white cards */
+  --card-foreground: oklch(0.15 0.02 240); /* Deep charcoal text */
+  --popover: oklch(1 0 0); /* White popover */
+  --popover-foreground: oklch(0.15 0.02 240); /* Deep charcoal */
 
-  /* Primary Color - NYC Taxi Yellow */
-  --primary: oklch(0.85 0.15 90); /* Vibrant taxi yellow for CTAs */
-  --primary-foreground: oklch(0.15 0.02 25); /* Deep burgundy text on yellow */
+  /* Primary Color - Modern Taxi Yellow */
+  --primary: oklch(0.75 0.15 85); /* Sophisticated taxi yellow for CTAs */
+  --primary-foreground: oklch(0.98 0.005 240); /* Light text on yellow */
   
-  /* Secondary Color - Medium Burgundy */
-  --secondary: oklch(0.38 0.12 22); /* Medium burgundy for supporting elements */
-  --secondary-foreground: oklch(0.92 0.05 15); /* Soft pink text */
+  /* Secondary Color - Slate Blue */
+  --secondary: oklch(0.93 0.01 240); /* Light slate for supporting elements */
+  --secondary-foreground: oklch(0.25 0.02 240); /* Dark text */
   
   /* Muted backgrounds and text */
-  --muted: oklch(0.35 0.08 20); /* Muted burgundy */
-  --muted-foreground: oklch(0.68 0.07 18); /* Dusty rose text */
+  --muted: oklch(0.95 0.01 240); /* Soft gray */
+  --muted-foreground: oklch(0.50 0.01 240); /* Medium gray text */
   
-  /* Accent Color - Rose Pink (Secondary CTAs) */
-  --accent: oklch(0.72 0.18 15); /* Vibrant rose pink */
-  --accent-foreground: oklch(0.12 0.02 25); /* Deep burgundy */
+  /* Accent Color - Electric Blue */
+  --accent: oklch(0.55 0.20 250); /* Vibrant blue for highlights */
+  --accent-foreground: oklch(0.98 0.005 240); /* Light text */
   
-  /* Destructive/Alert - Bright Red */
-  --destructive: oklch(0.58 0.24 27); /* Vivid alert red */
-  --destructive-foreground: oklch(0.96 0.02 15); /* Light pink */
+  /* Destructive/Alert - Modern Red */
+  --destructive: oklch(0.55 0.22 25); /* Clear alert red */
+  --destructive-foreground: oklch(0.98 0.005 240); /* Light text */
 
-  /* Status Colors - Enhanced Contrast */
-  --success: oklch(0.68 0.17 145); /* Vibrant success green */
-  --success-foreground: oklch(0.12 0.02 145); /* Dark green */
-  --warning: oklch(0.70 0.20 45); /* Bright warning orange */
-  --warning-foreground: oklch(0.12 0.02 25); /* Dark text */
+  /* Status Colors - Clear & Distinct */
+  --success: oklch(0.60 0.17 150); /* Fresh success green */
+  --success-foreground: oklch(0.98 0.005 240); /* Light text */
+  --warning: oklch(0.70 0.15 60); /* Clear warning amber */
+  --warning-foreground: oklch(0.15 0.02 240); /* Dark text */
 
-  /* Borders and inputs - Enhanced Definition */
-  --border: oklch(0.42 0.11 22); /* Red-wine border */
-  --input: oklch(0.36 0.11 24); /* Burgundy input background */
-  --ring: oklch(0.85 0.15 90); /* Yellow focus ring (matches primary) */
+  /* Borders and inputs - Subtle Definition */
+  --border: oklch(0.88 0.01 240); /* Light gray border */
+  --input: oklch(0.96 0.01 240); /* Soft input background */
+  --ring: oklch(0.55 0.20 250); /* Blue focus ring */
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
-  /* Typography - Professional and Technical */
+  /* Typography - Modern and Clean */
   --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-serif: 'Noto Serif', serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
-  /* Chart Colors - Burgundy to Yellow Gradient */
-  --chart-1: oklch(0.85 0.15 90); /* Taxi yellow (primary) */
-  --chart-2: oklch(0.72 0.18 15); /* Rose pink (accent) */
-  --chart-3: oklch(0.58 0.16 30); /* Coral red */
-  --chart-4: oklch(0.68 0.17 145); /* Success green */
-  --chart-5: oklch(0.70 0.20 45); /* Warning orange */
-  --chart-6: oklch(0.50 0.20 22); /* Deep burgundy red */
-  --chart-7: oklch(0.62 0.15 60); /* Warm amber */
-  --chart-8: oklch(0.80 0.12 95); /* Light gold */
+  /* Chart Colors - Modern Vibrant Palette */
+  --chart-1: oklch(0.55 0.20 250); /* Electric blue (accent) */
+  --chart-2: oklch(0.75 0.15 85); /* Taxi yellow (primary) */
+  --chart-3: oklch(0.60 0.17 150); /* Success green */
+  --chart-4: oklch(0.70 0.15 60); /* Warning amber */
+  --chart-5: oklch(0.60 0.18 320); /* Purple */
+  --chart-6: oklch(0.65 0.20 30); /* Coral */
+  --chart-7: oklch(0.55 0.18 180); /* Teal */
+  --chart-8: oklch(0.70 0.16 270); /* Violet */
 
   /* Sidebar Colors */
-  --sidebar: oklch(0.28 0.12 24);
-  --sidebar-foreground: oklch(0.92 0.04 15);
-  --sidebar-primary: oklch(0.85 0.15 90);
-  --sidebar-primary-foreground: oklch(0.15 0.02 25);
-  --sidebar-accent: oklch(0.72 0.18 15);
-  --sidebar-accent-foreground: oklch(0.12 0.02 25);
-  --sidebar-border: oklch(0.42 0.11 22);
-  --sidebar-ring: oklch(0.85 0.15 90);
+  --sidebar: oklch(0.98 0.005 240);
+  --sidebar-foreground: oklch(0.15 0.02 240);
+  --sidebar-primary: oklch(0.75 0.15 85);
+  --sidebar-primary-foreground: oklch(0.98 0.005 240);
+  --sidebar-accent: oklch(0.55 0.20 250);
+  --sidebar-accent-foreground: oklch(0.98 0.005 240);
+  --sidebar-border: oklch(0.88 0.01 240);
+  --sidebar-ring: oklch(0.55 0.20 250);
 
   /* Shadow System */
-  --shadow-color: oklch(0.08 0.01 25);
-  --shadow-opacity: 0.08;
-  --shadow-blur: 12px;
+  --shadow-color: oklch(0.15 0.02 240);
+  --shadow-opacity: 0.06;
+  --shadow-blur: 16px;
   --shadow-spread: 0px;
   --shadow-offset-x: 0px;
-  --shadow-offset-y: 4px;
+  --shadow-offset-y: 2px;
 
   --spacing: 0.25rem;
 }
@@ -149,27 +149,27 @@ body {
 }
 
 .marker-cluster-small {
-  background-color: oklch(0.72 0.18 15 / 0.8);
+  background-color: oklch(0.55 0.20 250 / 0.3);
 }
 
 .marker-cluster-small div {
-  background-color: oklch(0.85 0.15 90 / 0.9);
+  background-color: oklch(0.55 0.20 250 / 0.9);
 }
 
 .marker-cluster-medium {
-  background-color: oklch(0.58 0.16 30 / 0.8);
+  background-color: oklch(0.75 0.15 85 / 0.3);
 }
 
 .marker-cluster-medium div {
-  background-color: oklch(0.70 0.20 45 / 0.9);
+  background-color: oklch(0.75 0.15 85 / 0.9);
 }
 
 .marker-cluster-large {
-  background-color: oklch(0.50 0.20 22 / 0.8);
+  background-color: oklch(0.60 0.17 150 / 0.3);
 }
 
 .marker-cluster-large div {
-  background-color: oklch(0.58 0.24 27 / 0.9);
+  background-color: oklch(0.60 0.17 150 / 0.9);
 }
 
 .marker-cluster {

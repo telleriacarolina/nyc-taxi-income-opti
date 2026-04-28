@@ -41,74 +41,81 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-background relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 opacity-80">
-          <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-gradient-to-br from-primary/25 via-primary/10 to-transparent blur-3xl" />
-          <div className="absolute right-0 top-12 h-72 w-72 rounded-full bg-gradient-to-br from-success/20 via-accent/10 to-transparent blur-3xl" />
-          <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-gradient-to-br from-warning/20 via-secondary/10 to-transparent blur-3xl" />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4 py-6 md:px-6 md:py-8">
-          <div className="rounded-2xl border bg-card/80 shadow-xl ring-1 ring-border/60 backdrop-blur supports-[backdrop-filter]:backdrop-blur p-5 md:p-6">
-            <header className="mb-6 space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                <span className="px-2.5 py-1 rounded-full border bg-muted/80 text-foreground/80">Live NYC Ops</span>
-                <span className="px-2.5 py-1 rounded-full border bg-primary/10 text-primary">Driver Success</span>
-                <span className="px-2.5 py-1 rounded-full border bg-success/10 text-success">Compliance Ready</span>
-                <div className="ml-auto">
-                  <ThemeSelector />
+      <div className="min-h-screen bg-background">
+        <div className="relative max-w-7xl mx-auto">
+          <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:backdrop-blur shadow-sm">
+            <div className="flex h-16 items-center justify-between px-4 md:px-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg">
+                  TLC
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="font-bold text-base md:text-lg leading-none">
+                    NYC Driver Hub
+                  </h1>
+                  <p className="text-xs text-muted-foreground hidden md:block">
+                    Compliance & Earnings Optimizer
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <h1 className="font-bold tracking-tight leading-tight text-[clamp(1.35rem,3vw,1.7rem)]">
-                  TLC Driver Hub
-                </h1>
-                <p className="text-muted-foreground text-[clamp(0.8rem,2.4vw,0.95rem)]">
-                  Smart compliance, earnings coaching, and daily routing in one place.
-                </p>
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2 text-xs">
+                  <span className="px-3 py-1.5 rounded-full bg-success/10 text-success font-medium border border-success/20">
+                    Active
+                  </span>
+                  <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary font-medium border border-primary/20">
+                    Live Data
+                  </span>
+                </div>
+                <ThemeSelector />
               </div>
-            </header>
+            </div>
+          </header>
+
+          <div className="px-4 py-6 md:px-6">
+            <div className="rounded-xl border bg-card shadow-sm p-4 md:p-6">
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="grid w-full grid-cols-10 max-w-6xl h-10 rounded-lg border bg-card/70 shadow-sm backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-              <TabsTrigger value="license" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <IdentificationCard size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">License</span>
+              <TabsList className="grid w-full grid-cols-5 md:grid-cols-10 h-auto md:h-10 rounded-lg border bg-muted/30 p-1 gap-1">
+              <TabsTrigger value="license" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <IdentificationCard size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">License</span>
               </TabsTrigger>
-              <TabsTrigger value="earnings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <ChartBar size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Earnings</span>
+              <TabsTrigger value="earnings" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <ChartBar size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Earnings</span>
               </TabsTrigger>
-              <TabsTrigger value="rides" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <MapTrifold size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Rides</span>
+              <TabsTrigger value="rides" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <MapTrifold size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Rides</span>
               </TabsTrigger>
-              <TabsTrigger value="apps" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <CarProfile size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Apps</span>
+              <TabsTrigger value="apps" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <CarProfile size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Apps</span>
               </TabsTrigger>
-              <TabsTrigger value="calculator" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Calculator size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Calc</span>
+              <TabsTrigger value="calculator" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <Calculator size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Calculator</span>
               </TabsTrigger>
-              <TabsTrigger value="chatroom" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <ChatCircleDots size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Chat</span>
+              <TabsTrigger value="chatroom" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <ChatCircleDots size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Chat</span>
               </TabsTrigger>
-              <TabsTrigger value="nyctlc" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Buildings size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">NYC TLC</span>
+              <TabsTrigger value="nyctlc" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <Buildings size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">TLC</span>
               </TabsTrigger>
-              <TabsTrigger value="dmv" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <CarSimple size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">DMV</span>
+              <TabsTrigger value="dmv" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <CarSimple size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">DMV</span>
               </TabsTrigger>
-              <TabsTrigger value="contact" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Phone size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Contact</span>
+              <TabsTrigger value="contact" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <Phone size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Contact</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="gap-1 text-[clamp(0.65rem,2vw,0.75rem)] px-2">
-                <Gear size={16} weight="fill" className="flex-shrink-0" />
-                <span className="truncate">Settings</span>
+              <TabsTrigger value="settings" className="gap-1.5 text-xs px-2 py-2 md:py-0 flex-col md:flex-row h-auto md:h-auto">
+                <Gear size={18} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs">Settings</span>
               </TabsTrigger>
             </TabsList>
 
@@ -169,6 +176,7 @@ function App() {
               <LocationSettings />
             </TabsContent>
           </Tabs>
+            </div>
           </div>
         </div>
       </div>

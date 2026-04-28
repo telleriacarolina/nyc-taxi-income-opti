@@ -629,39 +629,39 @@ Here's some content about multi-apping tips...
 
 ## Design Direction
 
-The design should evoke confidence, empowerment, and professionalism - like having a compliance assistant, business advisor, platform expert, AI consultant, real-time traffic control center with access to both live NYC traffic intelligence and millions of historical NYC TLC trip records, and a supportive driver community network. It should feel official yet data-forward, with clear status indicators for compliance and compelling visualizations that reveal earning patterns and opportunities. The Chatroom should feel welcoming and community-focused, like having a driver's lounge where colleagues share real-time traffic tips, coordinate meetups, and build professional relationships - with clean message bubbles, clear sender identification, and intuitive online/offline status indicators that make connecting with fellow drivers effortless. The integration of OpenFreeMap provides free, open-source mapping tiles that give drivers true geographic context for their earnings data and real-time traffic conditions, showing exactly where on NYC streets their high-earning zones are located and which corridors are flowing freely without reliance on proprietary mapping services. The AI features should feel accessible and trustworthy, with a friendly brain icon and smooth animations that build confidence in the intelligent recommendations enhanced by both NYC DOT real-time data feeds (<https://www.nyc.gov/html/dot/html/about/datafeeds.shtml>) and NYC TLC Trip Record Data (<https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page>). The integration of both data sources should feel like having insider knowledge - historical TLC trip data reveals which neighborhoods consistently produce high fares ($35+ rides), what times of day see premium demand, and where tips are highest, while NYC DOT real-time feeds help drivers avoid construction zones, monitor traffic speeds, check planned events, and optimize routes to reach those proven high-fare locations efficiently. The Real-Time Traffic Overlay should feel like mission control for NYC drivers, with color-coded speed indicators (green for free-flow, yellow for moderate, orange for congested, red for severe) that instantly communicate road conditions, interactive maps showing live traffic across all five boroughs, and actionable incident alerts (construction, accidents, events, closures) that help drivers plan optimal routes. The interactive map views powered by OpenFreeMap should feel fluid and responsive, with custom markers showing earnings intensity and traffic conditions at each location, smooth zoom/pan controls, and seamless integration with statistical views. The Earnings Optimizer should feel energizing and opportunity-focused, while the License Manager maintains urgency around deadlines. The Ride Share Apps section should feel informative and comparative, helping drivers make strategic decisions about platform usage. The Ride Comparison view should feel analytical and detail-oriented, empowering drivers with granular insights into ride-by-ride profitability to make better decisions about which rides to accept. The Trip Calculator should feel powerful and decisive, presenting clear financial comparisons that help drivers choose between rideshare and medical transport opportunities with confidence. AI-powered features should feel like having an expert advisor in your pocket with access to both real-time city traffic data and years of historical trip patterns, always ready with personalized insights that factor in proven high-earning locations from TLC records, current traffic conditions, construction alerts, and event schedules.
+The design should evoke confidence, clarity, and efficiency - like having a professional business dashboard that's approachable and easy to navigate. The interface uses a modern, light aesthetic with clean lines and generous whitespace that puts information front and center without visual clutter. Status indicators use clear, semantic colors that drivers can understand at a glance. The layout prioritizes content visibility with a persistent header for quick context switching and organized card-based sections that group related functions logically. The modernized design feels fresh, contemporary, and trustworthy - like a well-designed SaaS product built specifically for professional drivers. Charts and visualizations use vibrant, distinct colors that make patterns immediately recognizable. The interface adapts seamlessly from mobile to desktop with responsive navigation that never feels cramped.
 
 ## Color Selection
 
-A sophisticated burgundy and gold palette inspired by premium NYC taxi service, combining deep wine tones with vibrant taxi yellow accents for a distinctive, professional appearance.
+A modern, professional light theme with vibrant accent colors that create visual hierarchy and improve usability.
 
-- **Primary Color**: Vibrant Taxi Yellow (oklch(0.85 0.15 90)) - The iconic NYC taxi yellow used for primary CTAs, important buttons, and focus states, creating instant visual recognition and urgency
+- **Primary Color**: Sophisticated Taxi Yellow (oklch(0.75 0.15 85)) - A refined version of taxi yellow that works beautifully on light backgrounds for CTAs and important actions
 - **Secondary Colors**:
-  - Deep Wine Burgundy (oklch(0.22 0.12 25)) for rich, sophisticated background
-  - Medium Burgundy (oklch(0.38 0.12 22)) for cards and elevated surfaces
-  - Rich Burgundy (oklch(0.30 0.13 22)) for secondary UI elements
-- **Accent Color**: Vibrant Rose Pink (oklch(0.72 0.18 15)) - Energetic rose pink for secondary CTAs, highlights, and interactive elements that complement the yellow primary
+  - Soft Off-White (oklch(0.98 0.005 240)) for a gentle, easy-on-the-eyes background
+  - Pure White (oklch(1 0 0)) for cards that lift off the page
+  - Light Slate (oklch(0.93 0.01 240)) for subtle supporting surfaces
+- **Accent Color**: Electric Blue (oklch(0.55 0.20 250)) - A vibrant, energetic blue for highlights, active states, and secondary CTAs that creates strong visual contrast
 - **Status Colors**:
-  - Success Green (oklch(0.68 0.17 145)) for valid documents, completed tasks, and positive states
-  - Warning Orange (oklch(0.70 0.20 45)) for items expiring within 30 days and caution states
-  - Alert Red (oklch(0.58 0.24 27)) for expired items, errors, and urgent attention
-- **Chart Colors** (8-color gradient palette):
-  - Chart 1: Taxi Yellow (oklch(0.85 0.15 90)) - Primary data series
-  - Chart 2: Rose Pink (oklch(0.72 0.18 15)) - Secondary series
-  - Chart 3: Coral Red (oklch(0.58 0.16 30)) - Tertiary series
-  - Chart 4: Success Green (oklch(0.68 0.17 145)) - Positive metrics
-  - Chart 5: Warning Orange (oklch(0.70 0.20 45)) - Caution metrics
-  - Chart 6: Deep Burgundy Red (oklch(0.50 0.20 22)) - Dark accent
-  - Chart 7: Warm Amber (oklch(0.62 0.15 60)) - Warm accent
-  - Chart 8: Light Gold (oklch(0.80 0.12 95)) - Light accent
+  - Success Green (oklch(0.60 0.17 150)) for valid states and positive actions
+  - Warning Amber (oklch(0.70 0.15 60)) for items needing attention with clear visibility
+  - Alert Red (oklch(0.55 0.22 25)) for urgent items and errors
+- **Chart Colors** (8-color vibrant palette):
+  - Chart 1: Electric Blue (oklch(0.55 0.20 250)) - Primary series
+  - Chart 2: Taxi Yellow (oklch(0.75 0.15 85)) - Secondary series
+  - Chart 3: Success Green (oklch(0.60 0.17 150)) - Positive metrics
+  - Chart 4: Warning Amber (oklch(0.70 0.15 60)) - Caution metrics
+  - Chart 5: Purple (oklch(0.60 0.18 320)) - Alternative series
+  - Chart 6: Coral (oklch(0.65 0.20 30)) - Warm accent
+  - Chart 7: Teal (oklch(0.55 0.18 180)) - Cool accent
+  - Chart 8: Violet (oklch(0.70 0.16 270)) - Deep accent
 - **Foreground/Background Pairings**:
-  - Background (Deep Wine Burgundy): Champagne Pink text oklch(0.94 0.03 15) - Ratio 12.8:1 ✓
-  - Card (Rich Burgundy): Soft Pink text oklch(0.92 0.04 15) - Ratio 10.2:1 ✓
-  - Primary (Taxi Yellow): Deep Burgundy text oklch(0.15 0.02 25) - Ratio 14.5:1 ✓
-  - Accent (Rose Pink): Deep Burgundy text oklch(0.12 0.02 25) - Ratio 11.3:1 ✓
-  - Success: Dark Green text oklch(0.12 0.02 145) - Ratio 9.8:1 ✓
-  - Warning: Dark text oklch(0.12 0.02 25) - Ratio 10.5:1 ✓
-  - Destructive: Light Pink text oklch(0.96 0.02 15) - Ratio 7.2:1 ✓
+  - Background (Soft Off-White): Deep Charcoal text oklch(0.15 0.02 240) - Ratio 14.2:1 ✓
+  - Card (Pure White): Deep Charcoal text oklch(0.15 0.02 240) - Ratio 15.8:1 ✓
+  - Primary (Taxi Yellow): Light text oklch(0.98 0.005 240) - Ratio 8.5:1 ✓
+  - Accent (Electric Blue): Light text oklch(0.98 0.005 240) - Ratio 7.8:1 ✓
+  - Success: Light text oklch(0.98 0.005 240) - Ratio 6.2:1 ✓
+  - Warning: Dark text oklch(0.15 0.02 240) - Ratio 9.5:1 ✓
+  - Destructive: Light text oklch(0.98 0.005 240) - Ratio 6.8:1 ✓
 
 ## Font Selection
 
