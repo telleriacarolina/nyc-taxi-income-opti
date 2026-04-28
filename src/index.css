@@ -8,82 +8,82 @@
 }
 
 :root {
-  /* Modern NYC Driver Hub - Clean Professional Theme */
+  /* Apple-Inspired NYC Driver Hub - Clean, Minimal, Refined */
   
-  /* Background & Surfaces - Light & Airy */
-  --background: oklch(0.98 0.005 240); /* Soft off-white background */
-  --foreground: oklch(0.15 0.02 240); /* Deep charcoal text */
+  /* Background & Surfaces - Soft & Bright like iOS/macOS */
+  --background: oklch(0.985 0.002 264); /* Ultra-light cool background */
+  --foreground: oklch(0.20 0.01 264); /* Deep charcoal text with subtle cool tone */
 
-  --card: oklch(1 0 0); /* Pure white cards */
-  --card-foreground: oklch(0.15 0.02 240); /* Deep charcoal text */
-  --popover: oklch(1 0 0); /* White popover */
-  --popover-foreground: oklch(0.15 0.02 240); /* Deep charcoal */
+  --card: oklch(0.995 0.001 264); /* Nearly white cards with subtle tint */
+  --card-foreground: oklch(0.20 0.01 264); /* Deep charcoal text */
+  --popover: oklch(1 0 0); /* Pure white popover */
+  --popover-foreground: oklch(0.20 0.01 264); /* Deep charcoal */
 
-  /* Primary Color - Modern Taxi Yellow */
-  --primary: oklch(0.75 0.15 85); /* Sophisticated taxi yellow for CTAs */
-  --primary-foreground: oklch(0.98 0.005 240); /* Light text on yellow */
+  /* Primary Color - Apple Blue (iOS system blue) */
+  --primary: oklch(0.55 0.17 255); /* Classic Apple blue for CTAs */
+  --primary-foreground: oklch(1 0 0); /* Pure white text on blue */
   
-  /* Secondary Color - Slate Blue */
-  --secondary: oklch(0.93 0.01 240); /* Light slate for supporting elements */
-  --secondary-foreground: oklch(0.25 0.02 240); /* Dark text */
+  /* Secondary Color - Soft Gray */
+  --secondary: oklch(0.96 0.005 264); /* Very light cool gray */
+  --secondary-foreground: oklch(0.30 0.01 264); /* Dark gray text */
   
   /* Muted backgrounds and text */
-  --muted: oklch(0.95 0.01 240); /* Soft gray */
-  --muted-foreground: oklch(0.50 0.01 240); /* Medium gray text */
+  --muted: oklch(0.97 0.004 264); /* Ultra soft gray */
+  --muted-foreground: oklch(0.55 0.01 264); /* Medium gray text */
   
-  /* Accent Color - Electric Blue */
-  --accent: oklch(0.55 0.20 250); /* Vibrant blue for highlights */
-  --accent-foreground: oklch(0.98 0.005 240); /* Light text */
+  /* Accent Color - Apple Orange */
+  --accent: oklch(0.65 0.20 50); /* Warm orange accent like iOS */
+  --accent-foreground: oklch(1 0 0); /* White text */
   
-  /* Destructive/Alert - Modern Red */
-  --destructive: oklch(0.55 0.22 25); /* Clear alert red */
-  --destructive-foreground: oklch(0.98 0.005 240); /* Light text */
+  /* Destructive/Alert - Apple Red */
+  --destructive: oklch(0.58 0.23 25); /* Apple system red */
+  --destructive-foreground: oklch(1 0 0); /* White text */
 
-  /* Status Colors - Clear & Distinct */
-  --success: oklch(0.60 0.17 150); /* Fresh success green */
-  --success-foreground: oklch(0.98 0.005 240); /* Light text */
-  --warning: oklch(0.70 0.15 60); /* Clear warning amber */
-  --warning-foreground: oklch(0.15 0.02 240); /* Dark text */
+  /* Status Colors - Apple System Colors */
+  --success: oklch(0.60 0.15 145); /* Apple green */
+  --success-foreground: oklch(1 0 0); /* White text */
+  --warning: oklch(0.75 0.15 80); /* Apple yellow */
+  --warning-foreground: oklch(0.20 0.01 264); /* Dark text */
 
-  /* Borders and inputs - Subtle Definition */
-  --border: oklch(0.88 0.01 240); /* Light gray border */
-  --input: oklch(0.96 0.01 240); /* Soft input background */
-  --ring: oklch(0.55 0.20 250); /* Blue focus ring */
+  /* Borders and inputs - Ultra Subtle */
+  --border: oklch(0.92 0.005 264); /* Barely-there border */
+  --input: oklch(0.975 0.003 264); /* Soft input background */
+  --ring: oklch(0.55 0.17 255); /* Apple blue focus ring */
 
-  --radius: 0.75rem;
+  --radius: 0.875rem;
 
-  /* Typography - Modern and Clean */
-  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Noto Serif', serif;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  /* Typography - Apple System Fonts */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: ui-serif, 'New York', 'Georgia', serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Menlo', 'Monaco', 'Courier New', monospace;
 
-  /* Chart Colors - Modern Vibrant Palette */
-  --chart-1: oklch(0.55 0.20 250); /* Electric blue (accent) */
-  --chart-2: oklch(0.75 0.15 85); /* Taxi yellow (primary) */
-  --chart-3: oklch(0.60 0.17 150); /* Success green */
-  --chart-4: oklch(0.70 0.15 60); /* Warning amber */
-  --chart-5: oklch(0.60 0.18 320); /* Purple */
-  --chart-6: oklch(0.65 0.20 30); /* Coral */
-  --chart-7: oklch(0.55 0.18 180); /* Teal */
-  --chart-8: oklch(0.70 0.16 270); /* Violet */
+  /* Chart Colors - Apple-Inspired System Palette */
+  --chart-1: oklch(0.55 0.17 255); /* Apple blue */
+  --chart-2: oklch(0.65 0.20 50); /* Apple orange */
+  --chart-3: oklch(0.60 0.15 145); /* Apple green */
+  --chart-4: oklch(0.75 0.15 80); /* Apple yellow */
+  --chart-5: oklch(0.60 0.18 310); /* Apple purple */
+  --chart-6: oklch(0.58 0.23 25); /* Apple red */
+  --chart-7: oklch(0.55 0.15 200); /* Apple teal */
+  --chart-8: oklch(0.62 0.16 320); /* Apple pink */
 
   /* Sidebar Colors */
-  --sidebar: oklch(0.98 0.005 240);
-  --sidebar-foreground: oklch(0.15 0.02 240);
-  --sidebar-primary: oklch(0.75 0.15 85);
-  --sidebar-primary-foreground: oklch(0.98 0.005 240);
-  --sidebar-accent: oklch(0.55 0.20 250);
-  --sidebar-accent-foreground: oklch(0.98 0.005 240);
-  --sidebar-border: oklch(0.88 0.01 240);
-  --sidebar-ring: oklch(0.55 0.20 250);
+  --sidebar: oklch(0.985 0.002 264);
+  --sidebar-foreground: oklch(0.20 0.01 264);
+  --sidebar-primary: oklch(0.55 0.17 255);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.65 0.20 50);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.92 0.005 264);
+  --sidebar-ring: oklch(0.55 0.17 255);
 
-  /* Shadow System */
-  --shadow-color: oklch(0.15 0.02 240);
-  --shadow-opacity: 0.06;
-  --shadow-blur: 16px;
+  /* Shadow System - Apple Style Soft Shadows */
+  --shadow-color: oklch(0.20 0.01 264);
+  --shadow-opacity: 0.08;
+  --shadow-blur: 20px;
   --shadow-spread: 0px;
   --shadow-offset-x: 0px;
-  --shadow-offset-y: 2px;
+  --shadow-offset-y: 4px;
 
   --spacing: 0.25rem;
 }
@@ -141,35 +141,37 @@
 }
 
 body {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .font-mono {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'SF Mono', ui-monospace, 'Menlo', 'Monaco', 'Courier New', monospace;
 }
 
 .marker-cluster-small {
-  background-color: oklch(0.55 0.20 250 / 0.3);
+  background-color: oklch(0.55 0.17 255 / 0.25);
 }
 
 .marker-cluster-small div {
-  background-color: oklch(0.55 0.20 250 / 0.9);
+  background-color: oklch(0.55 0.17 255 / 0.85);
 }
 
 .marker-cluster-medium {
-  background-color: oklch(0.75 0.15 85 / 0.3);
+  background-color: oklch(0.65 0.20 50 / 0.25);
 }
 
 .marker-cluster-medium div {
-  background-color: oklch(0.75 0.15 85 / 0.9);
+  background-color: oklch(0.65 0.20 50 / 0.85);
 }
 
 .marker-cluster-large {
-  background-color: oklch(0.60 0.17 150 / 0.3);
+  background-color: oklch(0.60 0.15 145 / 0.25);
 }
 
 .marker-cluster-large div {
-  background-color: oklch(0.60 0.17 150 / 0.9);
+  background-color: oklch(0.60 0.15 145 / 0.85);
 }
 
 .marker-cluster {

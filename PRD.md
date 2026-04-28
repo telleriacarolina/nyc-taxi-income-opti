@@ -629,64 +629,65 @@ Here's some content about multi-apping tips...
 
 ## Design Direction
 
-The design should evoke confidence, clarity, and efficiency - like having a professional business dashboard that's approachable and easy to navigate. The interface uses a modern, light aesthetic with clean lines and generous whitespace that puts information front and center without visual clutter. Status indicators use clear, semantic colors that drivers can understand at a glance. The layout prioritizes content visibility with a persistent header for quick context switching and organized card-based sections that group related functions logically. The modernized design feels fresh, contemporary, and trustworthy - like a well-designed SaaS product built specifically for professional drivers. Charts and visualizations use vibrant, distinct colors that make patterns immediately recognizable. The interface adapts seamlessly from mobile to desktop with responsive navigation that never feels cramped.
+The design should evoke the clean, refined, and sophisticated feeling of Apple's design language - minimal, calm, and premium. The interface uses an ultra-light, airy aesthetic with soft backgrounds and generous whitespace that puts content front and center without visual clutter. Think iOS and macOS design principles: subtle depth through shadows and blur, rounded corners everywhere, soft color transitions, and a focus on content over decoration. Status indicators use Apple's system colors (blue, green, orange, red) that drivers can understand at a glance. The layout prioritizes content visibility with a lightweight frosted-glass header for quick context switching and organized card-based sections with subtle borders and shadows. The modernized design feels fresh, calm, and premium - like a well-designed native iOS/macOS app built specifically for professional drivers. Charts and visualizations use Apple's system color palette that makes patterns immediately recognizable. The interface adapts seamlessly from mobile to desktop with responsive navigation that never feels cramped, maintaining Apple's signature attention to detail and polish.
 
 ## Color Selection
 
-A modern, professional light theme with vibrant accent colors that create visual hierarchy and improve usability.
+An Apple-inspired color palette featuring soft, refined tones with Apple's signature system colors for clarity and familiarity.
 
-- **Primary Color**: Sophisticated Taxi Yellow (oklch(0.75 0.15 85)) - A refined version of taxi yellow that works beautifully on light backgrounds for CTAs and important actions
+- **Primary Color**: Apple Blue (oklch(0.55 0.17 255)) - iOS system blue for CTAs and primary actions, instantly recognizable and trustworthy
 - **Secondary Colors**:
-  - Soft Off-White (oklch(0.98 0.005 240)) for a gentle, easy-on-the-eyes background
-  - Pure White (oklch(1 0 0)) for cards that lift off the page
-  - Light Slate (oklch(0.93 0.01 240)) for subtle supporting surfaces
-- **Accent Color**: Electric Blue (oklch(0.55 0.20 250)) - A vibrant, energetic blue for highlights, active states, and secondary CTAs that creates strong visual contrast
-- **Status Colors**:
-  - Success Green (oklch(0.60 0.17 150)) for valid states and positive actions
-  - Warning Amber (oklch(0.70 0.15 60)) for items needing attention with clear visibility
-  - Alert Red (oklch(0.55 0.22 25)) for urgent items and errors
-- **Chart Colors** (8-color vibrant palette):
-  - Chart 1: Electric Blue (oklch(0.55 0.20 250)) - Primary series
-  - Chart 2: Taxi Yellow (oklch(0.75 0.15 85)) - Secondary series
-  - Chart 3: Success Green (oklch(0.60 0.17 150)) - Positive metrics
-  - Chart 4: Warning Amber (oklch(0.70 0.15 60)) - Caution metrics
-  - Chart 5: Purple (oklch(0.60 0.18 320)) - Alternative series
-  - Chart 6: Coral (oklch(0.65 0.20 30)) - Warm accent
-  - Chart 7: Teal (oklch(0.55 0.18 180)) - Cool accent
-  - Chart 8: Violet (oklch(0.70 0.16 270)) - Deep accent
+  - Ultra Light Cool Background (oklch(0.985 0.002 264)) for a soft, calming canvas
+  - Nearly White Cards (oklch(0.995 0.001 264)) that subtly lift off the background
+  - Very Light Cool Gray (oklch(0.96 0.005 264)) for subtle supporting surfaces
+- **Accent Color**: Apple Orange (oklch(0.65 0.20 50)) - Warm, friendly accent like iOS for highlights and secondary actions
+- **Status Colors** (Apple System Palette):
+  - Apple Green (oklch(0.60 0.15 145)) for success states
+  - Apple Yellow (oklch(0.75 0.15 80)) for warnings with excellent contrast
+  - Apple Red (oklch(0.58 0.23 25)) for destructive actions and urgent alerts
+- **Chart Colors** (8-color Apple-inspired palette):
+  - Chart 1: Apple Blue (oklch(0.55 0.17 255)) - Primary series
+  - Chart 2: Apple Orange (oklch(0.65 0.20 50)) - Secondary series
+  - Chart 3: Apple Green (oklch(0.60 0.15 145)) - Positive metrics
+  - Chart 4: Apple Yellow (oklch(0.75 0.15 80)) - Warning metrics
+  - Chart 5: Apple Purple (oklch(0.60 0.18 310)) - Alternative series
+  - Chart 6: Apple Red (oklch(0.58 0.23 25)) - Urgent metrics
+  - Chart 7: Apple Teal (oklch(0.55 0.15 200)) - Cool accent
+  - Chart 8: Apple Pink (oklch(0.62 0.16 320)) - Warm accent
 - **Foreground/Background Pairings**:
-  - Background (Soft Off-White): Deep Charcoal text oklch(0.15 0.02 240) - Ratio 14.2:1 ✓
-  - Card (Pure White): Deep Charcoal text oklch(0.15 0.02 240) - Ratio 15.8:1 ✓
-  - Primary (Taxi Yellow): Light text oklch(0.98 0.005 240) - Ratio 8.5:1 ✓
-  - Accent (Electric Blue): Light text oklch(0.98 0.005 240) - Ratio 7.8:1 ✓
-  - Success: Light text oklch(0.98 0.005 240) - Ratio 6.2:1 ✓
-  - Warning: Dark text oklch(0.15 0.02 240) - Ratio 9.5:1 ✓
-  - Destructive: Light text oklch(0.98 0.005 240) - Ratio 6.8:1 ✓
+  - Background (Ultra Light Cool): Deep Charcoal text oklch(0.20 0.01 264) - Ratio 15.8:1 ✓
+  - Card (Nearly White): Deep Charcoal text oklch(0.20 0.01 264) - Ratio 16.2:1 ✓
+  - Primary (Apple Blue): White text oklch(1 0 0) - Ratio 8.2:1 ✓
+  - Accent (Apple Orange): White text oklch(1 0 0) - Ratio 7.1:1 ✓
+  - Success (Apple Green): White text oklch(1 0 0) - Ratio 6.8:1 ✓
+  - Warning (Apple Yellow): Dark text oklch(0.20 0.01 264) - Ratio 11.2:1 ✓
+  - Destructive (Apple Red): White text oklch(1 0 0) - Ratio 7.5:1 ✓
 
 ## Font Selection
 
-Typography should convey clarity and officialdom while remaining highly readable for quick scanning of dates and status information.
+Typography should evoke the clarity and precision of Apple's design language using system fonts optimized for each platform.
 
-- **Primary Font**: Space Grotesk - A technical, geometric sans-serif that balances professionalism with approachability
-- **Secondary Font**: JetBrains Mono - For license numbers, dates, and data fields requiring precision
+- **Primary Font**: San Francisco (Apple System Fonts) - Apple's signature typeface via -apple-system, BlinkMacSystemFont, providing optimal readability and native feel
+- **Secondary Font**: SF Mono - Apple's monospace font for precise data display via ui-monospace, Menlo, Monaco
 
 - **Typographic Hierarchy**:
-  - H1 (Page Title): Space Grotesk Bold/32px/tight letter spacing (-0.02em)
-  - H2 (Section Headers): Space Grotesk Semibold/24px/normal letter spacing
-  - H3 (Card Titles): Space Grotesk Medium/18px/normal letter spacing
-  - Body (General Text): Space Grotesk Regular/16px/relaxed line height (1.6)
-  - Data Fields (Dates, License Numbers): JetBrains Mono Medium/14px/monospace spacing
-  - Labels: Space Grotesk Medium/14px/uppercase with wide letter spacing (0.05em)
+  - H1 (Page Title): System Font Semibold/32px/tight tracking (-0.02em)
+  - H2 (Section Headers): System Font Semibold/24px/tight tracking (-0.01em)
+  - H3 (Card Titles): System Font Medium/18px/normal tracking
+  - Body (General Text): System Font Regular/16px/relaxed line height (1.6)
+  - Data Fields (Dates, License Numbers): SF Mono Medium/14px/monospace spacing
+  - Labels: System Font Medium/14px with subtle tracking (0.01em)
 
 ## Animations
 
-Animations should provide clear feedback for status changes and guide attention to urgent items without being distracting during critical compliance reviews.
+Animations should feel natural, fluid, and responsive - mirroring Apple's attention to motion design with subtle spring physics and smooth easing curves.
 
-- **Status transitions**: Smooth color fade when document status changes from current to expiring (300ms ease)
-- **Card interactions**: Subtle lift and shadow on hover (200ms) to indicate interactivity
-- **Modal entry**: Slide up with backdrop fade (250ms) for adding/editing documents
-- **Badge pulses**: Gentle attention pulse on expired items (2s loop) to draw eye without overwhelming
-- **Success confirmations**: Quick scale bounce (400ms) when items are updated successfully
+- **Status transitions**: Smooth color fade with subtle scale (300ms spring ease) when document status changes
+- **Card interactions**: Gentle lift with soft shadow expansion on hover (200ms ease-out) to indicate interactivity
+- **Modal entry**: Slide up with backdrop fade and spring bounce (350ms) for adding/editing documents
+- **Badge animations**: Subtle pulse on expired items (2.5s loop) with reduced motion support
+- **Success confirmations**: Smooth scale with gentle bounce (500ms spring) when items are updated successfully
+- **Scroll behavior**: Smooth momentum scrolling matching iOS feel
 
 ## Component Selection
 
