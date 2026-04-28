@@ -32,8 +32,8 @@ export function ShiftCard({ shift, onEdit, onDelete }: ShiftCardProps) {
       whileHover={{ scale: 1.01, y: -2 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <Card className="p-4">
-        <div className="flex items-start justify-between gap-4">
+      <Card className="p-4 diagonal-stripes geometric-accent">
+        <div className="flex items-start justify-between gap-4 relative z-10">
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <div className="shrink-0">
               <div className={cn(

@@ -76,8 +76,8 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
       whileHover={{ scale: 1.01, y: -2 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <Card className="p-4 group">
-        <div className="flex items-start justify-between mb-3">
+      <Card className="p-4 group hexagon-pattern circuit-pattern">
+        <div className="flex items-start justify-between mb-3 relative z-10">
           <div className="flex items-center gap-3">
             <div 
               className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-[clamp(0.7rem,2vw,0.8rem)]"
@@ -130,7 +130,7 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
           </div>
         </div>
 
-      <div className="space-y-2.5 mb-3">
+      <div className="space-y-2.5 mb-3 relative z-10">
         <div className="flex items-start gap-2">
           <MapPin size={18} className="text-success mt-0.5 flex-shrink-0" weight="fill" />
           <div className="flex-1 min-w-0">
@@ -151,7 +151,7 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 mb-3">
+      <div className="grid grid-cols-2 gap-2.5 mb-3 relative z-10">
         <div className="flex items-center gap-2 p-2.5 bg-secondary/50 rounded-lg">
           <Path size={18} className="text-primary" weight="bold" />
           <div className="flex-1">
@@ -169,7 +169,7 @@ export function RideCard({ ride, onEdit, onDelete }: RideCardProps) {
         </div>
       </div>
 
-      <div className="border-t pt-3">
+      <div className="border-t pt-3 relative z-10">
         <div className="grid grid-cols-3 gap-3">
           <div>
             <div className="text-[clamp(0.625rem,1.8vw,0.7rem)] text-muted-foreground mb-1">Gross Pay</div>

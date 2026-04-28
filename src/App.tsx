@@ -74,7 +74,7 @@ function App() {
           </header>
 
           <div className="px-4 py-6 md:px-8 md:py-8">
-            <div className="rounded-lg border-2 border-primary/20 bg-card shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_80px_rgba(0,200,255,0.15)] p-4 md:p-8 card-scan">
+            <div className="rounded-lg border-2 border-primary/20 bg-card shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_80px_rgba(0,200,255,0.15)] p-4 md:p-8 card-scan hexagon-pattern-accent">
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList className="grid w-full grid-cols-5 md:grid-cols-10 h-auto md:h-12 rounded-lg border-2 border-border bg-background/50 p-1.5 gap-1">
