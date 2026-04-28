@@ -8,83 +8,80 @@
 }
 
 :root {
-  /* Apple-Inspired Design System - Clean, Minimal, Refined */
+  /* Performance Dashboard Design System - Bold, Technical, High-Energy */
   
-  /* Background & Surfaces - Soft & Bright like iOS/macOS */
-  --background: oklch(0.98 0.002 264); /* Ultra-light cool background */
-  --foreground: oklch(0.18 0.01 264); /* Deep charcoal text with subtle cool tone */
+  /* Background & Surfaces - Deep Space with Elevated Layers */
+  --background: oklch(0.15 0.015 265); /* Deep space background - rich dark base */
+  --foreground: oklch(0.97 0 0); /* Bright white text for maximum contrast */
 
-  --card: oklch(1 0 0); /* Pure white cards for contrast */
-  --card-foreground: oklch(0.18 0.01 264); /* Deep charcoal text */
-  --popover: oklch(1 0 0); /* Pure white popover */
-  --popover-foreground: oklch(0.18 0.01 264); /* Deep charcoal */
+  --card: oklch(0.22 0.020 265); /* Elevated surface - lighter than background */
+  --card-foreground: oklch(0.97 0 0); /* Bright white text */
+  --popover: oklch(0.24 0.022 265); /* Popover surface - slightly elevated */
+  --popover-foreground: oklch(0.97 0 0); /* Bright white */
 
-  /* Primary Color - Apple Blue (iOS system blue) */
-  --primary: oklch(0.55 0.17 255); /* Classic Apple blue for CTAs */
-  --primary-foreground: oklch(1 0 0); /* Pure white text on blue */
+  /* Primary Color - Electric Cyan (HUD/Dashboard Aesthetic) */
+  --primary: oklch(0.70 0.19 195); /* Vibrant electric cyan for CTAs */
+  --primary-foreground: oklch(0.15 0.015 265); /* Deep space text on cyan */
   
-  /* Secondary Color - Soft Gray */
-  --secondary: oklch(0.96 0.005 264); /* Very light cool gray */
-  --secondary-foreground: oklch(0.30 0.01 264); /* Dark gray text */
+  /* Secondary Color - Muted Surface */
+  --secondary: oklch(0.28 0.018 265); /* Slightly lighter surface */
+  --secondary-foreground: oklch(0.97 0 0); /* White text */
   
   /* Muted backgrounds and text */
-  --muted: oklch(0.96 0.004 264); /* Ultra soft gray */
-  --muted-foreground: oklch(0.50 0.01 264); /* Medium gray text */
+  --muted: oklch(0.18 0.018 265); /* Subtle variation surface */
+  --muted-foreground: oklch(0.65 0.02 265); /* Muted gray-blue text */
   
-  /* Accent Color - Apple Orange */
-  --accent: oklch(0.65 0.20 50); /* Warm orange accent like iOS */
+  /* Accent Color - Neon Magenta */
+  --accent: oklch(0.68 0.27 330); /* Vibrant pink/magenta accent */
   --accent-foreground: oklch(1 0 0); /* White text */
   
-  /* Destructive/Alert - Apple Red */
-  --destructive: oklch(0.58 0.23 25); /* Apple system red */
+  /* Destructive/Alert - Alert Red */
+  --destructive: oklch(0.60 0.25 25); /* Critical red */
   --destructive-foreground: oklch(1 0 0); /* White text */
 
-  /* Status Colors - Apple System Colors */
-  --success: oklch(0.60 0.15 145); /* Apple green */
+  /* Status Colors - Performance Palette */
+  --success: oklch(0.65 0.20 145); /* Racing green */
   --success-foreground: oklch(1 0 0); /* White text */
-  --warning: oklch(0.75 0.15 80); /* Apple yellow */
-  --warning-foreground: oklch(0.20 0.01 264); /* Dark text */
+  --warning: oklch(0.75 0.18 75); /* Warning amber */
+  --warning-foreground: oklch(0.15 0.015 265); /* Dark text */
 
-  /* Borders and inputs - Ultra Subtle */
-  --border: oklch(0.90 0.005 264); /* Barely-there border */
-  --input: oklch(0.975 0.003 264); /* Soft input background */
-  --ring: oklch(0.55 0.17 255); /* Apple blue focus ring */
+  /* Borders and inputs - Subtle Glow Effect */
+  --border: oklch(0.30 0.025 265); /* Visible border with subtle glow */
+  --input: oklch(0.20 0.020 265); /* Input background */
+  --ring: oklch(0.70 0.19 195); /* Electric cyan focus ring */
 
-  --radius: 1rem;
+  --radius: 0.375rem;
 
-  /* Typography - Apple System Fonts */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: ui-serif, 'New York', 'Georgia', serif;
-  --font-mono: 'SF Mono', ui-monospace, 'Menlo', 'Monaco', 'Courier New', monospace;
+  /* Typography - Technical Performance Fonts */
+  --font-sans: 'Rajdhani', 'Inter', -apple-system, sans-serif;
+  --font-display: 'Orbitron', 'Rajdhani', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
 
-  /* Chart Colors - Apple-Inspired System Palette */
-  --chart-1: oklch(0.55 0.17 255); /* Apple blue */
-  --chart-2: oklch(0.65 0.20 50); /* Apple orange */
-  --chart-3: oklch(0.60 0.15 145); /* Apple green */
-  --chart-4: oklch(0.75 0.15 80); /* Apple yellow */
-  --chart-5: oklch(0.60 0.18 310); /* Apple purple */
-  --chart-6: oklch(0.58 0.23 25); /* Apple red */
-  --chart-7: oklch(0.55 0.15 200); /* Apple teal */
-  --chart-8: oklch(0.62 0.16 320); /* Apple pink */
+  /* Chart Colors - High-Contrast Performance Palette */
+  --chart-1: oklch(0.70 0.19 195); /* Electric cyan */
+  --chart-2: oklch(0.68 0.27 330); /* Neon magenta */
+  --chart-3: oklch(0.65 0.20 145); /* Racing green */
+  --chart-4: oklch(0.80 0.16 95); /* Performance yellow */
+  --chart-5: oklch(0.65 0.24 290); /* Violet glow */
+  --chart-6: oklch(0.60 0.25 25); /* Alert red */
+  --chart-7: oklch(0.72 0.17 180); /* Turquoise bright */
+  --chart-8: oklch(0.70 0.22 45); /* Orange blaze */
 
   /* Sidebar Colors */
-  --sidebar: oklch(0.985 0.002 264);
-  --sidebar-foreground: oklch(0.20 0.01 264);
-  --sidebar-primary: oklch(0.55 0.17 255);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.65 0.20 50);
+  --sidebar: oklch(0.18 0.018 265);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.70 0.19 195);
+  --sidebar-primary-foreground: oklch(0.15 0.015 265);
+  --sidebar-accent: oklch(0.68 0.27 330);
   --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.92 0.005 264);
-  --sidebar-ring: oklch(0.55 0.17 255);
+  --sidebar-border: oklch(0.30 0.025 265);
+  --sidebar-ring: oklch(0.70 0.19 195);
 
-  /* Shadow System - Apple Style Soft Shadows */
-  --shadow-color: oklch(0.20 0.01 264);
-  --shadow-opacity: 0.08;
-  --shadow-blur: 20px;
-  --shadow-spread: 0px;
-  --shadow-offset-x: 0px;
-  --shadow-offset-y: 4px;
-
+  /* Glow Effects - Neon Lighting System */
+  --glow-primary: 0 0 20px oklch(0.70 0.19 195 / 0.5);
+  --glow-accent: 0 0 20px oklch(0.68 0.27 330 / 0.5);
+  --glow-success: 0 0 20px oklch(0.65 0.20 145 / 0.4);
+  
   --spacing: 0.25rem;
 }
 
@@ -141,13 +138,23 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Rajdhani', 'Inter', -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .font-mono {
-  font-family: 'SF Mono', ui-monospace, 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-family: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  font-weight: 600;
 }
 
 .marker-cluster-small {
@@ -223,10 +230,97 @@ body {
 }
 
 .spring-interactive {
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform;
 }
 
 .spring-interactive:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px oklch(0.70 0.19 195 / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px oklch(0.70 0.19 195 / 0.6);
+  }
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px oklch(0.70 0.19 195 / 0.8),
+                 0 0 20px oklch(0.70 0.19 195 / 0.6);
+  }
+  50% {
+    opacity: 0.95;
+    text-shadow: 0 0 5px oklch(0.70 0.19 195 / 0.5),
+                 0 0 10px oklch(0.70 0.19 195 / 0.4);
+  }
+}
+
+.text-glow {
+  text-shadow: 0 0 10px oklch(0.70 0.19 195 / 0.6),
+               0 0 20px oklch(0.70 0.19 195 / 0.4);
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 10px oklch(0.68 0.27 330 / 0.6),
+               0 0 20px oklch(0.68 0.27 330 / 0.4);
+}
+
+.border-glow {
+  box-shadow: 0 0 15px oklch(0.70 0.19 195 / 0.4),
+              inset 0 0 10px oklch(0.70 0.19 195 / 0.2);
+}
+
+.border-glow-accent {
+  box-shadow: 0 0 15px oklch(0.68 0.27 330 / 0.4),
+              inset 0 0 10px oklch(0.68 0.27 330 / 0.2);
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.card-scan {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-scan::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, oklch(0.70 0.19 195 / 0.6), transparent);
+  animation: scan-line 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes digit-count {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.counter-digit {
+  animation: digit-count 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }

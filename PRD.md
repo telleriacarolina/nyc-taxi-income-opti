@@ -629,65 +629,69 @@ Here's some content about multi-apping tips...
 
 ## Design Direction
 
-The design should evoke the clean, refined, and sophisticated feeling of Apple's design language - minimal, calm, and premium. The interface uses an ultra-light, airy aesthetic with soft backgrounds and generous whitespace that puts content front and center without visual clutter. Think iOS and macOS design principles: subtle depth through shadows and blur, rounded corners everywhere, soft color transitions, and a focus on content over decoration. Status indicators use Apple's system colors (blue, green, orange, red) that drivers can understand at a glance. The layout prioritizes content visibility with a lightweight frosted-glass header for quick context switching and organized card-based sections with subtle borders and shadows. The modernized design feels fresh, calm, and premium - like a well-designed native iOS/macOS app built specifically for professional drivers. Charts and visualizations use Apple's system color palette that makes patterns immediately recognizable. The interface adapts seamlessly from mobile to desktop with responsive navigation that never feels cramped, maintaining Apple's signature attention to detail and polish.
+The design should evoke the dynamic, energetic feeling of a professional driver's dashboard - bold, data-rich, and action-oriented. The interface uses a vibrant, high-contrast aesthetic with deep backgrounds and glowing accents that command attention and emphasize actionable data. Think modern automotive HUD displays and professional trading terminals: strong geometric shapes, neon-inspired accents, hexagonal design elements, crisp data visualization, and ambient lighting effects. Status indicators use vivid, saturated colors that are instantly scannable at highway speed. The layout emphasizes information density with a powerful dark header and compact card-based sections featuring sharp edges and subtle glow effects. The design feels futuristic, assertive, and performance-focused - like a premium racing telemetry system reimagined for urban drivers. Charts and visualizations use electric color gradients that pop against dark backgrounds. The interface maintains perfect readability in both bright daylight and late-night driving conditions, with an emphasis on speed, precision, and professional performance.
 
 ## Color Selection
 
-An Apple-inspired color palette featuring soft, refined tones with Apple's signature system colors for clarity and familiarity.
+A bold, high-energy color palette inspired by automotive HUDs, gaming interfaces, and professional dashboards with electric neon accents against deep backgrounds.
 
-- **Primary Color**: Apple Blue (oklch(0.55 0.17 255)) - iOS system blue for CTAs and primary actions, instantly recognizable and trustworthy
+- **Primary Color**: Electric Cyan (oklch(0.70 0.19 195)) - Vibrant cyan reminiscent of performance dashboards and HUD displays, commanding attention for critical actions
 - **Secondary Colors**:
-  - Ultra Light Cool Background (oklch(0.985 0.002 264)) for a soft, calming canvas
-  - Nearly White Cards (oklch(0.995 0.001 264)) that subtly lift off the background
-  - Very Light Cool Gray (oklch(0.96 0.005 264)) for subtle supporting surfaces
-- **Accent Color**: Apple Orange (oklch(0.65 0.20 50)) - Warm, friendly accent like iOS for highlights and secondary actions
-- **Status Colors** (Apple System Palette):
-  - Apple Green (oklch(0.60 0.15 145)) for success states
-  - Apple Yellow (oklch(0.75 0.15 80)) for warnings with excellent contrast
-  - Apple Red (oklch(0.58 0.23 25)) for destructive actions and urgent alerts
-- **Chart Colors** (8-color Apple-inspired palette):
-  - Chart 1: Apple Blue (oklch(0.55 0.17 255)) - Primary series
-  - Chart 2: Apple Orange (oklch(0.65 0.20 50)) - Secondary series
-  - Chart 3: Apple Green (oklch(0.60 0.15 145)) - Positive metrics
-  - Chart 4: Apple Yellow (oklch(0.75 0.15 80)) - Warning metrics
-  - Chart 5: Apple Purple (oklch(0.60 0.18 310)) - Alternative series
-  - Chart 6: Apple Red (oklch(0.58 0.23 25)) - Urgent metrics
-  - Chart 7: Apple Teal (oklch(0.55 0.15 200)) - Cool accent
-  - Chart 8: Apple Pink (oklch(0.62 0.16 320)) - Warm accent
+  - Deep Space Background (oklch(0.15 0.015 265)) - Rich dark base providing maximum contrast and reducing eye strain
+  - Elevated Surface (oklch(0.22 0.020 265)) - Slightly lighter cards that float above the background
+  - Muted Surface (oklch(0.18 0.018 265)) - Subtle variation for secondary elements
+- **Accent Color**: Neon Magenta (oklch(0.68 0.27 330)) - Vibrant pink/magenta for attention-grabbing highlights and secondary CTAs
+- **Status Colors** (Automotive-Inspired Performance Palette):
+  - Racing Green (oklch(0.65 0.20 145)) - Success, achievements, high performance
+  - Warning Amber (oklch(0.75 0.18 75)) - Caution, upcoming deadlines, attention needed  
+  - Alert Red (oklch(0.60 0.25 25)) - Critical alerts, expired items, urgent action
+  - Performance Yellow (oklch(0.80 0.16 95)) - Premium features, optimal conditions
+- **Chart Colors** (8-color high-contrast performance palette):
+  - Chart 1: Electric Cyan (oklch(0.70 0.19 195)) - Primary data series
+  - Chart 2: Neon Magenta (oklch(0.68 0.27 330)) - Secondary series
+  - Chart 3: Racing Green (oklch(0.65 0.20 145)) - Positive metrics
+  - Chart 4: Performance Yellow (oklch(0.80 0.16 95)) - Premium data
+  - Chart 5: Violet Glow (oklch(0.65 0.24 290)) - Alternative series
+  - Chart 6: Alert Red (oklch(0.60 0.25 25)) - Critical metrics
+  - Chart 7: Turquoise Bright (oklch(0.72 0.17 180)) - Cool accent
+  - Chart 8: Orange Blaze (oklch(0.70 0.22 45)) - Warm accent
 - **Foreground/Background Pairings**:
-  - Background (Ultra Light Cool): Deep Charcoal text oklch(0.20 0.01 264) - Ratio 15.8:1 ✓
-  - Card (Nearly White): Deep Charcoal text oklch(0.20 0.01 264) - Ratio 16.2:1 ✓
-  - Primary (Apple Blue): White text oklch(1 0 0) - Ratio 8.2:1 ✓
-  - Accent (Apple Orange): White text oklch(1 0 0) - Ratio 7.1:1 ✓
-  - Success (Apple Green): White text oklch(1 0 0) - Ratio 6.8:1 ✓
-  - Warning (Apple Yellow): Dark text oklch(0.20 0.01 264) - Ratio 11.2:1 ✓
-  - Destructive (Apple Red): White text oklch(1 0 0) - Ratio 7.5:1 ✓
+  - Background (Deep Space): Bright White text oklch(0.97 0 0) - Ratio 14.2:1 ✓
+  - Card (Elevated Surface): Bright White text oklch(0.97 0 0) - Ratio 11.5:1 ✓
+  - Primary (Electric Cyan): Deep Space text oklch(0.15 0.015 265) - Ratio 9.8:1 ✓
+  - Accent (Neon Magenta): White text oklch(1 0 0) - Ratio 7.8:1 ✓
+  - Success (Racing Green): White text oklch(1 0 0) - Ratio 7.2:1 ✓
+  - Warning (Warning Amber): Deep Space text oklch(0.15 0.015 265) - Ratio 12.5:1 ✓
+  - Destructive (Alert Red): White text oklch(1 0 0) - Ratio 7.9:1 ✓
 
 ## Font Selection
 
-Typography should evoke the clarity and precision of Apple's design language using system fonts optimized for each platform.
+Typography should evoke precision, speed, and technical excellence using modern geometric sans-serifs with strong character and excellent readability.
 
-- **Primary Font**: San Francisco (Apple System Fonts) - Apple's signature typeface via -apple-system, BlinkMacSystemFont, providing optimal readability and native feel
-- **Secondary Font**: SF Mono - Apple's monospace font for precise data display via ui-monospace, Menlo, Monaco
+- **Primary Font**: Rajdhani - Bold geometric sans-serif with condensed proportions, excellent for dense data displays and dashboard interfaces
+- **Secondary Font**: Orbitron - Technical display font for headers and key metrics, evoking digital displays and HUD aesthetics
+- **Data Font**: JetBrains Mono - Monospace font for precise numerical data, timestamps, and code-like information
 
 - **Typographic Hierarchy**:
-  - H1 (Page Title): System Font Semibold/32px/tight tracking (-0.02em)
-  - H2 (Section Headers): System Font Semibold/24px/tight tracking (-0.01em)
-  - H3 (Card Titles): System Font Medium/18px/normal tracking
-  - Body (General Text): System Font Regular/16px/relaxed line height (1.6)
-  - Data Fields (Dates, License Numbers): SF Mono Medium/14px/monospace spacing
-  - Labels: System Font Medium/14px with subtle tracking (0.01em)
+  - H1 (Page Title): Orbitron Bold/36px/wide letter spacing (0.08em)/uppercase
+  - H2 (Section Headers): Orbitron SemiBold/26px/wide tracking (0.06em)/uppercase
+  - H3 (Card Titles): Rajdhani Bold/20px/normal tracking/uppercase
+  - Body (General Text): Rajdhani Medium/16px/relaxed line height (1.6)
+  - Data Fields (Numbers, Stats): JetBrains Mono Bold/18px/tabular figures
+  - Labels: Rajdhani SemiBold/14px with tracking (0.02em)/uppercase
 
 ## Animations
 
-Animations should feel natural, fluid, and responsive - mirroring Apple's attention to motion design with subtle spring physics and smooth easing curves.
+Animations should feel powerful, precise, and performance-oriented - mirroring the snap and responsiveness of high-performance automotive interfaces with sharp transitions and energetic motion.
 
-- **Status transitions**: Smooth color fade with subtle scale (300ms spring ease) when document status changes
-- **Card interactions**: Gentle lift with soft shadow expansion on hover (200ms ease-out) to indicate interactivity
-- **Modal entry**: Slide up with backdrop fade and spring bounce (350ms) for adding/editing documents
-- **Badge animations**: Subtle pulse on expired items (2.5s loop) with reduced motion support
-- **Success confirmations**: Smooth scale with gentle bounce (500ms spring) when items are updated successfully
-- **Scroll behavior**: Smooth momentum scrolling matching iOS feel
+- **Status transitions**: Sharp color flash with scale pulse (250ms cubic-bezier ease) when metrics update
+- **Card interactions**: Powerful lift with glowing border expansion on hover (180ms ease-out) with subtle neon glow
+- **Modal entry**: Slide up with backdrop blur and electric glow reveal (300ms) for adding/editing data
+- **Badge animations**: Sharp pulse with glow effect on critical items (1.5s loop) with high contrast
+- **Success confirmations**: Electric flash with scale bounce (400ms spring) when actions complete
+- **Scroll behavior**: Smooth with momentum, data-driven feel
+- **Number counter**: Rapid count-up animation for metrics with digital display effect
+- **Chart animations**: Staggered reveal with neon trace effect (500ms cascade)
 
 ## Component Selection
 

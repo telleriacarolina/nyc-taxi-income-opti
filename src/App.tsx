@@ -44,27 +44,27 @@ function App() {
     <>
       <div className="min-h-screen bg-background">
         <div className="relative max-w-7xl mx-auto">
-          <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/95 backdrop-blur-2xl supports-[backdrop-filter]:backdrop-blur-2xl shadow-sm">
-            <div className="flex h-16 items-center justify-between px-6 md:px-8">
+          <header className="sticky top-0 z-50 w-full border-b-2 border-primary/30 bg-card/90 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+            <div className="flex h-20 items-center justify-between px-6 md:px-8">
               <div className="flex items-center gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-base shadow-lg shadow-primary/25">
+                <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-primary via-primary/80 to-accent text-primary-foreground font-display font-black text-xl shadow-lg border-2 border-primary/50 border-glow">
                   TLC
                 </div>
                 <div className="flex flex-col">
-                  <h1 className="font-semibold text-base md:text-lg leading-none tracking-tight text-foreground">
-                    NYC Driver Hub
+                  <h1 className="font-display font-bold text-xl md:text-2xl leading-none tracking-widest text-foreground text-glow">
+                    NYC DRIVER HUB
                   </h1>
-                  <p className="text-xs text-muted-foreground hidden md:block mt-0.5">
-                    Compliance & Earnings Optimizer
+                  <p className="text-xs text-primary font-bold hidden md:block mt-1 tracking-wider uppercase">
+                    Performance Dashboard
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-2 text-xs">
-                  <span className="px-3 py-1.5 rounded-full bg-success/10 text-success font-semibold border border-success/20">
+                <div className="hidden md:flex items-center gap-2 text-xs font-bold">
+                  <span className="px-3 py-2 rounded-md bg-success/20 text-success font-display uppercase tracking-wider border border-success/40 shadow-[0_0_10px_rgba(0,255,100,0.3)]">
                     Active
                   </span>
-                  <span className="px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20">
+                  <span className="px-3 py-2 rounded-md bg-primary/20 text-primary font-display uppercase tracking-wider border border-primary/40 shadow-[0_0_10px_rgba(0,200,255,0.3)]">
                     Live
                   </span>
                 </div>
@@ -73,50 +73,50 @@ function App() {
             </div>
           </header>
 
-          <div className="px-6 py-6 md:px-8 md:py-8">
-            <div className="rounded-3xl border border-border/40 bg-card shadow-lg shadow-black/5 p-6 md:p-8">
+          <div className="px-4 py-6 md:px-8 md:py-8">
+            <div className="rounded-lg border-2 border-primary/20 bg-card shadow-[0_0_40px_rgba(0,0,0,0.8),0_0_80px_rgba(0,200,255,0.15)] p-4 md:p-8 card-scan">
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5 md:grid-cols-10 h-auto md:h-11 rounded-2xl border border-border/30 bg-muted/30 p-1.5 gap-1">
-              <TabsTrigger value="license" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <IdentificationCard size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">License</span>
+              <TabsList className="grid w-full grid-cols-5 md:grid-cols-10 h-auto md:h-12 rounded-lg border-2 border-border bg-background/50 p-1.5 gap-1">
+              <TabsTrigger value="license" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <IdentificationCard size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">License</span>
               </TabsTrigger>
-              <TabsTrigger value="earnings" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <ChartBar size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Earnings</span>
+              <TabsTrigger value="earnings" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <ChartBar size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Earnings</span>
               </TabsTrigger>
-              <TabsTrigger value="rides" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <MapTrifold size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Rides</span>
+              <TabsTrigger value="rides" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <MapTrifold size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Rides</span>
               </TabsTrigger>
-              <TabsTrigger value="apps" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <CarProfile size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Apps</span>
+              <TabsTrigger value="apps" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <CarProfile size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Apps</span>
               </TabsTrigger>
-              <TabsTrigger value="calculator" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <Calculator size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Calculator</span>
+              <TabsTrigger value="calculator" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <Calculator size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Calc</span>
               </TabsTrigger>
-              <TabsTrigger value="chatroom" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <ChatCircleDots size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Chat</span>
+              <TabsTrigger value="chatroom" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <ChatCircleDots size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Chat</span>
               </TabsTrigger>
-              <TabsTrigger value="nyctlc" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <Buildings size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">TLC</span>
+              <TabsTrigger value="nyctlc" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <Buildings size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">TLC</span>
               </TabsTrigger>
-              <TabsTrigger value="dmv" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <CarSimple size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">DMV</span>
+              <TabsTrigger value="dmv" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <CarSimple size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">DMV</span>
               </TabsTrigger>
-              <TabsTrigger value="contact" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <Phone size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Contact</span>
+              <TabsTrigger value="contact" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <Phone size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Contact</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
-                <Gear size={18} weight="duotone" className="flex-shrink-0" />
-                <span className="truncate text-[11px] md:text-xs font-medium">Settings</span>
+              <TabsTrigger value="settings" className="gap-1.5 text-xs px-3 py-2.5 md:py-0 flex-col md:flex-row h-auto md:h-auto rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_rgba(0,200,255,0.5)] transition-all font-bold uppercase tracking-wider spring-interactive">
+                <Gear size={20} weight="duotone" className="flex-shrink-0" />
+                <span className="truncate text-[10px] md:text-xs font-display">Settings</span>
               </TabsTrigger>
             </TabsList>
 
@@ -126,7 +126,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <LicenseManager />
                 </motion.div>
@@ -137,7 +137,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <EarningsOptimizer />
                 </motion.div>
@@ -148,7 +148,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <CurrentLocationRouter />
                   <RideComparison />
@@ -160,13 +160,13 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <Tabs defaultValue="rideshare" className="space-y-4">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="rideshare">Rideshare</TabsTrigger>
-                      <TabsTrigger value="delivery">Delivery</TabsTrigger>
-                      <TabsTrigger value="packages">Packages</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-3 bg-background/50 border-2 border-border">
+                      <TabsTrigger value="rideshare" className="font-display uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Rideshare</TabsTrigger>
+                      <TabsTrigger value="delivery" className="font-display uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Delivery</TabsTrigger>
+                      <TabsTrigger value="packages" className="font-display uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Packages</TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="rideshare" className="space-y-4">
@@ -189,7 +189,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <TripCalculator />
                 </motion.div>
@@ -200,7 +200,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <Chatroom />
                 </motion.div>
@@ -211,7 +211,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <NYCTLCHub />
                 </motion.div>
@@ -222,7 +222,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <NYDMVHub />
                 </motion.div>
@@ -233,7 +233,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <ContactTLC />
                 </motion.div>
@@ -244,7 +244,7 @@ function App() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <PrivacyDataManagement />
                   <NotificationPermissions />
