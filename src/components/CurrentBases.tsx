@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { HexagonBadge } from '@/components/HexagonBadge'
 import { 
   Buildings, 
   Phone, 
@@ -178,94 +179,108 @@ export function CurrentBases() {
         ) : (
           <ScrollArea className="h-[500px] pr-4">
             <div className="grid gap-3">
-              {filteredBases.map((base, index) => (
-                <Card 
-                  key={`${base.base_number}-${index}`}
-                  className="p-4 border-l-4 hover:shadow-md transition-shadow"
-                  style={{ borderLeftColor: base.base_type === 'Black-Car' ? '#3b82f6' : '#10b981' }}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h4 className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)] truncate">
-                            {base.base_name || base.dba || 'Unknown Base'}
-                          </h4>
-                          {base.base_type && (
-                            <Badge variant="secondary" className="text-[clamp(0.65rem,2vw,0.7rem)] flex-shrink-0">
-                              {base.base_type}
-                            </Badge>
-                          )}
+              {filteredBases.map((base, index) => {
+                const baseColor = base.base_type === 'Black-Car' ? 'oklch(0.60 0.22 250)' : 'oklch(0.65 0.20 145)'
+                const baseBgColor = base.base_type === 'Black-Car' ? 'oklch(0.25 0.025 250)' : 'oklch(0.22 0.020 145)'
+                
+                return (
+                  <Card 
+                    key={`${base.base_number}-${index}`}
+                    className="p-4 border-l-4 hover:shadow-md transition-shadow hexagon-pattern"
+                    style={{ borderLeftColor: base.base_type === 'Black-Car' ? '#3b82f6' : '#10b981' }}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                          <HexagonBadge
+                            icon={<Buildings size={24} weight="fill" className="text-white" />}
+                            color={baseColor}
+                            bgColor={baseBgColor}
+                            size="sm"
+                            animated={true}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h4 className="font-semibold text-[clamp(0.85rem,2.5vw,0.95rem)] truncate">
+                                {base.base_name || base.dba || 'Unknown Base'}
+                              </h4>
+                              {base.base_type && (
+                                <Badge variant="secondary" className="text-[clamp(0.65rem,2vw,0.7rem)] flex-shrink-0">
+                                  {base.base_type}
+                                </Badge>
+                              )}
+                            </div>
+                            
+                            {base.dba && base.dba !== base.base_name && (
+                              <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-2">
+                                DBA: {base.dba}
+                              </p>
+                            )}
+
+                            {base.app_company_affiliation && (
+                              <div className="flex items-center gap-2 mb-2">
+                                <Briefcase size={14} className="text-primary flex-shrink-0" />
+                                <span className="text-[clamp(0.7rem,2vw,0.75rem)] text-foreground font-medium">
+                                  {base.app_company_affiliation}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        
-                        {base.dba && base.dba !== base.base_name && (
-                          <p className="text-[clamp(0.7rem,2vw,0.75rem)] text-muted-foreground mb-2">
-                            DBA: {base.dba}
-                          </p>
+
+                        <Badge 
+                          variant="outline" 
+                          className="text-[clamp(0.65rem,2vw,0.7rem)] font-mono flex-shrink-0"
+                        >
+                          {base.base_number}
+                        </Badge>
+                      </div>
+
+                      <div className="grid gap-2 text-[clamp(0.7rem,2vw,0.75rem)]">
+                        {base.base_address && (
+                          <div className="flex items-start gap-2">
+                            <MapPin size={14} weight="fill" className="text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <span className="text-muted-foreground break-words">{base.base_address}</span>
+                          </div>
                         )}
 
-                        {base.app_company_affiliation && (
-                          <div className="flex items-center gap-2 mb-2">
-                            <Briefcase size={14} className="text-primary flex-shrink-0" />
-                            <span className="text-[clamp(0.7rem,2vw,0.75rem)] text-foreground font-medium">
-                              {base.app_company_affiliation}
-                            </span>
+                        {base.base_telephone_number && (
+                          <div className="flex items-center gap-2">
+                            <Phone size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                            <a 
+                              href={`tel:${base.base_telephone_number}`}
+                              className="text-primary hover:underline"
+                            >
+                              {base.base_telephone_number}
+                            </a>
+                          </div>
+                        )}
+
+                        {base.website && (
+                          <div className="flex items-center gap-2">
+                            <Globe size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                            <a 
+                              href={base.website.startsWith('http') ? base.website : `https://${base.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline truncate"
+                            >
+                              {base.website}
+                            </a>
+                          </div>
+                        )}
+
+                        {base.veh && (
+                          <div className="flex items-center gap-2">
+                            <Taxi size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
+                            <span className="text-muted-foreground">{base.veh} vehicles</span>
                           </div>
                         )}
                       </div>
-
-                      <Badge 
-                        variant="outline" 
-                        className="text-[clamp(0.65rem,2vw,0.7rem)] font-mono flex-shrink-0"
-                      >
-                        {base.base_number}
-                      </Badge>
                     </div>
-
-                    <div className="grid gap-2 text-[clamp(0.7rem,2vw,0.75rem)]">
-                      {base.base_address && (
-                        <div className="flex items-start gap-2">
-                          <MapPin size={14} weight="fill" className="text-muted-foreground mt-0.5 flex-shrink-0" />
-                          <span className="text-muted-foreground break-words">{base.base_address}</span>
-                        </div>
-                      )}
-
-                      {base.base_telephone_number && (
-                        <div className="flex items-center gap-2">
-                          <Phone size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
-                          <a 
-                            href={`tel:${base.base_telephone_number}`}
-                            className="text-primary hover:underline"
-                          >
-                            {base.base_telephone_number}
-                          </a>
-                        </div>
-                      )}
-
-                      {base.website && (
-                        <div className="flex items-center gap-2">
-                          <Globe size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
-                          <a 
-                            href={base.website.startsWith('http') ? base.website : `https://${base.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline truncate"
-                          >
-                            {base.website}
-                          </a>
-                        </div>
-                      )}
-
-                      {base.veh && (
-                        <div className="flex items-center gap-2">
-                          <Taxi size={14} weight="fill" className="text-muted-foreground flex-shrink-0" />
-                          <span className="text-muted-foreground">{base.veh} vehicles</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                )
+              })}
             </div>
           </ScrollArea>
         )}

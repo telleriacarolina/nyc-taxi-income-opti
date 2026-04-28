@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MTMEnrollmentWalkthrough } from '@/components/MTMEnrollmentWalkthrough'
+import { HexagonBadge } from '@/components/HexagonBadge'
 import { 
   FirstAidKit,
   Wheelchair,
@@ -263,17 +264,22 @@ export function MedicalVouchers() {
             {filteredProviders.map(provider => (
               <Card 
                 key={provider.id} 
-                className="p-4 transition-all hover:shadow-lg"
+                className="p-4 transition-all hover:shadow-lg hexagon-pattern"
                 style={{ borderLeft: `3px solid ${provider.color}` }}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
-                      style={{ backgroundColor: provider.bgColor }}
-                    >
-                      {provider.icon}
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <HexagonBadge
+                      icon={
+                        provider.type === 'medical' ? <FirstAidKit size={24} weight="fill" className="text-white" /> :
+                        provider.type === 'ambulette' ? <Wheelchair size={24} weight="fill" className="text-white" /> :
+                        <Ambulance size={24} weight="fill" className="text-white" />
+                      }
+                      color={provider.color}
+                      bgColor={provider.bgColor}
+                      size="md"
+                      animated={true}
+                    />
                     <div>
                       <h3 className="text-base font-semibold">{provider.name}</h3>
                       <Badge 
