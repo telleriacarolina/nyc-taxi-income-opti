@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts'
+import { HexagonBadge } from '@/components/HexagonBadge'
 import {
   Truck,
   ClipboardText,
@@ -599,13 +600,13 @@ export function PackageDeliveryWork() {
                 style={{ borderLeft: `3px solid ${platform.color}` }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-9 h-9 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: platform.bgColor }}
-                    >
-                      <Package size={20} weight="fill" style={{ color: platform.color }} />
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <HexagonBadge 
+                      icon={<Package size={20} weight="fill" />}
+                      color={platform.color}
+                      bgColor={platform.bgColor}
+                      size="sm"
+                    />
                     <div>
                       <h3 className="text-[clamp(0.9rem,2.8vw,1rem)] font-semibold">{platform.name}</h3>
                       <Badge variant="secondary" className="mt-0.5 text-[10px] h-4">

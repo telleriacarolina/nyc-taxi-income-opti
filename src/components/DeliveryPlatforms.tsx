@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { HexagonBadge } from '@/components/HexagonBadge'
 import { 
   Package,
   Bicycle,
@@ -374,13 +375,13 @@ export function DeliveryPlatforms() {
                 style={{ borderLeft: `3px solid ${platform.color}` }}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-xl"
-                      style={{ backgroundColor: platform.bgColor }}
-                    >
-                      {platform.icon}
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <HexagonBadge 
+                      icon={<span className="text-xl">{platform.icon}</span>}
+                      color={platform.color}
+                      bgColor={platform.bgColor}
+                      size="sm"
+                    />
                     <div>
                       <h3 className="text-base font-semibold">{platform.name}</h3>
                       <Badge 

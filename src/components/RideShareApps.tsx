@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MedicalVouchers } from '@/components/MedicalVouchers'
 import { DailyPlatformPlanner } from '@/components/DailyPlatformPlanner'
 import { CurrentBases } from '@/components/CurrentBases'
+import { HexagonBadge } from '@/components/HexagonBadge'
 import { 
   CarProfile, 
   Globe, 
@@ -198,13 +199,13 @@ export function RideShareApps() {
               style={{ borderLeft: `3px solid ${app.color}` }}
             >
               <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div 
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
-                    style={{ backgroundColor: app.bgColor }}
-                  >
-                    {app.icon}
-                  </div>
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <HexagonBadge 
+                    icon={<span className="text-xl">{app.icon}</span>}
+                    color={app.color}
+                    bgColor={app.bgColor}
+                    size="sm"
+                  />
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold text-[clamp(0.9rem,2.8vw,1rem)] line-clamp-1">{app.name}</h3>
                     {app.marketShare && (
