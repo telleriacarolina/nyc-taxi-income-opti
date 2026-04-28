@@ -8,16 +8,16 @@
 }
 
 :root {
-  /* Apple-Inspired NYC Driver Hub - Clean, Minimal, Refined */
+  /* Apple-Inspired Design System - Clean, Minimal, Refined */
   
   /* Background & Surfaces - Soft & Bright like iOS/macOS */
-  --background: oklch(0.985 0.002 264); /* Ultra-light cool background */
-  --foreground: oklch(0.20 0.01 264); /* Deep charcoal text with subtle cool tone */
+  --background: oklch(0.98 0.002 264); /* Ultra-light cool background */
+  --foreground: oklch(0.18 0.01 264); /* Deep charcoal text with subtle cool tone */
 
-  --card: oklch(0.995 0.001 264); /* Nearly white cards with subtle tint */
-  --card-foreground: oklch(0.20 0.01 264); /* Deep charcoal text */
+  --card: oklch(1 0 0); /* Pure white cards for contrast */
+  --card-foreground: oklch(0.18 0.01 264); /* Deep charcoal text */
   --popover: oklch(1 0 0); /* Pure white popover */
-  --popover-foreground: oklch(0.20 0.01 264); /* Deep charcoal */
+  --popover-foreground: oklch(0.18 0.01 264); /* Deep charcoal */
 
   /* Primary Color - Apple Blue (iOS system blue) */
   --primary: oklch(0.55 0.17 255); /* Classic Apple blue for CTAs */
@@ -28,8 +28,8 @@
   --secondary-foreground: oklch(0.30 0.01 264); /* Dark gray text */
   
   /* Muted backgrounds and text */
-  --muted: oklch(0.97 0.004 264); /* Ultra soft gray */
-  --muted-foreground: oklch(0.55 0.01 264); /* Medium gray text */
+  --muted: oklch(0.96 0.004 264); /* Ultra soft gray */
+  --muted-foreground: oklch(0.50 0.01 264); /* Medium gray text */
   
   /* Accent Color - Apple Orange */
   --accent: oklch(0.65 0.20 50); /* Warm orange accent like iOS */
@@ -46,11 +46,11 @@
   --warning-foreground: oklch(0.20 0.01 264); /* Dark text */
 
   /* Borders and inputs - Ultra Subtle */
-  --border: oklch(0.92 0.005 264); /* Barely-there border */
+  --border: oklch(0.90 0.005 264); /* Barely-there border */
   --input: oklch(0.975 0.003 264); /* Soft input background */
   --ring: oklch(0.55 0.17 255); /* Apple blue focus ring */
 
-  --radius: 0.875rem;
+  --radius: 1rem;
 
   /* Typography - Apple System Fonts */
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
