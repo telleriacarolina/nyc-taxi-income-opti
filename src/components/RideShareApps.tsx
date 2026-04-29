@@ -7,6 +7,7 @@ import { MedicalVouchers } from '@/components/MedicalVouchers'
 import { DailyPlatformPlanner } from '@/components/DailyPlatformPlanner'
 import { CurrentBases } from '@/components/CurrentBases'
 import { HexagonBadge } from '@/components/HexagonBadge'
+import { getPlatformGradient } from '@/lib/platformColors'
 import { 
   CarProfile, 
   Globe, 
@@ -204,6 +205,7 @@ export function RideShareApps() {
                     icon={<span className="text-xl">{app.icon}</span>}
                     color={app.color}
                     bgColor={app.bgColor}
+                    gradientColors={getPlatformGradient(app.id)}
                     size="sm"
                   />
                   <div className="min-w-0 flex-1">

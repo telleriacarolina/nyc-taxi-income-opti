@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MTMEnrollmentWalkthrough } from '@/components/MTMEnrollmentWalkthrough'
 import { HexagonBadge } from '@/components/HexagonBadge'
+import { getPlatformGradient } from '@/lib/platformColors'
 import { 
   FirstAidKit,
   Wheelchair,
@@ -277,6 +278,7 @@ export function MedicalVouchers() {
                       }
                       color={provider.color}
                       bgColor={provider.bgColor}
+                      gradientColors={getPlatformGradient(provider.id)}
                       size="md"
                       animated={true}
                     />

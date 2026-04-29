@@ -7,6 +7,7 @@ interface HexagonBadgeProps {
   bgColor?: string
   size?: 'sm' | 'md' | 'lg'
   animated?: boolean
+  gradientColors?: [string, string]
 }
 
 export function HexagonBadge({ 
@@ -14,7 +15,8 @@ export function HexagonBadge({
   color = 'oklch(0.70 0.19 195)', 
   bgColor = 'oklch(0.22 0.020 265)',
   size = 'md',
-  animated = true 
+  animated = true,
+  gradientColors
 }: HexagonBadgeProps) {
   const sizeMap = {
     sm: { width: 40, height: 46, iconSize: 20 },
@@ -23,8 +25,16 @@ export function HexagonBadge({
   }
 
   const dimensions = sizeMap[size]
-
   const hexagonPath = `polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)`
+
+  const createGradient = () => {
+    if (gradientColors) {
+      return `linear-gradient(135deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`
+    }
+    return `linear-gradient(135deg, ${bgColor} 0%, ${color} 100%)`
+  }
+
+  const glowColor = gradientColors ? gradientColors[1] : color
 
   return (
     <motion.div
@@ -33,8 +43,8 @@ export function HexagonBadge({
         width: dimensions.width,
         height: dimensions.height,
         clipPath: hexagonPath,
-        background: `linear-gradient(135deg, ${bgColor} 0%, ${color} 100%)`,
-        boxShadow: `0 0 20px ${color}40, inset 0 0 15px ${color}20`
+        background: createGradient(),
+        boxShadow: `0 0 20px ${glowColor}40, inset 0 0 15px ${glowColor}20`
       }}
       initial={animated ? { scale: 0.9, opacity: 0 } : {}}
       animate={animated ? { scale: 1, opacity: 1 } : {}}
@@ -46,7 +56,7 @@ export function HexagonBadge({
       } : {}}
       whileHover={animated ? { 
         scale: 1.05,
-        boxShadow: `0 0 30px ${color}60, inset 0 0 20px ${color}30`,
+        boxShadow: `0 0 30px ${glowColor}60, inset 0 0 20px ${glowColor}30`,
         transition: { type: "spring", stiffness: 500, damping: 15 }
       } : {}}
     >
@@ -54,7 +64,9 @@ export function HexagonBadge({
         className="absolute inset-0"
         style={{
           clipPath: hexagonPath,
-          background: `linear-gradient(135deg, transparent 0%, ${color}15 100%)`
+          background: gradientColors 
+            ? `linear-gradient(135deg, ${gradientColors[0]}20 0%, ${gradientColors[1]}30 100%)`
+            : `linear-gradient(135deg, transparent 0%, ${color}15 100%)`
         }}
         initial={animated ? { opacity: 0 } : {}}
         animate={animated ? { opacity: [0.3, 0.6, 0.3] } : {}}
@@ -71,7 +83,7 @@ export function HexagonBadge({
           width: '90%',
           height: '90%',
           clipPath: hexagonPath,
-          borderColor: color,
+          borderColor: glowColor,
           opacity: 0.3
         }}
         initial={animated ? { scale: 0.8, opacity: 0 } : {}}

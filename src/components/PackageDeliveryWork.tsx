@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts'
 import { HexagonBadge } from '@/components/HexagonBadge'
+import { getPlatformGradient } from '@/lib/platformColors'
 import {
   Truck,
   ClipboardText,
@@ -605,6 +606,7 @@ export function PackageDeliveryWork() {
                       icon={<Package size={20} weight="fill" />}
                       color={platform.color}
                       bgColor={platform.bgColor}
+                      gradientColors={getPlatformGradient(platform.id)}
                       size="sm"
                     />
                     <div>

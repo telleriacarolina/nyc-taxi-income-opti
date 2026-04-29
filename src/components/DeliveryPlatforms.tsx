@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HexagonBadge } from '@/components/HexagonBadge'
+import { getPlatformGradient } from '@/lib/platformColors'
 import { 
   Package,
   Bicycle,
@@ -380,6 +381,7 @@ export function DeliveryPlatforms() {
                       icon={<span className="text-xl">{platform.icon}</span>}
                       color={platform.color}
                       bgColor={platform.bgColor}
+                      gradientColors={getPlatformGradient(platform.id)}
                       size="sm"
                     />
                     <div>
