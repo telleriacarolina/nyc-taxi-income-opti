@@ -5,7 +5,7 @@ interface HexagonBadgeProps {
   icon: ReactNode
   color?: string
   bgColor?: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   animated?: boolean
   gradientColors?: [string, string]
 }
@@ -19,9 +19,12 @@ export function HexagonBadge({
   gradientColors
 }: HexagonBadgeProps) {
   const sizeMap = {
+    xs: { width: 28, height: 32, iconSize: 14 },
     sm: { width: 40, height: 46, iconSize: 20 },
     md: { width: 50, height: 58, iconSize: 24 },
-    lg: { width: 60, height: 69, iconSize: 28 }
+    lg: { width: 60, height: 69, iconSize: 28 },
+    xl: { width: 80, height: 92, iconSize: 36 },
+    '2xl': { width: 100, height: 115, iconSize: 48 }
   }
 
   const dimensions = sizeMap[size]
