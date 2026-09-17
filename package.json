@@ -40,6 +40,7 @@
         "test": "vitest",
         "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage",
+        "security-checks": "npm audit --audit-level=high",
         "lint": "eslint .",
         "optimize": "vite optimize",
         "preview": "vite preview",
